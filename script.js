@@ -2,6 +2,7 @@
 const searchInput = document.getElementById('searchInput');
 const typeFilter = document.getElementById('typeFilter');
 const itineraryListElement = document.getElementById('itineraryList');
+const itineraryNotification = document.getElementById('itineraryNotification'); // Added this line
 const langButtons = document.querySelectorAll('#langSwitcher button');
 
 // App state
@@ -38,12 +39,20 @@ function generatePopupContent(attraction) {
     const t = translations[currentLanguage];
     // Basic placeholder for description - could be made more dynamic if needed
     const description = `Discover the beauty of ${attraction.name}. More details coming soon!`;
+
+    let buttonText = t.addToItinerary;
+    let buttonDisabled = false;
+    if (tripItinerary.some(item => item.name === attraction.name)) {
+        buttonText = t.inItinerary;
+        buttonDisabled = true;
+    }
+
     return `
         <h3>${attraction.name}</h3>
         <p>${description}</p>
         <a href="#" target="_blank">${t.moreInfoLink}</a> | <a href="#" target="_blank">${t.bookingsLink}</a>
         <br>
-        <button class="addToItineraryBtn" data-name="${attraction.name}">${t.addToItinerary}</button>
+        <button class="addToItineraryBtn" data-name="${attraction.name}" ${buttonDisabled ? 'disabled' : ''}>${buttonText}</button>
     `;
 }
 
@@ -107,7 +116,7 @@ function renderItinerary() {
     });
 }
 
-function addToItinerary(attractionName) {
+function addToItinerary(attractionName, buttonElement) { // Added buttonElement
     // Find the full attraction object from the main 'attractions' array
     const attractionToAdd = attractions.find(attr => attr.name === attractionName);
     if (!attractionToAdd) {
@@ -119,8 +128,18 @@ function addToItinerary(attractionName) {
     if (!tripItinerary.some(item => item.name === attractionToAdd.name)) {
         tripItinerary.push(attractionToAdd);
         renderItinerary();
+        if (buttonElement) { // If buttonElement is provided
+            buttonElement.textContent = translations[currentLanguage].addedToItinerary;
+            buttonElement.disabled = true;
+        }
     } else {
-        alert(attractionToAdd.name + ' is already in your itinerary.');
+        // alert(attractionToAdd.name + ' is already in your itinerary.'); // Old alert
+        itineraryNotification.textContent = attractionToAdd.name + ' is already in your itinerary.';
+        itineraryNotification.style.display = 'block'; // Show notification
+        setTimeout(() => {
+            itineraryNotification.textContent = '';
+            itineraryNotification.style.display = 'none'; // Hide notification
+        }, 3000); // Hide after 3 seconds
     }
 }
 
@@ -136,11 +155,15 @@ map.on('popupopen', function(e) {
         const addButton = popupNode.querySelector('.addToItineraryBtn');
         if (addButton) {
             // No need for listenerAttached dataset property here as onclick is reassigned
-            addButton.onclick = function() {
-                const attractionName = this.dataset.name;
-                addToItinerary(attractionName);
-                // map.closePopup(); // Optionally close popup
-            };
+            // Check if the button is already disabled by generatePopupContent
+            if (!addButton.disabled) {
+                addButton.onclick = function() {
+                    const attractionName = this.dataset.name;
+                    // Pass 'this' (the button itself) to addToItinerary to modify it
+                    addToItinerary(attractionName, this);
+                    // map.closePopup(); // Optionally close popup
+                };
+            }
         }
     }
 });
@@ -148,8 +171,13 @@ map.on('popupopen', function(e) {
 
 // --- Language Functions ---
 function setLanguage(lang) {
+    // Fallback to English if the selected language or its translations are not found
+    if (!translations[lang]) {
+        console.warn(`Language "${lang}" not found. Falling back to English.`);
+        lang = 'en';
+    }
     currentLanguage = lang;
-    const t = translations[lang];
+    const t = translations[lang]; // Now lang is guaranteed to be a valid key (either original or 'en')
 
     // Update UI elements
     document.getElementById('searchInput').placeholder = t.searchPlaceholder;
@@ -165,7 +193,7 @@ function setLanguage(lang) {
 
     // Update language switcher button styles
     langButtons.forEach(button => {
-        if (button.dataset.lang === lang) {
+        if (button.dataset.lang === currentLanguage) { // Use currentLanguage after potential fallback
             button.classList.add('activeLang');
         } else {
             button.classList.remove('activeLang');

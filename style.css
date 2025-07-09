@@ -69,6 +69,17 @@ html, body { height: 100%; }
     background-color: #ff9999; /* Darker pastel red on hover */
 }
 
+#itineraryNotification {
+    margin-top: 10px;
+    color: #d8000c; /* Error red */
+    background-color: #ffdddd; /* Light red background */
+    border: 1px solid #f44336; /* Red border */
+    padding: 8px; /* Adjusted padding from inline to match other elements */
+    border-radius: 4px; /* Adjusted border-radius */
+    text-align: center;
+    /* display: none; /* Managed by JS to show/hide */
+}
+
 #langSwitcher {
     margin-top: 5px;
     margin-bottom: 5px;

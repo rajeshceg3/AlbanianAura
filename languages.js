@@ -9,6 +9,8 @@ const translations = {
         itineraryTitle: "My Trip Itinerary",
         removeFromItinerary: "Remove",
         addToItinerary: "Add to Itinerary",
+        inItinerary: "In Itinerary", // New
+        addedToItinerary: "Added!",    // New
         moreInfoLink: "More Info",
         bookingsLink: "Bookings",
         // Attraction pop-up placeholders (if we decide to translate them later)
@@ -25,6 +27,8 @@ const translations = {
         itineraryTitle: "Itinerari im i udhëtimit",
         removeFromItinerary: "Hiqe",
         addToItinerary: "Shto në Itinerar",
+        inItinerary: "Në Itinerar", // New
+        addedToItinerary: "Shtuar!",   // New
         moreInfoLink: "Më shumë Info",
         bookingsLink: "Rezervime",
         // defaultPopupDesc: "Zbuloni bukurinë e {attractionName}. Më shumë detaje së shpejti!"
