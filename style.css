@@ -1,0 +1,123 @@
+#controls {
+    padding: 10px;
+    background-color: #f0f0f0;
+}
+#controls input, #controls select {
+    margin-right: 10px;
+    padding: 5px;
+}
+#map {
+    height: calc(100vh - 70px); /* Adjust map height considering controls, assuming controls are approx 50px + 2*10px padding */
+    width: 100%;
+}
+body { margin: 0; font-family: sans-serif; }
+html, body { height: 100%; }
+
+#itinerary {
+    padding: 10px;
+    background-color: #e9e9e9;
+    margin-top: 10px;
+}
+#itinerary h2 {
+    margin-top: 0;
+}
+#itineraryList {
+    list-style-type: none;
+    padding: 0;
+}
+#itineraryList li {
+    padding: 5px 0;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#itineraryList li:last-child {
+    border-bottom: none;
+}
+#itineraryList button {
+    padding: 3px 8px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+#langSwitcher {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    background-color: #ddd; /* Differentiate it slightly */
+    border-radius: 3px;
+    text-align: right; /* Align to the right of the controls bar */
+}
+#langSwitcher span {
+    margin-right: 5px;
+}
+#langSwitcher button {
+    padding: 3px 8px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+#langSwitcher button.activeLang { /* Style for the active language button */
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* --- Responsive Design --- */
+
+/* For smaller screens (e.g., mobile phones) */
+@media (max-width: 600px) {
+    #controls {
+        padding: 8px; /* Slightly reduce padding */
+    }
+
+    #controls input,
+    #controls select {
+        display: block; /* Stack them vertically */
+        width: calc(100% - 16px); /* Full width with some padding consideration */
+        margin-bottom: 8px; /* Add space between stacked elements */
+        margin-right: 0; /* Remove right margin */
+    }
+
+    #map {
+        /* Adjust map height if controls height changes significantly.
+           Assuming controls might now take up more vertical space when stacked.
+           This value might need fine-tuning based on actual stacked height.
+           The lang switcher might add a bit more height.
+           Let's estimate a stacked controls height of around 160px now. */
+        height: calc(100vh - 170px); /* Further adjust for lang switcher */
+    }
+    #langSwitcher {
+        text-align: left; /* Align to left on mobile when controls stack */
+        margin-top: 10px;
+    }
+
+    #itinerary h2 {
+        font-size: 1.2em; /* Adjust heading size */
+    }
+
+    body {
+        font-size: 0.95em; /* Slightly adjust base font size for small screens */
+    }
+
+    /* Ensure popups are not too wide */
+    .leaflet-popup-content-wrapper {
+        max-width: 80vw; /* Max width relative to viewport width */
+    }
+}
+
+/* For very small screens, further adjustments if needed */
+@media (max-width: 400px) {
+    #controls input,
+    #controls select {
+        padding: 8px 5px; /* Adjust padding for very small inputs */
+    }
+     /* Re-evaluate map height for very small screens if controls take more space */
+    #map {
+         height: calc(100vh - 180px); /* Potentially adjust if controls take even more space */
+    }
+}
