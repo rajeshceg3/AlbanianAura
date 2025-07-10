@@ -127,6 +127,7 @@ html, body { height: 100%; }
         width: calc(100% - 16px); /* Full width with some padding consideration */
         margin-bottom: 8px; /* Add space between stacked elements */
         margin-right: 0; /* Remove right margin */
+        box-sizing: border-box; /* Ensure padding and border are included in the width */
     }
 
     #map {
