@@ -10,6 +10,7 @@ AlbanianAura is a web-based interactive map designed to help tourists discover a
 *   **Type Filtering:** Filter attractions by type (e.g., City, Beach, Nature, History).
 *   **Multilingual Support:** Switch between English (EN) and Albanian (SQ) for UI elements.
 *   **Itinerary Planning:** Add attractions to a personal itinerary and remove them.
+*   **Rate and Review Attractions:** Users can rate attractions (1-5 stars) and write textual reviews. Average ratings are displayed on popups, and a modal allows viewing all reviews and submitting new ones.
 *   **Responsive Design:** Basic responsiveness for use on different screen sizes.
 
 ## Setup and Usage
