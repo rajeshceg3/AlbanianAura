@@ -7,30 +7,14 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 </head>
 <body>
-  <div id="controls">
-    <input type="text" id="searchInput" placeholder="Search by name...">
-    <select id="typeFilter">
-        <option value="">All Types</option>
-        <option value="city">City</option>
-        <option value="beach">Beach</option>
-        <option value="nature">Nature</option>
-        <option value="history">History</option>
-    </select>
-    <div id="langSwitcher">
-        <span id="langLabel">Language:</span>
-        <button data-lang="en">EN</button>
-        <button data-lang="sq">SQ</button>
-    </div>
+  <div id="langSwitcher">
+      <span id="langLabel">Language:</span>
+      <button data-lang="en">EN</button>
+      <button data-lang="sq">SQ</button>
   </div>
   <div id="map"></div>
-  <div id="itinerary">
-      <h2>My Trip Itinerary</h2>
-      <ul id="itineraryList">
-          <!-- Itinerary items will be added here by JavaScript -->
-      </ul>
-    <div id="itineraryNotification" style="margin-top: 10px; color: #d8000c; background-color: #ffdddd; border: 1px solid #f44336; padding: 5px; border-radius: 3px; text-align: center; display: none;">
-        <!-- Notification message will appear here -->
-    </div>
+  <div id="dream-controls">
+    <button id="dreamModeBtn">Dream Mode</button>
   </div>
 
   <!-- Review Modal -->
