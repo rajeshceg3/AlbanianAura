@@ -1,23 +1,3 @@
-#controls {
-    padding: 10px;
-    background-color: #f2e6ff; /* Pale Lavender */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-#controls input, #controls select {
-    margin-right: 10px; /* Consistent margin */
-    margin-bottom: 5px; /* Add some bottom margin for stacked elements in mobile */
-    padding: 8px 10px; /* Updated padding */
-    border: 1px solid #d9d9d9; /* Light Grey border */
-    border-radius: 5px; /* Softer corners */
-    background-color: #fff; /* White background */
-    transition: box-shadow 0.3s ease; /* Transition for focus */
-}
-
-#controls input:focus, #controls select:focus {
-    box-shadow: 0 0 0 2px #ffd9b3; /* Soft Coral focus shadow */
-    outline: none; /* Remove default outline */
-}
-
 #map {
     height: calc(100vh - 70px); /* Adjust map height considering controls, assuming controls are approx 50px + 2*10px padding */
     width: 100%;
@@ -29,56 +9,6 @@ body {
     color: #4a4a4a; /* Dark Grey */
 }
 html, body { height: 100%; }
-
-#itinerary {
-    padding: 10px;
-    background-color: #f2e6ff; /* Pale Lavender */
-    margin-top: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-#itinerary h2 {
-    margin-top: 0;
-    margin-bottom: 10px; /* Add some space below the heading */
-    font-size: 1.3em; /* Ensure consistent font size */
-}
-#itineraryList {
-    list-style-type: none;
-    padding: 0;
-}
-#itineraryList li {
-    padding: 10px; /* Increased padding */
-    border-bottom: 1px solid #e0e0e0; /* Lighter grey border */
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff; /* White background for items */
-}
-#itineraryList li:last-child {
-    border-bottom: none;
-}
-#itineraryList button {
-    padding: 5px 10px; /* Updated padding */
-    background-color: #ffb3b3; /* Softer pastel red */
-    color: #fff; /* White text */
-    border: none;
-    cursor: pointer;
-    border-radius: 5px; /* Softer corners */
-    transition: background-color 0.3s ease;
-}
-#itineraryList button:hover {
-    background-color: #ff9999; /* Darker pastel red on hover */
-}
-
-#itineraryNotification {
-    margin-top: 10px;
-    color: #d8000c; /* Error red */
-    background-color: #ffdddd; /* Light red background */
-    border: 1px solid #f44336; /* Red border */
-    padding: 8px; /* Adjusted padding from inline to match other elements */
-    border-radius: 4px; /* Adjusted border-radius */
-    text-align: center;
-    /* display: none; /* Managed by JS to show/hide */
-}
 
 #langSwitcher {
     margin-top: 5px;
@@ -113,23 +43,51 @@ html, body { height: 100%; }
     /* Ensure transition applies to active state changes if any hover effects also apply here */
 }
 
+#dream-controls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 400;
+}
+
+#dreamModeBtn {
+    padding: 10px 15px;
+    font-size: 1em;
+    background-color: #8e44ad;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+@keyframes pulsate {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+.pulsating-marker {
+    animation: pulsate 2s infinite;
+}
+
+.ripple-effect {
+    transition: all 0.5s ease-out;
+}
+
 /* --- Responsive Design --- */
 
 /* For smaller screens (e.g., mobile phones) */
 @media (max-width: 600px) {
-    #controls {
-        padding: 8px; /* Slightly reduce padding */
-    }
-
-    #controls input,
-    #controls select {
-        display: block; /* Stack them vertically */
-        width: calc(100% - 16px); /* Full width with some padding consideration */
-        margin-bottom: 8px; /* Add space between stacked elements */
-        margin-right: 0; /* Remove right margin */
-        box-sizing: border-box; /* Ensure padding and border are included in the width */
-    }
-
     #map {
         /* Adjust map height if controls height changes significantly.
            Assuming controls might now take up more vertical space when stacked.
@@ -141,10 +99,6 @@ html, body { height: 100%; }
     #langSwitcher {
         text-align: left; /* Align to left on mobile when controls stack */
         margin-top: 10px;
-    }
-
-    #itinerary h2 {
-        font-size: 1.2em; /* Adjust heading size */
     }
 
     body {
@@ -159,10 +113,6 @@ html, body { height: 100%; }
 
 /* For very small screens, further adjustments if needed */
 @media (max-width: 400px) {
-    #controls input,
-    #controls select {
-        padding: 8px 5px; /* Adjust padding for very small inputs */
-    }
      /* Re-evaluate map height for very small screens if controls take more space */
     #map {
          height: calc(100vh - 180px); /* Potentially adjust if controls take even more space */
@@ -216,23 +166,6 @@ html, body { height: 100%; }
     color: #555 !important;
 }
 
-/* "Add to Itinerary" Button in Popup */
-.addToItineraryBtn {
-    background-color: #ffd9b3; /* Soft Coral */
-    color: #4a4a4a; /* Dark Grey text */
-    border: 1px solid #ffc8a3; /* Darker Soft Coral border */
-    padding: 8px 12px;
-    border-radius: 5px;
-    margin-top: 10px; /* Space above the button */
-    cursor: pointer;
-    display: inline-block; /* Ensure proper block-like behavior */
-    text-align: center;
-    width: calc(100% - 24px); /* Make it full width minus padding */
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-.addToItineraryBtn:hover {
-    background-color: #ffc8a3; /* Darker Soft Coral on hover */
-}
 
 /* --- Review Modal Styles --- */
 .modal {

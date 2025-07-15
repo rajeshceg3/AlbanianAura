@@ -1,9 +1,6 @@
 // Get references to HTML elements
-const searchInput = document.getElementById('searchInput');
-const typeFilter = document.getElementById('typeFilter');
-const itineraryListElement = document.getElementById('itineraryList');
-const itineraryNotification = document.getElementById('itineraryNotification');
 const langButtons = document.querySelectorAll('#langSwitcher button');
+const dreamModeBtn = document.getElementById('dreamModeBtn');
 
 // Review Modal Elements
 const reviewModal = document.getElementById('reviewModal');
@@ -26,9 +23,9 @@ const submitReviewBtnElement = document.getElementById('submitReviewBtn');
 
 // App state
 let currentLanguage = 'en'; // Default language
-let tripItinerary = [];
 let attractionReviews = {}; // To store reviews: { "AttractionName": [{user, stars, review}, ...], ... }
 let currentlyReviewedAttraction = null; // To keep track of which attraction's modal is open
+let dreamMode = false;
 
 
 // Define attractions
@@ -50,23 +47,19 @@ const attractions = [
 var map = L.map('map').setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
 
 // Add a tile layer to the map (using OpenStreetMap)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+let generativeLayer = null;
+
 const allMarkers = [];
+const pulsatingMarkers = [];
 
 // Helper function to generate popup content
 function generatePopupContent(attraction) {
     const t = translations[currentLanguage];
     const description = `Discover the beauty of ${attraction.name}. More details coming soon!`;
-
-    let itineraryButtonText = t.addToItinerary;
-    let itineraryButtonDisabled = false;
-    if (tripItinerary.some(item => item.name === attraction.name)) {
-        itineraryButtonText = t.inItinerary;
-        itineraryButtonDisabled = true;
-    }
 
     // Rating and Review related content
     const reviews = attractionReviews[attraction.name] || [];
@@ -85,8 +78,6 @@ function generatePopupContent(attraction) {
         <button class="view-reviews-btn" data-name="${attraction.name}">${t.viewAddReviewBtn}</button>
         <hr style="margin: 8px 0;">
         <a href="#" target="_blank">${t.moreInfoLink}</a> | <a href="#" target="_blank">${t.bookingsLink}</a>
-        <br>
-        <button class="addToItineraryBtn" data-name="${attraction.name}" ${itineraryButtonDisabled ? 'disabled' : ''}>${itineraryButtonText}</button>
     `;
 }
 
@@ -247,93 +238,9 @@ window.addEventListener('click', function(event) { // Close modal if clicked out
 });
 
 
-// Function to filter attractions based on search input and type filter
-function filterAttractions() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const selectedType = typeFilter.value;
-
-    allMarkers.forEach(marker => {
-        const attractionName = marker.attractionData.name.toLowerCase();
-        const attractionType = marker.attractionData.type;
-
-        // Check if the attraction matches the search term and selected type
-        const nameMatch = attractionName.includes(searchTerm);
-        const typeMatch = selectedType === "" || attractionType === selectedType;
-
-        if (nameMatch && typeMatch) {
-            if (!map.hasLayer(marker)) {
-                marker.addTo(map); // Show marker if not already on map
-            }
-        } else {
-            if (map.hasLayer(marker)) {
-                map.removeLayer(marker); // Hide marker if currently on map
-            }
-        }
-    });
-}
-
-// Add event listeners
-searchInput.addEventListener('input', filterAttractions);
-typeFilter.addEventListener('change', filterAttractions);
-
-// --- Itinerary Functions ---
-
-function renderItinerary() {
-    itineraryListElement.innerHTML = ''; // Clear current list
-    const t = translations[currentLanguage];
-
-    tripItinerary.forEach((attraction, index) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = attraction.name; // Attraction name itself is not translated here
-
-        const removeButton = document.createElement('button');
-        removeButton.textContent = t.removeFromItinerary;
-        removeButton.onclick = () => {
-            tripItinerary.splice(index, 1); // Remove attraction from array
-            renderItinerary(); // Re-render the list
-        };
-
-        listItem.appendChild(removeButton);
-        itineraryListElement.appendChild(listItem);
-    });
-}
-
-function addToItinerary(attractionName, buttonElement) { // Added buttonElement
-    // Find the full attraction object from the main 'attractions' array
-    const attractionToAdd = attractions.find(attr => attr.name === attractionName);
-    if (!attractionToAdd) {
-        console.error("Attraction not found:", attractionName);
-        return;
-    }
-
-    // Check if already in itinerary
-    if (!tripItinerary.some(item => item.name === attractionToAdd.name)) {
-        tripItinerary.push(attractionToAdd);
-        renderItinerary();
-        if (buttonElement) { // If buttonElement is provided
-            buttonElement.textContent = translations[currentLanguage].addedToItinerary;
-            buttonElement.disabled = true;
-        }
-    } else {
-        // alert(attractionToAdd.name + ' is already in your itinerary.'); // Old alert
-        itineraryNotification.textContent = attractionToAdd.name + ' is already in your itinerary.';
-        itineraryNotification.style.display = 'block'; // Show notification
-        setTimeout(() => {
-            itineraryNotification.textContent = '';
-            itineraryNotification.style.display = 'none'; // Hide notification
-        }, 3000); // Hide after 3 seconds
-    }
-}
 
 // Helper function to attach listeners to popup buttons
 function attachPopupListeners(popupNode, attractionData) {
-    const addButton = popupNode.querySelector('.addToItineraryBtn');
-    if (addButton && !addButton.disabled) {
-        addButton.onclick = function() {
-            addToItinerary(attractionData.name, this);
-        };
-    }
-
     const viewReviewsButton = popupNode.querySelector('.view-reviews-btn');
     if (viewReviewsButton) {
         viewReviewsButton.onclick = function() {
@@ -352,6 +259,149 @@ map.on('popupopen', function(e) {
     }
 });
 
+function createGenerativeLayer() {
+    const GenerativeLayer = L.GridLayer.extend({
+        createTile: function (coords) {
+            const tile = document.createElement('canvas');
+            const tileSize = this.getTileSize();
+            tile.width = tileSize.x;
+            tile.height = tileSize.y;
+            const ctx = tile.getContext('2d');
+
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            ctx.fillStyle = `rgba(${r},${g},${b},0.5)`;
+            ctx.fillRect(0, 0, tileSize.x, tileSize.y);
+
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * tileSize.x;
+                const y = Math.random() * tileSize.y;
+                const radius = Math.random() * 20;
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${r},${g},${b},0.7)`;
+                ctx.fill();
+            }
+
+            return tile;
+        }
+    });
+    return new GenerativeLayer();
+}
+
+function createPulsatingMarker(attraction) {
+    const latlng = [attraction.lat, attraction.lng];
+    const marker = L.circleMarker(latlng, {
+        radius: 10,
+        fillColor: "#ff0000",
+        color: "#ff0000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8,
+        className: 'pulsating-marker'
+    });
+
+    marker.on('click', () => {
+        createRippleEffect(attraction.lat, attraction.lng);
+        const phrase = getSurrealPhrase(attraction.name);
+        L.popup()
+            .setLatLng(latlng)
+            .setContent(phrase)
+            .openOn(map);
+    });
+
+    return marker;
+}
+
+function createRippleEffect(lat, lng) {
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            const ripple = L.circle([lat, lng], {
+                radius: 0,
+                color: 'white',
+                weight: 2,
+                fillOpacity: 0,
+                className: 'ripple-effect'
+            }).addTo(map);
+
+            let radius = 0;
+            const interval = setInterval(() => {
+                radius += 200;
+                ripple.setRadius(radius);
+                if (radius > 2000) {
+                    clearInterval(interval);
+                    map.removeLayer(ripple);
+                }
+            }, 50);
+        }, i * 200);
+    }
+}
+
+function getSurrealPhrase(attractionName) {
+    switch (attractionName) {
+        case 'Tirana':
+            return "The city breathes in whispers of concrete and color.";
+        case 'Berat':
+            return "A thousand windows gaze into the void.";
+        case 'Gjirokastër':
+            return "Stones remember the footsteps of forgotten kings.";
+        case 'Albanian Riviera':
+            return "Where the sea sings lullabies to the sleeping mountains.";
+        case 'Llogara Pass':
+            return "The wind carries tales from the eagle's nest.";
+        case 'Lake Ohrid (Albanian side)':
+            return "Time sleeps in the deep, cold heart of the lake.";
+        case 'Theth National Park':
+            return "Here, the mountains dream of a world without men.";
+        case 'Ksamil':
+            return "Islands of memory in a sea of turquoise forgetting.";
+        case 'Rozafa Castle':
+            return "A mother's love, a fortress of sorrow.";
+        case 'Butrint':
+            return "Echoes of empires in the rustling reeds.";
+        default:
+            return "A place between worlds.";
+    }
+}
+
+function toggleDreamMode() {
+    if (dreamMode) {
+        if (!generativeLayer) {
+            generativeLayer = createGenerativeLayer();
+        }
+        generativeLayer.addTo(map);
+        baseLayer.setOpacity(0);
+
+        allMarkers.forEach(marker => {
+            const pulsatingMarker = createPulsatingMarker(marker.attractionData);
+            pulsatingMarker.addTo(map);
+            pulsatingMarkers.push(pulsatingMarker);
+            marker.unbindPopup();
+            map.removeLayer(marker);
+        });
+
+    } else {
+        if (generativeLayer) {
+            generativeLayer.remove();
+        }
+        baseLayer.setOpacity(1);
+
+        pulsatingMarkers.forEach(marker => {
+            map.removeLayer(marker);
+        });
+        pulsatingMarkers.length = 0;
+
+        allMarkers.forEach(marker => {
+            marker.addTo(map);
+            marker.bindPopup(generatePopupContent(marker.attractionData));
+        });
+    }
+}
+
 
 // --- Language Functions ---
 function setLanguage(lang) {
@@ -363,16 +413,8 @@ function setLanguage(lang) {
     const t = translations[currentLanguage];
 
     // Update general UI elements
-    document.getElementById('searchInput').placeholder = t.searchPlaceholder;
-    const typeFilterElement = document.getElementById('typeFilter');
-    typeFilterElement.options[0].textContent = t.allTypesOption;
-    typeFilterElement.options[1].textContent = t.cityOption;
-    typeFilterElement.options[2].textContent = t.beachOption;
-    typeFilterElement.options[3].textContent = t.natureOption;
-    typeFilterElement.options[4].textContent = t.historyOption;
-
-    document.getElementById('itinerary').querySelector('h2').textContent = t.itineraryTitle;
     document.getElementById('langLabel').textContent = t.languageSwitcherLabel;
+    dreamModeBtn.textContent = t.dreamModeButton;
 
     // Update Review Modal UI elements
     // reviewModalTitle.textContent = t.reviewsFor; // This will be set dynamically when modal opens
@@ -397,8 +439,6 @@ function setLanguage(lang) {
         button.classList.toggle('activeLang', button.dataset.lang === currentLanguage);
     });
 
-    renderItinerary();
-
     if (map.closePopup) {
         map.closePopup();
     }
@@ -419,6 +459,11 @@ langButtons.forEach(button => {
     });
 });
 
+dreamModeBtn.addEventListener('click', () => {
+    dreamMode = !dreamMode;
+    toggleDreamMode();
+});
+
 // Initial render and language setting
 // Sample reviews data (can be expanded)
 attractionReviews = {
@@ -432,5 +477,4 @@ attractionReviews = {
     // ... add more sample reviews for other attractions if desired
 };
 
-renderItinerary();
 setLanguage(currentLanguage);
