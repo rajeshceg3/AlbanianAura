@@ -1,64 +1,97 @@
+:root {
+    --background: #f8f8f8;
+    --text-primary: #333333;
+    --text-secondary: #757575;
+    --accent: #007aff;
+    --accent-hover: #0056b3;
+    --white: #ffffff;
+    --border-light: #e0e0e0;
+    --shadow: rgba(0, 0, 0, 0.05);
+    --star-gold: #ffcc00;
+}
+
 #map {
-    height: calc(100vh - 70px); /* Adjust map height considering controls, assuming controls are approx 50px + 2*10px padding */
+    height: 100vh;
     width: 100%;
 }
 body {
     margin: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #e6fff2; /* Soft Mint */
-    color: #4a4a4a; /* Dark Grey */
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 html, body { height: 100%; }
 
 #langSwitcher {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding: 5px;
-    background-color: transparent; /* Remove specific background, rely on #controls */
-    border-radius: 3px;
-    text-align: right; /* Align to the right of the controls bar */
-    padding: 0; /* Remove padding if not needed, or adjust */
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 400;
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow);
+    overflow: hidden;
 }
-#langSwitcher span {
-    margin-right: 5px;
-    vertical-align: middle; /* Align text nicely with buttons */
-}
+
 #langSwitcher button {
-    padding: 5px 10px; /* Updated padding */
+    padding: 10px 15px;
     cursor: pointer;
-    border: 1px solid #d9d9d9; /* Light Grey border */
-    background-color: #fff; /* White background */
-    color: #4a4a4a; /* Dark Grey text */
-    border-radius: 5px; /* Softer corners */
-    margin-left: 5px; /* Add some space between buttons */
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    border: none;
+    background-color: transparent;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    float: left; /* To keep them side-by-side */
 }
+
 #langSwitcher button:hover {
-    background-color: #fff7f0; /* Lighter Soft Coral/Cream hover */
+    color: var(--text-primary);
 }
-#langSwitcher button.activeLang { /* Style for the active language button */
-    background-color: #ffd9b3; /* Soft Coral */
-    color: #4a4a4a; /* Dark Grey text */
-    border-color: #ffd9b3; /* Soft Coral border */
-    /* Ensure transition applies to active state changes if any hover effects also apply here */
+
+#langSwitcher button.activeLang {
+    color: var(--white);
+    background-color: var(--accent);
 }
 
 #dream-controls {
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 20px;
+    left: 20px;
     z-index: 400;
 }
 
 #dreamModeBtn {
-    padding: 10px 15px;
-    font-size: 1em;
-    background-color: #8e44ad;
-    color: white;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: var(--white);
+    color: var(--text-primary);
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#dreamModeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--shadow);
+}
+
+body.dream-mode #dreamModeBtn {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
+#langSwitcher button {
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+#langSwitcher button:hover {
+    transform: scale(1.05);
 }
 
 @keyframes pulsate {
@@ -80,282 +113,340 @@ html, body { height: 100%; }
     animation: pulsate 2s infinite;
 }
 
+.custom-marker {
+    background-color: var(--accent);
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--white);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
 .ripple-effect {
     transition: all 0.5s ease-out;
 }
 
 /* --- Responsive Design --- */
-
-/* For smaller screens (e.g., mobile phones) */
 @media (max-width: 600px) {
-    #map {
-        /* Adjust map height if controls height changes significantly.
-           Assuming controls might now take up more vertical space when stacked.
-           This value might need fine-tuning based on actual stacked height.
-           The lang switcher might add a bit more height.
-           Let's estimate a stacked controls height of around 160px now. */
-        height: calc(100vh - 170px); /* Further adjust for lang switcher */
+    #dream-controls {
+        top: 15px;
+        left: 15px;
     }
     #langSwitcher {
-        text-align: left; /* Align to left on mobile when controls stack */
-        margin-top: 10px;
+        top: 15px;
+        right: 15px;
     }
-
     body {
-        font-size: 0.95em; /* Slightly adjust base font size for small screens */
+        font-size: 15px;
     }
-
-    /* Ensure popups are not too wide */
     .leaflet-popup-content-wrapper {
-        max-width: 80vw; /* Max width relative to viewport width */
-    }
-}
-
-/* For very small screens, further adjustments if needed */
-@media (max-width: 400px) {
-     /* Re-evaluate map height for very small screens if controls take more space */
-    #map {
-         height: calc(100vh - 180px); /* Potentially adjust if controls take even more space */
+        max-width: 85vw;
     }
 }
 
 /* --- Leaflet Popup Styling --- */
 .leaflet-popup-content-wrapper {
-    background-color: #fff; /* White background for popup */
-    color: #4a4a4a; /* Dark Grey text */
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    background-color: var(--white);
+    color: var(--text-primary);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px var(--shadow);
+    border: 1px solid var(--border-light);
 }
 
 .leaflet-popup-content {
-    margin: 15px; /* Ensure adequate padding inside the popup */
+    margin: 20px;
+    font-size: 14px;
+    line-height: 1.6;
 }
 
 .leaflet-popup-content h3 {
-    color: #4a4a4a;
-    font-size: 1.15em; /* Slightly larger for title */
-    margin-top: 0; /* Remove default top margin if any */
-    margin-bottom: 10px; /* Space below title */
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 12px;
 }
 
 .leaflet-popup-content p {
-    line-height: 1.6; /* Improve readability */
-    margin-bottom: 10px; /* Space between paragraphs or elements */
+    margin-bottom: 12px;
 }
 .leaflet-popup-content p:last-child {
-    margin-bottom: 0; /* No margin for the last paragraph */
+    margin-bottom: 0;
 }
 
 .leaflet-popup-content a {
-    color: #ff8c66; /* Saturated Soft Coral for links */
+    color: var(--accent);
     text-decoration: none;
+    font-weight: 500;
 }
 .leaflet-popup-content a:hover {
-    text-decoration: underline;
+    color: var(--accent-hover);
 }
 
 .leaflet-popup-tip {
-    background-color: #fff; /* Match popup body */
+    background: var(--white);
 }
 
-/* Adjust close button color if needed to fit the new theme */
 .leaflet-popup-close-button {
-    color: #777 !important; /* Important to override Leaflet's inline styles if necessary */
+    color: var(--text-secondary) !important;
+    padding: 8px;
 }
 .leaflet-popup-close-button:hover {
-    color: #555 !important;
+    color: var(--text-primary) !important;
 }
 
 
 /* --- Review Modal Styles --- */
 .modal {
-    position: fixed; /* Stay in place */
-    z-index: 1000; /* Sit on top */
+    position: fixed;
+    z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    display: flex; /* Used to center the modal content */
-    align-items: center; /* Vertical centering */
-    justify-content: center; /* Horizontal centering */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal[style*="display: flex"] {
+    opacity: 1;
+    visibility: visible;
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: auto; /* Auto margins for centering, but flexbox handles it better */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px; /* Maximum width */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    position: relative; /* For positioning the close button */
+    background-color: var(--white);
+    padding: 30px;
+    border: none;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal[style*="display: flex"] .modal-content {
+    transform: scale(1);
+}
+
+.confirmation-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--white);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    border-radius: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 10;
+}
+
+.confirmation-message.visible {
+    opacity: 1;
+    visibility: visible;
 }
 
 .close-button {
-    color: #aaa;
-    float: right; /* Position to the top-right corner */
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute; /* Position relative to modal-content */
-    top: 10px;
+    color: var(--text-secondary);
+    position: absolute;
+    top: 15px;
     right: 15px;
+    font-size: 24px;
+    font-weight: normal;
+    line-height: 1;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .close-button:hover,
 .close-button:focus {
-    color: black;
+    color: var(--text-primary);
+    background-color: var(--background);
     text-decoration: none;
     cursor: pointer;
 }
 
 #reviewModal h3, #reviewModal h4 {
     margin-top: 0;
-    color: #333;
+    color: var(--text-primary);
+    font-weight: 700;
 }
-#reviewModal h4 {
-    margin-top: 15px;
-    margin-bottom: 10px;
-}
+#reviewModal h3 { font-size: 22px; margin-bottom: 8px; }
+#reviewModal h4 { font-size: 16px; margin-top: 25px; margin-bottom: 15px; }
 
 #reviewsList {
-    max-height: 200px; /* Max height for review list */
-    overflow-y: auto; /* Scroll for overflow */
-    margin-bottom: 15px;
-    border: 1px solid #eee;
-    padding: 10px;
-    border-radius: 5px;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-light);
+    padding: 15px;
+    border-radius: 8px;
+    background-color: var(--background);
 }
 
 .review-item {
-    padding: 8px 0;
-    border-bottom: 1px dotted #ccc;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
 }
-.review-item:last-child {
-    border-bottom: none;
-}
+.review-item:last-child { border-bottom: none; }
 .review-item .user-name {
-    font-weight: bold;
-    color: #555;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .review-item .rating-static {
-    color: #f0ad4e; /* Star color - Bootstrap's warning yellow */
-    margin-left: 5px;
+    color: var(--star-gold);
+    font-size: 16px;
 }
 .review-item .review-text {
-    margin-top: 3px;
-    font-size: 0.95em;
-    color: #444;
+    margin-top: 5px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
 }
 
 #reviewForm label {
     display: block;
-    margin-top: 10px;
-    margin-bottom: 3px;
-    font-weight: bold;
-    font-size: 0.9em;
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text-secondary);
 }
 
 #reviewForm input[type="text"],
 #reviewForm textarea {
-    width: calc(100% - 22px); /* Full width minus padding and border */
-    padding: 10px;
+    width: 100%;
+    padding: 12px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background-color: var(--background);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#reviewForm input[type="text"]:focus,
+#reviewForm textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
 }
 #reviewForm textarea {
     resize: vertical;
+    min-height: 80px;
 }
 
 #starRatingContainer {
     margin-bottom: 10px;
+    display: flex;
+    gap: 5px;
 }
 #starRatingContainer .star {
-    font-size: 2em;
-    color: #ddd; /* Default empty star color */
+    font-size: 28px;
+    color: var(--border-light);
     cursor: pointer;
-    padding: 0 2px; /* Spacing between stars */
+    padding: 0;
+    transition: color 0.2s ease, transform 0.1s ease;
+}
+#starRatingContainer .star:hover {
+    transform: scale(1.1);
 }
 #starRatingContainer .star.selected,
-#starRatingContainer .star:hover {
-    color: #f0ad4e; /* Filled star color (e.g., gold) */
+#starRatingContainer .star.hovered {
+    color: var(--star-gold);
 }
-
 
 #submitReviewBtn {
-    background-color: #5cb85c; /* Green for submit */
-    color: white;
-    padding: 10px 15px;
+    background-color: var(--accent);
+    color: var(--white);
+    padding: 12px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 10px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 #submitReviewBtn:hover {
-    background-color: #4cae4c; /* Darker green on hover */
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
 }
 
 /* Popup elements for reviews */
 .popup-rating-summary {
-    font-size: 0.9em;
-    margin-top: 8px;
-    color: #555;
+    font-size: 13px;
+    margin-top: 12px;
+    color: var(--text-secondary);
 }
 .popup-rating-summary .avg-rating-text {
-    font-weight: bold;
+    font-weight: 500;
 }
 .popup-rating-summary .star-icon {
-    color: #f0ad4e; /* Gold star */
+    color: var(--star-gold);
+    font-size: 16px;
+    vertical-align: middle;
 }
 
 .view-reviews-btn {
-    background-color: #f0ad4e; /* Orange for view reviews */
-    color: white;
+    background-color: var(--accent);
+    color: var(--white);
     border: none;
-    padding: 6px 10px;
-    border-radius: 4px;
+    padding: 8px 15px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9em;
-    margin-top: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 10px;
     display: inline-block;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 .view-reviews-btn:hover {
-    background-color: #ec971f; /* Darker orange on hover */
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
 }
 
 /* Responsive adjustments for modal */
 @media (max-width: 600px) {
     .modal-content {
-        width: 90%; /* Wider modal on small screens */
-        margin-top: 20px; /* Add some margin from top */
+        width: 90%;
+        padding: 20px;
+        margin-top: 20px;
         margin-bottom: 20px;
-        padding: 15px;
     }
 
     #reviewModal h3 {
-        font-size: 1.2em;
+        font-size: 20px;
     }
     #reviewModal h4 {
-        font-size: 1.1em;
-    }
-
-    #reviewForm input[type="text"],
-    #reviewForm textarea {
-        padding: 8px;
-    }
-
-    #submitReviewBtn {
-        padding: 8px 12px;
-        font-size: 0.95em;
+        font-size: 15px;
     }
 
     #starRatingContainer .star {
-        font-size: 1.8em; /* Slightly smaller stars on mobile */
+        font-size: 24px;
     }
 }
