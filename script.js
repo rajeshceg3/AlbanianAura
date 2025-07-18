@@ -81,9 +81,18 @@ function generatePopupContent(attraction) {
     `;
 }
 
+// Helper function to create a custom icon
+function createCustomIcon() {
+    return L.divIcon({
+        className: 'custom-marker',
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+    });
+}
+
 // Add markers for each attraction
 attractions.forEach(function(attraction) {
-  const marker = L.marker([attraction.lat, attraction.lng]);
+  const marker = L.marker([attraction.lat, attraction.lng], { icon: createCustomIcon() });
   marker.attractionData = attraction;
   marker.addTo(map);
   allMarkers.push(marker);
@@ -164,25 +173,15 @@ starRatingContainer.querySelectorAll('.star').forEach(star => {
             s.classList.toggle('selected', parseInt(s.dataset.value) <= parseInt(value));
         });
     });
-    // Hover effect (optional, but good UX)
+    // Hover effect for stars
     star.addEventListener('mouseover', function() {
         const hoverValue = this.dataset.value;
         starRatingContainer.querySelectorAll('.star').forEach(s => {
-            if (parseInt(s.dataset.value) <= parseInt(hoverValue)) {
-                s.style.color = '#f0ad4e'; // Highlight up to hovered star
-            }
+            s.classList.toggle('hovered', parseInt(s.dataset.value) <= parseInt(hoverValue));
         });
     });
     star.addEventListener('mouseout', function() {
-        // Reset colors based on current selection or default
-        const selectedValue = ratingValueInput.value;
-        starRatingContainer.querySelectorAll('.star').forEach(s => {
-            if (parseInt(s.dataset.value) > parseInt(selectedValue)) {
-                s.style.color = '#ddd'; // Reset stars not selected
-            } else {
-                s.style.color = '#f0ad4e'; // Keep selected stars highlighted
-            }
-        });
+        starRatingContainer.querySelectorAll('.star').forEach(s => s.classList.remove('hovered'));
     });
 });
 
@@ -214,10 +213,18 @@ reviewForm.addEventListener('submit', function(event) {
     }
     attractionReviews[currentlyReviewedAttraction].push(newReview);
 
-    renderReviews(currentlyReviewedAttraction); // Re-render reviews in modal
-    reviewForm.reset();
-    ratingValueInput.value = "0";
-    starRatingContainer.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+    // Show confirmation
+    const confirmation = reviewModal.querySelector('.confirmation-message');
+    confirmation.classList.add('visible');
+
+    setTimeout(() => {
+        confirmation.classList.remove('visible');
+        renderReviews(currentlyReviewedAttraction); // Re-render reviews in modal
+        reviewForm.reset();
+        ratingValueInput.value = "0";
+        starRatingContainer.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+    }, 1500);
+
 
     // Optionally, refresh the popup if it's open for this attraction
     allMarkers.forEach(marker => {
@@ -268,22 +275,18 @@ function createGenerativeLayer() {
             tile.height = tileSize.y;
             const ctx = tile.getContext('2d');
 
-            const r = Math.floor(Math.random() * 255);
-            const g = Math.floor(Math.random() * 255);
-            const b = Math.floor(Math.random() * 255);
-            ctx.fillStyle = `rgba(${r},${g},${b},0.5)`;
+            // Ethereal background
+            const gradient = ctx.createRadialGradient(tileSize.x / 2, tileSize.y / 2, 0, tileSize.x / 2, tileSize.y / 2, tileSize.x);
+            gradient.addColorStop(0, `hsl(${Math.random() * 360}, 100%, 75%, 0.1)`);
+            gradient.addColorStop(1, `hsl(${Math.random() * 360}, 100%, 50%, 0)`);
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, tileSize.x, tileSize.y);
 
-            for (let i = 0; i < 30; i++) {
-                const x = Math.random() * tileSize.x;
-                const y = Math.random() * tileSize.y;
-                const radius = Math.random() * 20;
-                const r = Math.floor(Math.random() * 255);
-                const g = Math.floor(Math.random() * 255);
-                const b = Math.floor(Math.random() * 255);
+            // Floating particles
+            for (let i = 0; i < 20; i++) {
                 ctx.beginPath();
-                ctx.arc(x, y, radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${r},${g},${b},0.7)`;
+                ctx.arc(Math.random() * tileSize.x, Math.random() * tileSize.y, Math.random() * 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
                 ctx.fill();
             }
 
@@ -369,20 +372,17 @@ function getSurrealPhrase(attractionName) {
 }
 
 function toggleDreamMode() {
+    document.body.classList.toggle('dream-mode', dreamMode);
+
     if (dreamMode) {
         if (!generativeLayer) {
             generativeLayer = createGenerativeLayer();
         }
         generativeLayer.addTo(map);
-        baseLayer.setOpacity(0);
+        baseLayer.setOpacity(0.1); // Keep it slightly visible for context
 
-        allMarkers.forEach(marker => {
-            const pulsatingMarker = createPulsatingMarker(marker.attractionData);
-            pulsatingMarker.addTo(map);
-            pulsatingMarkers.push(pulsatingMarker);
-            marker.unbindPopup();
-            map.removeLayer(marker);
-        });
+        allMarkers.forEach(marker => map.removeLayer(marker));
+        pulsatingMarkers.forEach(marker => marker.addTo(map));
 
     } else {
         if (generativeLayer) {
@@ -390,15 +390,8 @@ function toggleDreamMode() {
         }
         baseLayer.setOpacity(1);
 
-        pulsatingMarkers.forEach(marker => {
-            map.removeLayer(marker);
-        });
-        pulsatingMarkers.length = 0;
-
-        allMarkers.forEach(marker => {
-            marker.addTo(map);
-            marker.bindPopup(generatePopupContent(marker.attractionData));
-        });
+        pulsatingMarkers.forEach(marker => map.removeLayer(marker));
+        allMarkers.forEach(marker => marker.addTo(map));
     }
 }
 
@@ -413,7 +406,6 @@ function setLanguage(lang) {
     const t = translations[currentLanguage];
 
     // Update general UI elements
-    document.getElementById('langLabel').textContent = t.languageSwitcherLabel;
     dreamModeBtn.textContent = t.dreamModeButton;
 
     // Update Review Modal UI elements
@@ -476,5 +468,10 @@ attractionReviews = {
     ],
     // ... add more sample reviews for other attractions if desired
 };
+
+// Create pulsating markers once and store them
+attractions.forEach(attraction => {
+    pulsatingMarkers.push(createPulsatingMarker(attraction));
+});
 
 setLanguage(currentLanguage);
