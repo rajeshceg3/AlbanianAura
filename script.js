@@ -7,6 +7,10 @@ const exploreBtn = document.getElementById('exploreBtn');
 const reviewModal = document.getElementById('reviewModal');
 const closeReviewModalBtn = document.getElementById('closeReviewModal');
 const reviewModalTitle = document.getElementById('reviewModalTitle');
+const triviaModal = document.getElementById('triviaModal');
+const closeTriviaModalBtn = document.getElementById('closeTriviaModal');
+const triviaModalTitle = document.getElementById('triviaModalTitle');
+const triviaModalContent = document.getElementById('triviaModalContent');
 const avgRatingValueElement = document.getElementById('avgRatingValue');
 const reviewsListElement = document.getElementById('reviewsList');
 const reviewForm = document.getElementById('reviewForm');
@@ -41,6 +45,10 @@ const attractions = [
             en: 'The vibrant capital of Albania, known for its colorful buildings and lively atmosphere.',
             sq: 'Kryeqyteti i gjallë i Shqipërisë, i njohur për ndërtesat e tij shumëngjyrëshe dhe atmosferën e gjallë.'
         },
+        trivia: {
+            en: 'Tirana is one of the few European capitals without a McDonald\'s restaurant.',
+            sq: 'Tirana është një nga kryeqytetet e pakta evropiane pa një restorant McDonald\'s.'
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Tirana',
         bookingsLink: 'https://www.booking.com/city/al/tirana.html'
     },
@@ -52,6 +60,10 @@ const attractions = [
         description: {
             en: 'A UNESCO World Heritage site, famous for its white Ottoman houses.',
             sq: 'Një sit i Trashëgimisë Botërore të UNESCO-s, i famshëm për shtëpitë e bardha osmane.'
+        },
+        trivia: {
+            en: 'Berat is known as the "City of a Thousand Windows" due to the appearance of its houses.',
+            sq: 'Berati njihet si "Qyteti i një mijë dritareve" për shkak të pamjes së shtëpive të tij.'
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Berat',
         bookingsLink: 'https://www.booking.com/city/al/berat.html'
@@ -65,6 +77,10 @@ const attractions = [
             en: 'A well-preserved Ottoman town with a magnificent castle and stone houses.',
             sq: 'Një qytet osman i ruajtur mirë me një kështjellë madhështore dhe shtëpi guri.'
         },
+        trivia: {
+            en: 'Gjirokastër\'s name means "Silver Fortress" in Greek, and it is also known as the "City of Stone".',
+            sq: 'Emri Gjirokastër do të thotë "Kalaja e Argjendtë" në greqisht, dhe njihet gjithashtu si "Qyteti i Gurit".'
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Gjirokastër',
         bookingsLink: 'https://www.booking.com/city/al/gjirokaster.html'
     },
@@ -76,6 +92,10 @@ const attractions = [
         description: {
             en: 'Stunning coastline with crystal clear waters and beautiful beaches.',
             sq: 'Bregdeti mahnitës me ujëra të kristalta dhe plazhe të bukura.'
+        },
+        trivia: {
+            en: 'The Albanian Riviera has some of the finest beaches in Europe, often compared to those in Italy and Greece.',
+            sq: 'Riviera Shqiptare ka disa nga plazhet më të bukura në Evropë, shpesh të krahasuara me ato në Itali dhe Greqi.'
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Albanian_Riviera',
         bookingsLink: 'https://www.booking.com/region/al/albanian-riviera.html'
@@ -89,6 +109,10 @@ const attractions = [
             en: 'A spectacular mountain pass with breathtaking views of the Ionian coast.',
             sq: 'Një kalim malor spektakolar me pamje mahnitëse të bregdetit Jon.'
         },
+        trivia: {
+            en: 'Julius Caesar\'s troops passed through Llogara Pass in 48 B.C. to chase his rival Pompey.',
+            sq: 'Trupat e Jul Çezarit kaluan nëpër Qafën e Llogarasë në vitin 48 para Krishtit për të ndjekur rivalin e tij Pompeun.'
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Llogara_Pass',
         bookingsLink: 'https://www.booking.com/hotel/al/llogara-tourist-village.html'
     },
@@ -100,6 +124,10 @@ const attractions = [
         description: {
             en: 'One of Europe\'s oldest and deepest lakes, a UNESCO World Heritage site.',
             sq: 'Një nga liqenet më të vjetra dhe më të thella të Evropës, një sit i Trashëgimisë Botërore të UNESCO-s.'
+        },
+        trivia: {
+            en: 'Lake Ohrid is over 3 million years old and is home to more than 200 endemic species.',
+            sq: 'Liqeni i Ohrit është mbi 3 milionë vjet i vjetër dhe është shtëpia e më shumë se 200 specieve endemike.'
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Lake_Ohrid',
         bookingsLink: 'https://www.booking.com/city/al/pogradec.html'
@@ -113,6 +141,10 @@ const attractions = [
             en: 'A stunningly beautiful area in the Albanian Alps, perfect for hiking.',
             sq: 'Një zonë mahnitëse e bukur në Alpet Shqiptare, e përkryer për ecje.'
         },
+        trivia: {
+            en: 'Theth is home to the "Lock-in Tower", a historical form of protection for families involved in blood feuds.',
+            sq: 'Thethi është shtëpia e "Kullës së Ngujimit", një formë historike e mbrojtjes për familjet e përfshira në gjakmarrje.'
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Theth_National_Park',
         bookingsLink: 'https://www.booking.com/city/al/theth.html'
     },
@@ -124,6 +156,10 @@ const attractions = [
         description: {
             en: 'A beautiful village with pristine beaches and four small islands.',
             sq: 'Një fshat i bukur me plazhe të pacenuara dhe katër ishuj të vegjël.'
+        },
+        trivia: {
+            en: 'The four rocky islands in Ksamil are uninhabited and can be reached by boat or even by swimming.',
+            sq: 'Katër ishujt shkëmborë në Ksamil janë të pabanuar dhe mund të arrihen me varkë apo edhe me not.'
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Ksamil',
         bookingsLink: 'https://www.booking.com/city/al/ksamil.html'
@@ -137,6 +173,10 @@ const attractions = [
             en: 'A legendary castle near Shkodër with panoramic views.',
             sq: 'Një kështjellë legjendare pranë Shkodrës me pamje panoramike.'
         },
+        trivia: {
+            en: 'The castle\'s legend tells of a woman who was walled up in the foundations as a sacrifice for its construction.',
+            sq: 'Legjenda e kalasë tregon për një grua që u murosua në themele si një sakrificë për ndërtimin e saj.'
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Rozafa_Castle',
         bookingsLink: 'https://www.booking.com/city/al/shkoder.html'
     },
@@ -148,6 +188,10 @@ const attractions = [
         description: {
             en: 'An ancient Greek and Roman city, a UNESCO World Heritage site.',
             sq: 'Një qytet i lashtë grek dhe romak, një sit i Trashëgimisë Botërore të UNESCO-s.'
+        },
+        trivia: {
+            en: 'Butrint was abandoned in the late Middle Ages after marshes and malaria-carrying mosquitos took over the area.',
+            sq: 'Butrinti u braktis në Mesjetën e vonë pasi kënetat dhe mushkonjat që mbanin malarien pushtuan zonën.'
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Butrint',
         bookingsLink: 'https://www.booking.com/attraction/al/butrint-national-park.html'
@@ -189,6 +233,7 @@ function generatePopupContent(attraction) {
             <span class="avg-rating-text">${ratingDisplay}</span>
         </div>
         <button class="view-reviews-btn" data-name="${attraction.name}">${t.viewAddReviewBtn}</button>
+        <button class="trivia-btn" data-name="${attraction.name}">${t.triviaButton}</button>
         <hr style="margin: 8px 0;">
         <a href="${moreInfoLink}" target="_blank">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank">${t.bookingsLink}</a>
     `;
@@ -278,6 +323,20 @@ function closeReviewModal() {
     currentlyReviewedAttraction = null;
 }
 
+function openTriviaModal(attractionName) {
+    const attraction = attractions.find(a => a.name === attractionName);
+    if (!attraction || !attraction.trivia) return;
+
+    const t = translations[currentLanguage];
+    triviaModalTitle.textContent = t.triviaModalTitle || "Did you know?";
+triviaModalContent.textContent = attraction.trivia[currentLanguage] ?? attraction.trivia.en;
+    triviaModal.style.display = 'flex';
+}
+
+function closeTriviaModal() {
+    triviaModal.style.display = 'none';
+}
+
 // Star rating interaction
 starRatingContainer.querySelectorAll('.star').forEach(star => {
     star.addEventListener('click', function() {
@@ -352,9 +411,13 @@ reviewForm.addEventListener('submit', function(event) {
 });
 
 closeReviewModalBtn.addEventListener('click', closeReviewModal);
+closeTriviaModalBtn.addEventListener('click', closeTriviaModal);
 window.addEventListener('click', function(event) { // Close modal if clicked outside
     if (event.target === reviewModal) {
         closeReviewModal();
+    }
+    if (event.target === triviaModal) {
+        closeTriviaModal();
     }
 });
 
@@ -366,6 +429,13 @@ function attachPopupListeners(popupNode, attractionData) {
     if (viewReviewsButton) {
         viewReviewsButton.onclick = function() {
             openReviewModal(attractionData.name);
+        };
+    }
+
+    const triviaButton = popupNode.querySelector('.trivia-btn');
+    if (triviaButton) {
+        triviaButton.onclick = function() {
+            openTriviaModal(attractionData.name);
         };
     }
 }
