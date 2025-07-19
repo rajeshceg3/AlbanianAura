@@ -31,16 +31,126 @@ let dreamMode = false;
 // Define attractions
 // (Assuming translations object is available from languages.js)
 const attractions = [
-  { name: 'Tirana', lat: 41.3275, lng: 19.8187, type: 'city' },
-  { name: 'Berat', lat: 40.7050, lng: 19.9522, type: 'city' },
-  { name: 'Gjirokastër', lat: 40.0755, lng: 20.1397, type: 'city' },
-  { name: 'Albanian Riviera', lat: 40.1500, lng: 19.7833, type: 'beach' }, // Approximate center
-  { name: 'Llogara Pass', lat: 40.2000, lng: 19.5833, type: 'nature' },
-  { name: 'Lake Ohrid (Albanian side)', lat: 41.0000, lng: 20.7000, type: 'nature' }, // Approximate for Albanian part
-  { name: 'Theth National Park', lat: 42.3950, lng: 19.7736, type: 'nature' },
-  { name: 'Ksamil', lat: 39.7667, lng: 20.0000, type: 'beach' },
-  { name: 'Rozafa Castle', lat: 42.0469, lng: 19.4928, type: 'history' },
-  { name: 'Butrint', lat: 39.7464, lng: 20.0194, type: 'history' }
+    {
+        name: 'Tirana',
+        lat: 41.3275,
+        lng: 19.8187,
+        type: 'city',
+        description: {
+            en: 'The vibrant capital of Albania, known for its colorful buildings and lively atmosphere.',
+            sq: 'Kryeqyteti i gjallë i Shqipërisë, i njohur për ndërtesat e tij shumëngjyrëshe dhe atmosferën e gjallë.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Tirana',
+        bookingsLink: 'https://www.booking.com/city/al/tirana.html'
+    },
+    {
+        name: 'Berat',
+        lat: 40.7050,
+        lng: 19.9522,
+        type: 'city',
+        description: {
+            en: 'A UNESCO World Heritage site, famous for its white Ottoman houses.',
+            sq: 'Një sit i Trashëgimisë Botërore të UNESCO-s, i famshëm për shtëpitë e bardha osmane.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Berat',
+        bookingsLink: 'https://www.booking.com/city/al/berat.html'
+    },
+    {
+        name: 'Gjirokastër',
+        lat: 40.0755,
+        lng: 20.1397,
+        type: 'city',
+        description: {
+            en: 'A well-preserved Ottoman town with a magnificent castle and stone houses.',
+            sq: 'Një qytet osman i ruajtur mirë me një kështjellë madhështore dhe shtëpi guri.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Gjirokastër',
+        bookingsLink: 'https://www.booking.com/city/al/gjirokaster.html'
+    },
+    {
+        name: 'Albanian Riviera',
+        lat: 40.1500,
+        lng: 19.7833,
+        type: 'beach',
+        description: {
+            en: 'Stunning coastline with crystal clear waters and beautiful beaches.',
+            sq: 'Bregdeti mahnitës me ujëra të kristalta dhe plazhe të bukura.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Albanian_Riviera',
+        bookingsLink: 'https://www.booking.com/region/al/albanian-riviera.html'
+    },
+    {
+        name: 'Llogara Pass',
+        lat: 40.2000,
+        lng: 19.5833,
+        type: 'nature',
+        description: {
+            en: 'A spectacular mountain pass with breathtaking views of the Ionian coast.',
+            sq: 'Një kalim malor spektakolar me pamje mahnitëse të bregdetit Jon.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Llogara_Pass',
+        bookingsLink: 'https://www.booking.com/hotel/al/llogara-tourist-village.html'
+    },
+    {
+        name: 'Lake Ohrid (Albanian side)',
+        lat: 41.0000,
+        lng: 20.7000,
+        type: 'nature',
+        description: {
+            en: 'One of Europe\'s oldest and deepest lakes, a UNESCO World Heritage site.',
+            sq: 'Një nga liqenet më të vjetra dhe më të thella të Evropës, një sit i Trashëgimisë Botërore të UNESCO-s.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Lake_Ohrid',
+        bookingsLink: 'https://www.booking.com/city/al/pogradec.html'
+    },
+    {
+        name: 'Theth National Park',
+        lat: 42.3950,
+        lng: 19.7736,
+        type: 'nature',
+        description: {
+            en: 'A stunningly beautiful area in the Albanian Alps, perfect for hiking.',
+            sq: 'Një zonë mahnitëse e bukur në Alpet Shqiptare, e përkryer për ecje.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Theth_National_Park',
+        bookingsLink: 'https://www.booking.com/city/al/theth.html'
+    },
+    {
+        name: 'Ksamil',
+        lat: 39.7667,
+        lng: 20.0000,
+        type: 'beach',
+        description: {
+            en: 'A beautiful village with pristine beaches and four small islands.',
+            sq: 'Një fshat i bukur me plazhe të pacenuara dhe katër ishuj të vegjël.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Ksamil',
+        bookingsLink: 'https://www.booking.com/city/al/ksamil.html'
+    },
+    {
+        name: 'Rozafa Castle',
+        lat: 42.0469,
+        lng: 19.4928,
+        type: 'history',
+        description: {
+            en: 'A legendary castle near Shkodër with panoramic views.',
+            sq: 'Një kështjellë legjendare pranë Shkodrës me pamje panoramike.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Rozafa_Castle',
+        bookingsLink: 'https://www.booking.com/city/al/shkoder.html'
+    },
+    {
+        name: 'Butrint',
+        lat: 39.7464,
+        lng: 20.0194,
+        type: 'history',
+        description: {
+            en: 'An ancient Greek and Roman city, a UNESCO World Heritage site.',
+            sq: 'Një qytet i lashtë grek dhe romak, një sit i Trashëgimisë Botërore të UNESCO-s.'
+        },
+        moreInfoLink: 'https://en.wikipedia.org/wiki/Butrint',
+        bookingsLink: 'https://www.booking.com/attraction/al/butrint-national-park.html'
+    }
 ];
 
 // Initialize the map and set its view to Albania
@@ -59,7 +169,9 @@ const pulsatingMarkers = [];
 // Helper function to generate popup content
 function generatePopupContent(attraction) {
     const t = translations[currentLanguage];
-    const description = `Discover the beauty of ${attraction.name}. More details coming soon!`;
+    const description = attractions.find(a => a.name === attraction.name)?.description[currentLanguage] || `Discover the beauty of ${attraction.name}. More details coming soon!`;
+    const moreInfoLink = attractions.find(a => a.name === attraction.name)?.moreInfoLink || '#';
+    const bookingsLink = attractions.find(a => a.name === attraction.name)?.bookingsLink || '#';
 
     // Rating and Review related content
     const reviews = attractionReviews[attraction.name] || [];
@@ -77,7 +189,7 @@ function generatePopupContent(attraction) {
         </div>
         <button class="view-reviews-btn" data-name="${attraction.name}">${t.viewAddReviewBtn}</button>
         <hr style="margin: 8px 0;">
-        <a href="#" target="_blank">${t.moreInfoLink}</a> | <a href="#" target="_blank">${t.bookingsLink}</a>
+        <a href="${moreInfoLink}" target="_blank">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank">${t.bookingsLink}</a>
     `;
 }
 
@@ -345,30 +457,19 @@ function createRippleEffect(lat, lng) {
 }
 
 function getSurrealPhrase(attractionName) {
-    switch (attractionName) {
-        case 'Tirana':
-            return "The city breathes in whispers of concrete and color.";
-        case 'Berat':
-            return "A thousand windows gaze into the void.";
-        case 'Gjirokastër':
-            return "Stones remember the footsteps of forgotten kings.";
-        case 'Albanian Riviera':
-            return "Where the sea sings lullabies to the sleeping mountains.";
-        case 'Llogara Pass':
-            return "The wind carries tales from the eagle's nest.";
-        case 'Lake Ohrid (Albanian side)':
-            return "Time sleeps in the deep, cold heart of the lake.";
-        case 'Theth National Park':
-            return "Here, the mountains dream of a world without men.";
-        case 'Ksamil':
-            return "Islands of memory in a sea of turquoise forgetting.";
-        case 'Rozafa Castle':
-            return "A mother's love, a fortress of sorrow.";
-        case 'Butrint':
-            return "Echoes of empires in the rustling reeds.";
-        default:
-            return "A place between worlds.";
-    }
+    const phrases = {
+        'Tirana': "The city breathes in whispers of concrete and color.",
+        'Berat': "A thousand windows gaze into the river of time.",
+        'Gjirokastër': "Stones remember the footsteps of forgotten kings.",
+        'Albanian Riviera': "Where the sea sings lullabies to the sleeping mountains.",
+        'Llogara Pass': "The wind carries tales from the eagle's nest to the sun-bleached shores.",
+        'Lake Ohrid (Albanian side)': "Time sleeps in the deep, cold heart of the ancient lake.",
+        'Theth National Park': "Here, the mountains dream of a world without men, cloaked in mist.",
+        'Ksamil': "Islands of memory in a sea of turquoise forgetting.",
+        'Rozafa Castle': "A mother's love, a fortress of sorrow, watching the rivers meet.",
+        'Butrint': "Echoes of empires in the rustling reeds, where history slumbers."
+    };
+    return phrases[attractionName] || "A place between worlds, waiting to be discovered.";
 }
 
 function toggleDreamMode() {

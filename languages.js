@@ -9,15 +9,11 @@ const translations = {
         itineraryTitle: "My Trip Itinerary",
         removeFromItinerary: "Remove",
         addToItinerary: "Add to Itinerary",
-        inItinerary: "In Itinerary", // New
-        addedToItinerary: "Added!",    // New
+        inItinerary: "In Itinerary",
+        addedToItinerary: "Added!",
         moreInfoLink: "More Info",
         bookingsLink: "Bookings",
-        // Attraction pop-up placeholders (if we decide to translate them later)
-        // defaultPopupDesc: "Discover the beauty of {attractionName}. More details coming soon!"
         languageSwitcherLabel: "Language:",
-
-        // Review Feature Translations
         averageRatingPopup: "Avg. Rating",
         reviewCountSingular: "review",
         reviewCountPlural: "reviews",
@@ -25,7 +21,7 @@ const translations = {
         viewAddReviewBtn: "View / Add Review",
         reviewsFor: "Reviews for",
         averageRatingModal: "Average Rating",
-        noReviewsYet: "No reviews yet",
+        noReviewsYet: "No reviews yet.",
         addReviewTitle: "Add Your Review",
         userNameLabel: "Name (Optional):",
         ratingLabel: "Your Rating:",
@@ -38,38 +34,35 @@ const translations = {
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
-        allTypesOption: "Të gjitha llojet",
+        allTypesOption: "Të gjitha Llojet",
         cityOption: "Qytet",
         beachOption: "Plazh",
-        natureOption: "Natyre",
-        historyOption: "Histori",
-        itineraryTitle: "Itinerari im i udhëtimit",
+        natureOption: "Natyror",
+        historyOption: "Historik",
+        itineraryTitle: "Itinerari im",
         removeFromItinerary: "Hiqe",
         addToItinerary: "Shto në Itinerar",
-        inItinerary: "Në Itinerar", // New
-        addedToItinerary: "Shtuar!",   // New
+        inItinerary: "Në Itinerar",
+        addedToItinerary: "Shtuar!",
         moreInfoLink: "Më shumë Info",
         bookingsLink: "Rezervime",
-        // defaultPopupDesc: "Zbuloni bukurinë e {attractionName}. Më shumë detaje së shpejti!"
         languageSwitcherLabel: "Gjuha:",
-
-        // Review Feature Translations (Albanian)
-        averageRatingPopup: "Vler. Mes.", // Mesatar
+        averageRatingPopup: "Vler. Mes.",
         reviewCountSingular: "vlerësim",
         reviewCountPlural: "vlerësime",
         noReviewsYetPopup: "Ende pa vlerësime",
         viewAddReviewBtn: "Shiko / Shto Vlerësim",
         reviewsFor: "Vlerësimet për",
         averageRatingModal: "Vlerësimi Mesatar",
-        noReviewsYet: "Ende asnjë vlerësim",
+        noReviewsYet: "Ende asnjë vlerësim.",
         addReviewTitle: "Shto Vlerësimin Tënd",
         userNameLabel: "Emri (Opsional):",
-        ratingLabel: "Vlerësimi Juaj:",
-        reviewTextLabel: "Vlerësimi Juaj (tekst):",
+        ratingLabel: "Vlerësimi juaj:",
+        reviewTextLabel: "Shkruaj vlerësimin:",
         submitReviewBtn: "Dërgo Vlerësimin",
         anonymousUser: "Anonim",
         selectRatingAlert: "Ju lutemi zgjidhni një vlerësim me yje.",
         writeReviewAlert: "Ju lutemi shkruani një vlerësim.",
-        dreamModeButton: "Mënyra e ëndrrave"
+        dreamModeButton: "Modaliteti i Ëndrrave"
     }
 };
