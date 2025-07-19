@@ -31,7 +31,9 @@ const translations = {
         selectRatingAlert: "Please select a star rating.",
         writeReviewAlert: "Please write a review.",
         dreamModeButton: "Dream Mode",
-        exploreButton: "Explore"
+        exploreButton: "Explore",
+        triviaButton: "Trivia",
+        triviaModalTitle: "Did you know?"
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -65,6 +67,8 @@ const translations = {
         selectRatingAlert: "Ju lutemi zgjidhni një vlerësim me yje.",
         writeReviewAlert: "Ju lutemi shkruani një vlerësim.",
         dreamModeButton: "Modaliteti i Ëndrrave",
-        exploreButton: "Eksploro"
+        exploreButton: "Eksploro",
+        triviaButton: "Trivia",
+        triviaModalTitle: "A e dini?"
     }
 };
