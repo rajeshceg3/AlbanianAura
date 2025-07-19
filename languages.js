@@ -30,7 +30,8 @@ const translations = {
         anonymousUser: "Anonymous",
         selectRatingAlert: "Please select a star rating.",
         writeReviewAlert: "Please write a review.",
-        dreamModeButton: "Dream Mode"
+        dreamModeButton: "Dream Mode",
+        exploreButton: "Explore"
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -63,6 +64,7 @@ const translations = {
         anonymousUser: "Anonim",
         selectRatingAlert: "Ju lutemi zgjidhni një vlerësim me yje.",
         writeReviewAlert: "Ju lutemi shkruani një vlerësim.",
-        dreamModeButton: "Modaliteti i Ëndrrave"
+        dreamModeButton: "Modaliteti i Ëndrrave",
+        exploreButton: "Eksploro"
     }
 };

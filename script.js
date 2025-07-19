@@ -1,6 +1,7 @@
 // Get references to HTML elements
 const langButtons = document.querySelectorAll('#langSwitcher button');
 const dreamModeBtn = document.getElementById('dreamModeBtn');
+const exploreBtn = document.getElementById('exploreBtn');
 
 // Review Modal Elements
 const reviewModal = document.getElementById('reviewModal');
@@ -233,13 +234,14 @@ function renderReviews(attractionName) {
     avgRatingValueElement.textContent = reviews.length > 0 ? `${avgRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? t.reviewCountSingular : t.reviewCountPlural})` : t.noReviewsYet;
 
     if (reviews.length === 0) {
-        reviewsListElement.innerHTML = `<p>${t.noReviewsYet}.</p>`;
+        reviewsListElement.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 20px 0;">${t.noReviewsYet}</p>`;
         return;
     }
 
-    reviews.forEach(review => {
+    reviews.forEach((review, index) => {
         const reviewItem = document.createElement('div');
         reviewItem.classList.add('review-item');
+        reviewItem.style.animationDelay = `${index * 0.1}s`;
 
         let starsDisplay = '';
         for (let i = 0; i < 5; i++) {
@@ -378,34 +380,78 @@ map.on('popupopen', function(e) {
     }
 });
 
-function createGenerativeLayer() {
-    const GenerativeLayer = L.GridLayer.extend({
-        createTile: function (coords) {
-            const tile = document.createElement('canvas');
-            const tileSize = this.getTileSize();
-            tile.width = tileSize.x;
-            tile.height = tileSize.y;
-            const ctx = tile.getContext('2d');
+function createDreamLayer() {
+    const DreamLayer = L.GridLayer.extend({
+        onAdd: function(map) {
+            L.GridLayer.prototype.onAdd.call(this, map);
+            this._map = map;
+            this._canvas = document.createElement('canvas');
+            this._canvas.style.position = 'absolute';
+            this._canvas.style.pointerEvents = 'none';
+            this.getPane().appendChild(this._canvas);
+            this.on('tileunload', e => this._onTileUnload(e));
+            this._resize();
+            this._animate();
+        },
 
-            // Ethereal background
-            const gradient = ctx.createRadialGradient(tileSize.x / 2, tileSize.y / 2, 0, tileSize.x / 2, tileSize.y / 2, tileSize.x);
-            gradient.addColorStop(0, `hsl(${Math.random() * 360}, 100%, 75%, 0.1)`);
-            gradient.addColorStop(1, `hsl(${Math.random() * 360}, 100%, 50%, 0)`);
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, tileSize.x, tileSize.y);
+        onRemove: function(map) {
+            L.GridLayer.prototype.onRemove.call(this, map);
+            this.getPane().removeChild(this._canvas);
+        },
 
-            // Floating particles
-            for (let i = 0; i < 20; i++) {
-                ctx.beginPath();
-                ctx.arc(Math.random() * tileSize.x, Math.random() * tileSize.y, Math.random() * 2, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
-                ctx.fill();
+        _resize: function() {
+            const size = this._map.getSize();
+            this._canvas.width = size.x;
+            this._canvas.height = size.y;
+        },
+
+        _onTileUnload: function(e) {
+            // No-op, just to prevent errors
+        },
+
+        _animate: function() {
+            if (!this._map) return;
+
+            const ctx = this._canvas.getContext('2d');
+            const width = this._canvas.width;
+            const height = this._canvas.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Your animation logic here
+            // Example: flowing particles
+            if (!this._particles) {
+                this._particles = [];
+                for (let i = 0; i < 100; i++) {
+                    this._particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: Math.random() - 0.5,
+                        vy: Math.random() - 0.5,
+                        radius: Math.random() * 2 + 1
+                    });
+                }
             }
 
-            return tile;
+            this._particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > width) p.vx *= -1;
+                if (p.y < 0 || p.y > height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+            });
+
+            requestAnimationFrame(this._animate.bind(this));
         }
     });
-    return new GenerativeLayer();
+
+    return new DreamLayer();
 }
 
 function createPulsatingMarker(attraction) {
@@ -477,10 +523,17 @@ function toggleDreamMode() {
 
     if (dreamMode) {
         if (!generativeLayer) {
-            generativeLayer = createGenerativeLayer();
+            generativeLayer = createDreamLayer();
         }
         generativeLayer.addTo(map);
-        baseLayer.setOpacity(0.1); // Keep it slightly visible for context
+        map.dragging.disable();
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+        map.keyboard.disable();
+        if (map.tap) map.tap.disable();
+        document.getElementById('map').style.cursor='default';
 
         allMarkers.forEach(marker => map.removeLayer(marker));
         pulsatingMarkers.forEach(marker => marker.addTo(map));
@@ -489,7 +542,14 @@ function toggleDreamMode() {
         if (generativeLayer) {
             generativeLayer.remove();
         }
-        baseLayer.setOpacity(1);
+        map.dragging.enable();
+        map.touchZoom.enable();
+        map.doubleClickZoom.enable();
+        map.scrollWheelZoom.enable();
+        map.boxZoom.enable();
+        map.keyboard.enable();
+        if (map.tap) map.tap.enable();
+        document.getElementById('map').style.cursor='grab';
 
         pulsatingMarkers.forEach(marker => map.removeLayer(marker));
         allMarkers.forEach(marker => marker.addTo(map));
@@ -508,6 +568,7 @@ function setLanguage(lang) {
 
     // Update general UI elements
     dreamModeBtn.textContent = t.dreamModeButton;
+    exploreBtn.textContent = t.exploreButton;
 
     // Update Review Modal UI elements
     // reviewModalTitle.textContent = t.reviewsFor; // This will be set dynamically when modal opens
@@ -555,6 +616,21 @@ langButtons.forEach(button => {
 dreamModeBtn.addEventListener('click', () => {
     dreamMode = !dreamMode;
     toggleDreamMode();
+});
+
+exploreBtn.addEventListener('click', () => {
+    const randomAttraction = attractions[Math.floor(Math.random() * attractions.length)];
+    map.flyTo([randomAttraction.lat, randomAttraction.lng], 12, {
+        animate: true,
+        duration: 2.5
+    });
+
+    setTimeout(() => {
+        const marker = allMarkers.find(m => m.attractionData.name === randomAttraction.name);
+        if (marker) {
+            marker.openPopup();
+        }
+    }, 2600);
 });
 
 // Initial render and language setting
