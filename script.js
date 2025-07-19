@@ -329,7 +329,7 @@ function openTriviaModal(attractionName) {
 
     const t = translations[currentLanguage];
     triviaModalTitle.textContent = t.triviaModalTitle || "Did you know?";
-    triviaModalContent.textContent = attraction.trivia[currentLanguage];
+triviaModalContent.textContent = attraction.trivia[currentLanguage] ?? attraction.trivia.en;
     triviaModal.style.display = 'flex';
 }
 
