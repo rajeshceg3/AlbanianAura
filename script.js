@@ -155,7 +155,7 @@ const attractions = [
 ];
 
 // Initialize the map and set its view to Albania
-var map = L.map('map').setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
+var map = L.map('map', { tap: false }).setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
 
 // Add a tile layer to the map (using OpenStreetMap)
 const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
