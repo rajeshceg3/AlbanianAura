@@ -2,6 +2,8 @@
 const langButtons = document.querySelectorAll('#langSwitcher button');
 const dreamModeBtn = document.getElementById('dreamModeBtn');
 const exploreBtn = document.getElementById('exploreBtn');
+const searchBox = document.getElementById('searchBox');
+const typeFilter = document.getElementById('typeFilter');
 
 // Review Modal Elements
 const reviewModal = document.getElementById('reviewModal');
@@ -209,7 +211,6 @@ const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.pn
 let generativeLayer = null;
 
 const allMarkers = [];
-const pulsatingMarkers = [];
 
 // Helper function to generate popup content
 function generatePopupContent(attraction) {
@@ -450,152 +451,13 @@ map.on('popupopen', function(e) {
     }
 });
 
-function createDreamLayer() {
-    const DreamLayer = L.GridLayer.extend({
-        onAdd: function(map) {
-            L.GridLayer.prototype.onAdd.call(this, map);
-            this._map = map;
-            this._canvas = document.createElement('canvas');
-            this._canvas.style.position = 'absolute';
-            this._canvas.style.pointerEvents = 'none';
-            this.getPane().appendChild(this._canvas);
-            this.on('tileunload', e => this._onTileUnload(e));
-            this._resize();
-            this._animate();
-        },
-
-        onRemove: function(map) {
-            L.GridLayer.prototype.onRemove.call(this, map);
-            this.getPane().removeChild(this._canvas);
-        },
-
-        _resize: function() {
-            const size = this._map.getSize();
-            this._canvas.width = size.x;
-            this._canvas.height = size.y;
-        },
-
-        _onTileUnload: function(e) {
-            // No-op, just to prevent errors
-        },
-
-        _animate: function() {
-            if (!this._map) return;
-
-            const ctx = this._canvas.getContext('2d');
-            const width = this._canvas.width;
-            const height = this._canvas.height;
-
-            // Clear canvas
-            ctx.clearRect(0, 0, width, height);
-
-            // Your animation logic here
-            // Example: flowing particles
-            if (!this._particles) {
-                this._particles = [];
-                for (let i = 0; i < 100; i++) {
-                    this._particles.push({
-                        x: Math.random() * width,
-                        y: Math.random() * height,
-                        vx: Math.random() - 0.5,
-                        vy: Math.random() - 0.5,
-                        radius: Math.random() * 2 + 1
-                    });
-                }
-            }
-
-            this._particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-
-                if (p.x < 0 || p.x > width) p.vx *= -1;
-                if (p.y < 0 || p.y > height) p.vy *= -1;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.fill();
-            });
-
-            requestAnimationFrame(this._animate.bind(this));
-        }
-    });
-
-    return new DreamLayer();
-}
-
-function createPulsatingMarker(attraction) {
-    const latlng = [attraction.lat, attraction.lng];
-    const marker = L.circleMarker(latlng, {
-        radius: 10,
-        fillColor: "#ff0000",
-        color: "#ff0000",
-        weight: 1,
-        opacity: 1,
-        fillOpacity: 0.8,
-        className: 'pulsating-marker'
-    });
-
-    marker.on('click', () => {
-        createRippleEffect(attraction.lat, attraction.lng);
-        const phrase = getSurrealPhrase(attraction.name);
-        L.popup()
-            .setLatLng(latlng)
-            .setContent(phrase)
-            .openOn(map);
-    });
-
-    return marker;
-}
-
-function createRippleEffect(lat, lng) {
-    for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-            const ripple = L.circle([lat, lng], {
-                radius: 0,
-                color: 'white',
-                weight: 2,
-                fillOpacity: 0,
-                className: 'ripple-effect'
-            }).addTo(map);
-
-            let radius = 0;
-            const interval = setInterval(() => {
-                radius += 200;
-                ripple.setRadius(radius);
-                if (radius > 2000) {
-                    clearInterval(interval);
-                    map.removeLayer(ripple);
-                }
-            }, 50);
-        }, i * 200);
-    }
-}
-
-function getSurrealPhrase(attractionName) {
-    const phrases = {
-        'Tirana': "The city breathes in whispers of concrete and color.",
-        'Berat': "A thousand windows gaze into the river of time.",
-        'Gjirokastër': "Stones remember the footsteps of forgotten kings.",
-        'Albanian Riviera': "Where the sea sings lullabies to the sleeping mountains.",
-        'Llogara Pass': "The wind carries tales from the eagle's nest to the sun-bleached shores.",
-        'Lake Ohrid (Albanian side)': "Time sleeps in the deep, cold heart of the ancient lake.",
-        'Theth National Park': "Here, the mountains dream of a world without men, cloaked in mist.",
-        'Ksamil': "Islands of memory in a sea of turquoise forgetting.",
-        'Rozafa Castle': "A mother's love, a fortress of sorrow, watching the rivers meet.",
-        'Butrint': "Echoes of empires in the rustling reeds, where history slumbers."
-    };
-    return phrases[attractionName] || "A place between worlds, waiting to be discovered.";
-}
-
+// --- Dream Mode ---
 function toggleDreamMode() {
+    dreamMode = !dreamMode;
     document.body.classList.toggle('dream-mode', dreamMode);
 
+    // Toggle map interaction
     if (dreamMode) {
-        if (!generativeLayer) {
-            generativeLayer = createDreamLayer();
-        }
-        generativeLayer.addTo(map);
         map.dragging.disable();
         map.touchZoom.disable();
         map.doubleClickZoom.disable();
@@ -603,15 +465,15 @@ function toggleDreamMode() {
         map.boxZoom.disable();
         map.keyboard.disable();
         if (map.tap) map.tap.disable();
-        document.getElementById('map').style.cursor='default';
+        document.getElementById('map').style.cursor = 'default';
 
-        allMarkers.forEach(marker => map.removeLayer(marker));
-        pulsatingMarkers.forEach(marker => marker.addTo(map));
-
-    } else {
-        if (generativeLayer) {
-            generativeLayer.remove();
+        // Add a dreamy overlay
+        if (!document.getElementById('dreamOverlay')) {
+            const overlay = document.createElement('div');
+            overlay.id = 'dreamOverlay';
+            document.getElementById('map').appendChild(overlay);
         }
+    } else {
         map.dragging.enable();
         map.touchZoom.enable();
         map.doubleClickZoom.enable();
@@ -619,10 +481,12 @@ function toggleDreamMode() {
         map.boxZoom.enable();
         map.keyboard.enable();
         if (map.tap) map.tap.enable();
-        document.getElementById('map').style.cursor='grab';
+        document.getElementById('map').style.cursor = 'grab';
 
-        pulsatingMarkers.forEach(marker => map.removeLayer(marker));
-        allMarkers.forEach(marker => marker.addTo(map));
+        const overlay = document.getElementById('dreamOverlay');
+        if (overlay) {
+            overlay.remove();
+        }
     }
 }
 
@@ -663,13 +527,11 @@ function setLanguage(lang) {
         button.classList.toggle('activeLang', button.dataset.lang === currentLanguage);
     });
 
-    if (map.closePopup) {
-        map.closePopup();
-    }
-    // Refresh currently open popup if any
+    // Refresh the currently open popup, if any
     allMarkers.forEach(marker => {
         if (marker.isPopupOpen()) {
             marker.setPopupContent(generatePopupContent(marker.attractionData));
+            // Re-attach listeners for the new popup content
             const popupNode = marker.getPopup()._contentNode;
             attachPopupListeners(popupNode, marker.attractionData);
         }
@@ -683,10 +545,7 @@ langButtons.forEach(button => {
     });
 });
 
-dreamModeBtn.addEventListener('click', () => {
-    dreamMode = !dreamMode;
-    toggleDreamMode();
-});
+dreamModeBtn.addEventListener('click', toggleDreamMode);
 
 exploreBtn.addEventListener('click', () => {
     const randomAttraction = attractions[Math.floor(Math.random() * attractions.length)];
@@ -695,12 +554,13 @@ exploreBtn.addEventListener('click', () => {
         duration: 2.5
     });
 
+    // Open popup after flying to the location
     setTimeout(() => {
         const marker = allMarkers.find(m => m.attractionData.name === randomAttraction.name);
         if (marker) {
             marker.openPopup();
         }
-    }, 2600);
+    }, 2600); // Wait for the flight animation to finish
 });
 
 // Initial render and language setting
@@ -716,9 +576,25 @@ attractionReviews = {
     // ... add more sample reviews for other attractions if desired
 };
 
-// Create pulsating markers once and store them
-attractions.forEach(attraction => {
-    pulsatingMarkers.push(createPulsatingMarker(attraction));
-});
+// --- Filtering Logic ---
+function filterMarkers() {
+    const searchTerm = searchBox.value.toLowerCase();
+    const type = typeFilter.value;
+
+    allMarkers.forEach(marker => {
+        const attraction = marker.attractionData;
+        const nameMatch = attraction.name.toLowerCase().includes(searchTerm);
+        const typeMatch = (type === 'all') || (attraction.type === type);
+
+        if (nameMatch && typeMatch) {
+            marker.addTo(map);
+        } else {
+            map.removeLayer(marker);
+        }
+    });
+}
+
+searchBox.addEventListener('input', filterMarkers);
+typeFilter.addEventListener('change', filterMarkers);
 
 setLanguage(currentLanguage);
