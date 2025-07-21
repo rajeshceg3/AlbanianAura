@@ -33,6 +33,31 @@ html, body { height: 100%; }
     z-index: 400;
     display: flex;
     gap: 15px;
+    align-items: center;
+}
+
+#filter-container {
+    display: flex;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 8px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+#searchBox, #typeFilter {
+    border: none;
+    padding: 8px 15px;
+    border-radius: 15px;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+
+#searchBox:focus, #typeFilter:focus {
+    outline: none;
+    background-color: #e8e8e8;
 }
 
 .control-button {
@@ -94,21 +119,22 @@ body.dream-mode #dreamModeBtn {
     color: var(--white);
 }
 
-body.dream-mode #map {
-    filter: blur(5px) brightness(0.7);
-    transform: scale(1.05);
-}
-
-body.dream-mode::after {
-    content: '';
+#dreamOverlay {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%,rgba(0,0,0,0.5) 100%);
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(2,0,36,0.3) 0%, rgba(9,9,121,0.3) 35%, rgba(0,212,255,0.3) 100%);
+    animation: dream-animation 20s ease infinite;
     pointer-events: none;
-    z-index: 399; /* Below UI controls */
+    z-index: 401; /* Above map tiles but below controls */
+}
+
+@keyframes dream-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 #langSwitcher button {
@@ -119,25 +145,6 @@ body.dream-mode::after {
     transform: scale(1.05);
 }
 
-@keyframes pulsate {
-    0% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-    50% {
-        transform: scale(1.5);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-}
-
-.pulsating-marker {
-    animation: pulsate 2s infinite;
-}
-
 .custom-marker {
     background-color: var(--accent);
     border-radius: 50%;
@@ -145,10 +152,6 @@ body.dream-mode::after {
     height: 12px;
     border: 2px solid var(--white);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.ripple-effect {
-    transition: all 0.5s ease-out;
 }
 
 /* --- Responsive Design --- */
