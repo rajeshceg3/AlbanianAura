@@ -1,23 +1,27 @@
 :root {
-    --background: #FFFFFF;
-    --text-primary: #1d1d1f;
-    --text-secondary: #86868b;
-    --accent: #0071e3;
-    --accent-hover: #0077ed;
+    --background: #fdfcfa;
+    --text-primary: #5c5c62;
+    --text-secondary: #9a9a9f;
+    --accent: #b8a2e0;
+    --accent-hover: #a68ecf;
     --white: #ffffff;
-    --border-light: #d2d2d7;
-    --shadow: rgba(0, 0, 0, 0.1);
-    --star-gold: #ffb800;
+    --border-light: #e8e8eb;
+    --shadow: rgba(0, 0, 0, 0.08);
+    --star-gold: #ffc400;
+    --pastel-blue: #a2bce0;
+    --pastel-pink: #e0a2b8;
+    --pastel-green: #a2e0b8;
 }
 
 #map {
     height: 100vh;
     width: 100%;
     transition: filter 1s ease-in-out;
+    filter: saturate(0.8) contrast(0.9);
 }
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Arial", sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
     background-color: var(--background);
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
@@ -39,67 +43,77 @@ html, body { height: 100%; }
 #filter-container {
     display: flex;
     gap: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 8px;
-    border-radius: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    background-color: var(--white);
+    backdrop-filter: blur(12px);
+    padding: 10px;
+    border-radius: 25px;
+    box-shadow: 0 8px 20px var(--shadow);
+    transition: all 0.3s ease;
+}
+
+#filter-container:hover {
+    box-shadow: 0 12px 25px var(--shadow);
+    transform: translateY(-2px);
 }
 
 #searchBox, #typeFilter {
     border: none;
-    padding: 8px 15px;
-    border-radius: 15px;
+    padding: 10px 18px;
+    border-radius: 20px;
     font-size: 14px;
-    background-color: #f0f0f0;
-    transition: background-color 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f5f7;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #searchBox:focus, #typeFilter:focus {
     outline: none;
-    background-color: #e8e8e8;
+    background-color: var(--white);
+    box-shadow: 0 0 0 3px var(--accent-hover);
 }
 
 .control-button {
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 10px 20px;
-    border-radius: 20px;
+    background-color: var(--white);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--border-light);
+    padding: 12px 24px;
+    border-radius: 25px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--text-primary);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 8px 15px var(--shadow);
 }
 
 .control-button:hover {
-    background-color: rgba(255, 255, 255, 1);
-    transform: translateY(-2px);
+    background-color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px var(--shadow);
 }
 
 #langSwitcher {
     display: flex;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 20px;
+    background-color: var(--white);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--border-light);
+    border-radius: 25px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 15px var(--shadow);
 }
 
 #langSwitcher button {
-    padding: 10px 18px;
+    padding: 12px 22px;
     cursor: pointer;
     border: none;
     background-color: transparent;
     color: var(--text-secondary);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     transition: color 0.3s ease, background-color 0.3s ease;
+    position: relative;
 }
 
 #langSwitcher button.activeLang {
@@ -115,8 +129,9 @@ html, body { height: 100%; }
 }
 
 body.dream-mode #dreamModeBtn {
-    background-color: var(--accent);
+    background-color: var(--pastel-pink);
     color: var(--white);
+    box-shadow: 0 8px 20px rgba(224, 162, 184, 0.4);
 }
 
 #dreamOverlay {
@@ -125,13 +140,20 @@ body.dream-mode #dreamModeBtn {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, rgba(2,0,36,0.3) 0%, rgba(9,9,121,0.3) 35%, rgba(0,212,255,0.3) 100%);
-    animation: dream-animation 20s ease infinite;
+    background: linear-gradient(45deg, var(--pastel-blue), var(--pastel-pink), var(--pastel-green));
+    background-size: 400% 400%;
+    animation: dream-gradient 20s ease infinite;
     pointer-events: none;
-    z-index: 401; /* Above map tiles but below controls */
+    z-index: 401;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
 }
 
-@keyframes dream-animation {
+body.dream-mode #dreamOverlay {
+    opacity: 0.6;
+}
+
+@keyframes dream-gradient {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
@@ -147,11 +169,17 @@ body.dream-mode #dreamModeBtn {
 
 .custom-marker {
     background-color: var(--accent);
-    border-radius: 50%;
-    width: 12px;
-    height: 12px;
+    border-radius: 50% 50% 50% 0;
+    width: 20px;
+    height: 20px;
     border: 2px solid var(--white);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: rotate(-45deg);
+    transition: transform 0.2s ease-in-out;
+}
+
+.custom-marker:hover {
+    transform: rotate(-45deg) scale(1.1);
 }
 
 /* --- Responsive Design --- */
@@ -174,13 +202,25 @@ body.dream-mode #dreamModeBtn {
 
 /* --- Leaflet Popup Styling --- */
 .leaflet-popup-content-wrapper {
-    background-color: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(15px) saturate(180%);
-    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    background-color: rgba(253, 252, 250, 0.85);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
     color: var(--text-primary);
-    border-radius: 14px;
-    box-shadow: 0 10px 30px var(--shadow);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    box-shadow: 0 12px 35px var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: popup-fade-in 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes popup-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .leaflet-popup-content {
@@ -230,21 +270,24 @@ body.dream-mode #dreamModeBtn {
 
 /* --- Trivia Modal Styles --- */
 #triviaModal .modal-content {
-    padding: 30px 40px;
+    padding: 40px 50px;
     text-align: center;
+    background-color: var(--pastel-blue);
+    color: var(--white);
 }
 
 #triviaModal h3 {
-    font-size: 24px;
-    color: var(--accent);
-    margin-bottom: 20px;
+    font-size: 28px;
+    color: var(--white);
+    margin-bottom: 25px;
+    font-weight: 700;
 }
 
 #triviaModalContent {
-    font-size: 18px;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    min-height: 80px;
+    font-size: 20px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+    min-height: 100px;
 }
 
 /* --- Review Modal Styles --- */
@@ -256,7 +299,7 @@ body.dream-mode #dreamModeBtn {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(92, 92, 98, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -402,12 +445,12 @@ body.dream-mode #dreamModeBtn {
     width: 100%;
     padding: 16px;
     margin-bottom: 15px;
-    border: 1px solid #d2d2d7;
-    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
     box-sizing: border-box;
-    font-family: inherit;
+    font-family: 'Inter', sans-serif;
     font-size: 16px;
-    background-color: #f5f5f7;
+    background-color: #f9f9f9;
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 #reviewForm input[type="text"]:focus,
@@ -415,7 +458,7 @@ body.dream-mode #dreamModeBtn {
     outline: none;
     border-color: var(--accent);
     background-color: var(--white);
-    box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+    box-shadow: 0 0 0 4px rgba(184, 162, 224, 0.2);
 }
 #reviewForm textarea {
     resize: vertical;
@@ -447,18 +490,19 @@ body.dream-mode #dreamModeBtn {
     color: var(--white);
     padding: 18px 30px;
     border: none;
-    border-radius: 14px;
+    border-radius: 16px;
     cursor: pointer;
     font-size: 18px;
     font-weight: 700;
     width: 100%;
     margin-top: 20px;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 8px 15px rgba(184, 162, 224, 0.3);
 }
 #submitReviewBtn:hover {
     background-color: var(--accent-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 113, 227, 0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px rgba(184, 162, 224, 0.4);
 }
 
 /* Popup elements for reviews */
