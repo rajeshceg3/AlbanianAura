@@ -255,7 +255,7 @@ attractions.forEach(function(attraction) {
     marker.attractionData = attraction;
 
     // Bind popup and add to map
-    marker.bindPopup(() => generatePopupContent(attraction));
+    marker.bindPopup();
     marker.addTo(map);
     allMarkers.push(marker);
 
