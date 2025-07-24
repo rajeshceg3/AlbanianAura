@@ -251,15 +251,18 @@ function createCustomIcon() {
 
 // Add markers for each attraction
 attractions.forEach(function(attraction) {
-  const marker = L.marker([attraction.lat, attraction.lng], { icon: createCustomIcon() });
-  marker.attractionData = attraction;
-  marker.addTo(map);
-  allMarkers.push(marker);
+    const marker = L.marker([attraction.lat, attraction.lng], { icon: createCustomIcon() });
+    marker.attractionData = attraction;
 
-  // Initialize review array for each attraction
-  if (!attractionReviews[attraction.name]) {
-    attractionReviews[attraction.name] = [];
-  }
+    // Bind popup and add to map
+    marker.bindPopup(() => generatePopupContent(attraction));
+    marker.addTo(map);
+    allMarkers.push(marker);
+
+    // Initialize review array for each attraction
+    if (!attractionReviews[attraction.name]) {
+        attractionReviews[attraction.name] = [];
+    }
 });
 
 // --- Review Functions ---
