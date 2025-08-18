@@ -33,7 +33,8 @@ const translations = {
         dreamModeButton: "Dream Mode",
         exploreButton: "Explore",
         triviaButton: "Trivia",
-        triviaModalTitle: "Did you know?"
+        triviaModalTitle: "Did you know?",
+        generativeModeButton: "Generative"
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -69,6 +70,7 @@ const translations = {
         dreamModeButton: "Modaliteti i Ëndrrave",
         exploreButton: "Eksploro",
         triviaButton: "Trivia",
-        triviaModalTitle: "A e dini?"
+        triviaModalTitle: "A e dini?",
+        generativeModeButton: "Gjenerues"
     }
 };

@@ -131,7 +131,22 @@ html, body { height: 100%; }
 body.dream-mode #dreamModeBtn {
     background-color: var(--pastel-pink);
     color: var(--white);
-    box-shadow: 0 8px 20px rgba(224, 162, 184, 0.4);
+    box-shadow: 0 0 15px var(--pastel-pink), 0 0 25px var(--pastel-pink);
+    animation: pulse-glow 2s infinite alternate;
+}
+
+@keyframes pulse-glow {
+    from {
+        box-shadow: 0 0 5px var(--pastel-pink), 0 0 10px var(--pastel-pink);
+    }
+    to {
+        box-shadow: 0 0 20px var(--pastel-pink), 0 0 30px var(--pastel-pink);
+    }
+}
+
+#generativeModeBtn.active {
+    background-color: var(--accent);
+    color: var(--white);
 }
 
 #dreamOverlay {
@@ -140,23 +155,20 @@ body.dream-mode #dreamModeBtn {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, var(--pastel-blue), var(--pastel-pink), var(--pastel-green));
-    background-size: 400% 400%;
-    animation: dream-gradient 20s ease infinite;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%, rgba(0,0,0,0.3) 100%);
     pointer-events: none;
-    z-index: 401;
+    z-index: 1; /* Should be behind markers but above tiles */
     opacity: 0;
-    transition: opacity 1s ease-in-out;
+    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.dream-mode #dreamOverlay {
-    opacity: 0.6;
+    opacity: 1;
 }
 
-@keyframes dream-gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* Make sure UI controls are visible above the dream overlay */
+.leaflet-pane, .leaflet-control {
+    z-index: 2;
 }
 
 #langSwitcher button {

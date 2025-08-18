@@ -1,6 +1,7 @@
 // Get references to HTML elements
 const langButtons = document.querySelectorAll('#langSwitcher button');
 const dreamModeBtn = document.getElementById('dreamModeBtn');
+const generativeModeBtn = document.getElementById('generativeModeBtn');
 const exploreBtn = document.getElementById('exploreBtn');
 const searchBox = document.getElementById('searchBox');
 const typeFilter = document.getElementById('typeFilter');
@@ -33,6 +34,7 @@ let currentLanguage = 'en'; // Default language
 let attractionReviews = {}; // To store reviews: { "AttractionName": [{user, stars, review}, ...], ... }
 let currentlyReviewedAttraction = null; // To keep track of which attraction's modal is open
 let dreamMode = false;
+let generativeMode = false;
 
 
 // Define attractions
@@ -208,7 +210,13 @@ const baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map);
 
-let generativeLayer = null;
+let generativeLayer = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	subdomains: 'abcd',
+	minZoom: 1,
+	maxZoom: 16,
+	ext: 'jpg'
+});
 
 const allMarkers = [];
 
@@ -455,12 +463,20 @@ map.on('popupopen', function(e) {
 });
 
 // --- Dream Mode ---
+let wasGenerativeBeforeDream = false;
 function toggleDreamMode() {
     dreamMode = !dreamMode;
     document.body.classList.toggle('dream-mode', dreamMode);
 
-    // Toggle map interaction
     if (dreamMode) {
+        // --- Entering Dream Mode ---
+        wasGenerativeBeforeDream = generativeMode;
+        if (!wasGenerativeBeforeDream) {
+            // Activate generative mode if it wasn't already
+            toggleGenerativeMode();
+        }
+
+        // Disable map interaction
         map.dragging.disable();
         map.touchZoom.disable();
         map.doubleClickZoom.disable();
@@ -470,13 +486,22 @@ function toggleDreamMode() {
         if (map.tap) map.tap.disable();
         document.getElementById('map').style.cursor = 'default';
 
-        // Add a dreamy overlay
+        // Add a dreamy overlay (its style will be updated in CSS)
         if (!document.getElementById('dreamOverlay')) {
             const overlay = document.createElement('div');
             overlay.id = 'dreamOverlay';
-            document.getElementById('map').appendChild(overlay);
+            // Insert it inside the map container but before the controls
+            const mapContainer = document.getElementById('map');
+            mapContainer.insertBefore(overlay, mapContainer.firstChild);
         }
     } else {
+        // --- Exiting Dream Mode ---
+        if (!wasGenerativeBeforeDream) {
+            // Deactivate generative mode only if it was off before dream
+            toggleGenerativeMode();
+        }
+
+        // Enable map interaction
         map.dragging.enable();
         map.touchZoom.enable();
         map.doubleClickZoom.enable();
@@ -486,6 +511,7 @@ function toggleDreamMode() {
         if (map.tap) map.tap.enable();
         document.getElementById('map').style.cursor = 'grab';
 
+        // Remove the overlay
         const overlay = document.getElementById('dreamOverlay');
         if (overlay) {
             overlay.remove();
@@ -506,6 +532,7 @@ function setLanguage(lang) {
     // Update general UI elements
     dreamModeBtn.textContent = t.dreamModeButton;
     exploreBtn.textContent = t.exploreButton;
+    generativeModeBtn.textContent = t.generativeModeButton;
 
     // Update Review Modal UI elements
     // reviewModalTitle.textContent = t.reviewsFor; // This will be set dynamically when modal opens
@@ -549,6 +576,22 @@ langButtons.forEach(button => {
 });
 
 dreamModeBtn.addEventListener('click', toggleDreamMode);
+
+function toggleGenerativeMode() {
+    generativeMode = !generativeMode;
+    if (generativeMode) {
+        map.addLayer(generativeLayer);
+        generativeLayer.bringToFront();
+        baseLayer.setOpacity(0.5); // Make original layer visible underneath
+    } else {
+        map.removeLayer(generativeLayer);
+        baseLayer.setOpacity(1);
+    }
+    document.body.classList.toggle('generative-mode', generativeMode);
+    generativeModeBtn.classList.toggle('active', generativeMode);
+}
+
+generativeModeBtn.addEventListener('click', toggleGenerativeMode);
 
 exploreBtn.addEventListener('click', () => {
     const randomAttraction = attractions[Math.floor(Math.random() * attractions.length)];
