@@ -351,13 +351,24 @@ function closeTriviaModal() {
 
 // Star rating interaction
 starRatingContainer.querySelectorAll('.star').forEach(star => {
-    star.addEventListener('click', function() {
-        const value = this.dataset.value;
+    function setRating(value) {
         ratingValueInput.value = value;
         starRatingContainer.querySelectorAll('.star').forEach(s => {
             s.classList.toggle('selected', parseInt(s.dataset.value) <= parseInt(value));
         });
+    }
+
+    star.addEventListener('click', function() {
+        setRating(this.dataset.value);
     });
+
+    star.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setRating(this.dataset.value);
+        }
+    });
+
     // Hover effect for stars
     star.addEventListener('mouseover', function() {
         const hoverValue = this.dataset.value;
