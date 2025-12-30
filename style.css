@@ -383,6 +383,9 @@ body.dream-mode #dreamOverlay {
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease, color 0.2s ease;
+    border: none;
+    background: transparent;
+    padding: 0;
 }
 
 .close-button:hover,
@@ -391,6 +394,7 @@ body.dream-mode #dreamOverlay {
     background-color: #ededf0;
     text-decoration: none;
     cursor: pointer;
+    outline: none;
 }
 
 #reviewModal h3, #reviewModal h4 {
@@ -491,6 +495,11 @@ body.dream-mode #dreamOverlay {
 }
 #starRatingContainer .star:hover {
     transform: scale(1.18);
+}
+#starRatingContainer .star:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
 }
 #starRatingContainer .star.selected,
 #starRatingContainer .star.hovered {
