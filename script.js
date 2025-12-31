@@ -35,6 +35,7 @@ let attractionReviews = {}; // To store reviews: { "AttractionName": [{user, sta
 let currentlyReviewedAttraction = null; // To keep track of which attraction's modal is open
 let dreamMode = false;
 let generativeMode = false;
+let lastFocusedElement = null; // For accessibility: track element that opened modal
 
 
 // Define attractions
@@ -314,6 +315,7 @@ function renderReviews(attractionName) {
 }
 
 function openReviewModal(attractionName) {
+    lastFocusedElement = document.activeElement;
     currentlyReviewedAttraction = attractionName;
     const t = translations[currentLanguage];
     reviewModalTitle.textContent = `${t.reviewsFor} ${attractionName}`;
@@ -328,14 +330,20 @@ function openReviewModal(attractionName) {
     stars.forEach(star => star.classList.remove('selected'));
 
     reviewModal.style.display = 'flex';
+    closeReviewModalBtn.focus();
 }
 
 function closeReviewModal() {
     reviewModal.style.display = 'none';
     currentlyReviewedAttraction = null;
+    if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
 }
 
 function openTriviaModal(attractionName) {
+    lastFocusedElement = document.activeElement;
     const attraction = attractions.find(a => a.name === attractionName);
     if (!attraction || !attraction.trivia) return;
 
@@ -343,10 +351,15 @@ function openTriviaModal(attractionName) {
     triviaModalTitle.textContent = t.triviaModalTitle || "Did you know?";
 triviaModalContent.textContent = attraction.trivia[currentLanguage] ?? attraction.trivia.en;
     triviaModal.style.display = 'flex';
+    closeTriviaModalBtn.focus();
 }
 
 function closeTriviaModal() {
     triviaModal.style.display = 'none';
+    if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
 }
 
 // Star rating interaction
@@ -441,6 +454,18 @@ window.addEventListener('click', function(event) { // Close modal if clicked out
     }
     if (event.target === triviaModal) {
         closeTriviaModal();
+    }
+});
+
+// Close modals on Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        if (reviewModal.style.display === 'flex') {
+            closeReviewModal();
+        }
+        if (triviaModal.style.display === 'flex') {
+            closeTriviaModal();
+        }
     }
 });
 
