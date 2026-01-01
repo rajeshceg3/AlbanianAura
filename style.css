@@ -128,6 +128,120 @@ html, body { height: 100%; }
     z-index: 400;
 }
 
+#missionControlToggle {
+    position: absolute;
+    top: 80px;
+    left: 25px;
+    z-index: 400;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    height: 100%;
+    background-color: rgba(253, 252, 250, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    z-index: 1001;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 5px 0 25px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-header {
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: var(--text-primary);
+}
+
+.mission-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.mission-item {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 10px var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.mission-item .item-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.mission-item .remove-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.mission-item .remove-btn:hover {
+    color: #ff6b6b;
+}
+
+.mission-stats {
+    padding: 25px;
+    border-top: 1px solid var(--border-light);
+    background-color: var(--background);
+}
+
+.mission-stats p {
+    margin: 0 0 15px 0;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.control-button.danger {
+    background-color: #ff6b6b;
+    color: white;
+    width: 100%;
+    border: none;
+}
+
+.control-button.danger:hover {
+    background-color: #ff5252;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 50px;
+}
+
+/* Mission Control Toggle Active State */
+#missionControlToggle.active {
+    background-color: var(--accent);
+    color: var(--white);
+}
+
 body.dream-mode #dreamModeBtn {
     background-color: var(--pastel-pink);
     color: var(--white);
@@ -187,7 +301,13 @@ body.dream-mode #dreamOverlay {
     border: 2px solid var(--white);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     transform: rotate(-45deg);
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+}
+
+.custom-marker.mission-target {
+    background-color: #ff6b6b; /* Tactical Red */
+    border-color: #ffe3e3;
+    z-index: 1000 !important;
 }
 
 .custom-marker:hover {

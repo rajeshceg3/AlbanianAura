@@ -6,6 +6,14 @@ const exploreBtn = document.getElementById('exploreBtn');
 const searchBox = document.getElementById('searchBox');
 const typeFilter = document.getElementById('typeFilter');
 
+// Mission Control Elements
+const missionControlToggle = document.getElementById('missionControlToggle');
+const missionControlPanel = document.getElementById('missionControlPanel');
+const closeMissionControlBtn = document.getElementById('closeMissionControl');
+const missionListElement = document.getElementById('missionList');
+const missionCountElement = document.getElementById('missionCount');
+const clearMissionBtn = document.getElementById('clearMissionBtn');
+
 // Review Modal Elements
 const reviewModal = document.getElementById('reviewModal');
 const closeReviewModalBtn = document.getElementById('closeReviewModal');
@@ -30,178 +38,13 @@ const submitReviewBtnElement = document.getElementById('submitReviewBtn');
 
 
 // App state
-let currentLanguage = 'en'; // Default language
-let attractionReviews = {}; // To store reviews: { "AttractionName": [{user, stars, review}, ...], ... }
 let currentlyReviewedAttraction = null; // To keep track of which attraction's modal is open
 let dreamMode = false;
 let generativeMode = false;
 let lastFocusedElement = null; // For accessibility: track element that opened modal
 
-
 // Define attractions
-// (Assuming translations object is available from languages.js)
-const attractions = [
-    {
-        name: 'Tirana',
-        lat: 41.3275,
-        lng: 19.8187,
-        type: 'city',
-        description: {
-            en: 'The vibrant capital of Albania, known for its colorful buildings and lively atmosphere.',
-            sq: 'Kryeqyteti i gjallë i Shqipërisë, i njohur për ndërtesat e tij shumëngjyrëshe dhe atmosferën e gjallë.'
-        },
-        trivia: {
-            en: 'Tirana is one of the few European capitals without a McDonald\'s restaurant.',
-            sq: 'Tirana është një nga kryeqytetet e pakta evropiane pa një restorant McDonald\'s.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Tirana',
-        bookingsLink: 'https://www.booking.com/city/al/tirana.html'
-    },
-    {
-        name: 'Berat',
-        lat: 40.7050,
-        lng: 19.9522,
-        type: 'city',
-        description: {
-            en: 'A UNESCO World Heritage site, famous for its white Ottoman houses.',
-            sq: 'Një sit i Trashëgimisë Botërore të UNESCO-s, i famshëm për shtëpitë e bardha osmane.'
-        },
-        trivia: {
-            en: 'Berat is known as the "City of a Thousand Windows" due to the appearance of its houses.',
-            sq: 'Berati njihet si "Qyteti i një mijë dritareve" për shkak të pamjes së shtëpive të tij.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Berat',
-        bookingsLink: 'https://www.booking.com/city/al/berat.html'
-    },
-    {
-        name: 'Gjirokastër',
-        lat: 40.0755,
-        lng: 20.1397,
-        type: 'city',
-        description: {
-            en: 'A well-preserved Ottoman town with a magnificent castle and stone houses.',
-            sq: 'Një qytet osman i ruajtur mirë me një kështjellë madhështore dhe shtëpi guri.'
-        },
-        trivia: {
-            en: 'Gjirokastër\'s name means "Silver Fortress" in Greek, and it is also known as the "City of Stone".',
-            sq: 'Emri Gjirokastër do të thotë "Kalaja e Argjendtë" në greqisht, dhe njihet gjithashtu si "Qyteti i Gurit".'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Gjirokastër',
-        bookingsLink: 'https://www.booking.com/city/al/gjirokaster.html'
-    },
-    {
-        name: 'Albanian Riviera',
-        lat: 40.1500,
-        lng: 19.7833,
-        type: 'beach',
-        description: {
-            en: 'Stunning coastline with crystal clear waters and beautiful beaches.',
-            sq: 'Bregdeti mahnitës me ujëra të kristalta dhe plazhe të bukura.'
-        },
-        trivia: {
-            en: 'The Albanian Riviera has some of the finest beaches in Europe, often compared to those in Italy and Greece.',
-            sq: 'Riviera Shqiptare ka disa nga plazhet më të bukura në Evropë, shpesh të krahasuara me ato në Itali dhe Greqi.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Albanian_Riviera',
-        bookingsLink: 'https://www.booking.com/region/al/albanian-riviera.html'
-    },
-    {
-        name: 'Llogara Pass',
-        lat: 40.2000,
-        lng: 19.5833,
-        type: 'nature',
-        description: {
-            en: 'A spectacular mountain pass with breathtaking views of the Ionian coast.',
-            sq: 'Një kalim malor spektakolar me pamje mahnitëse të bregdetit Jon.'
-        },
-        trivia: {
-            en: 'Julius Caesar\'s troops passed through Llogara Pass in 48 B.C. to chase his rival Pompey.',
-            sq: 'Trupat e Jul Çezarit kaluan nëpër Qafën e Llogarasë në vitin 48 para Krishtit për të ndjekur rivalin e tij Pompeun.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Llogara_Pass',
-        bookingsLink: 'https://www.booking.com/hotel/al/llogara-tourist-village.html'
-    },
-    {
-        name: 'Lake Ohrid (Albanian side)',
-        lat: 41.0000,
-        lng: 20.7000,
-        type: 'nature',
-        description: {
-            en: 'One of Europe\'s oldest and deepest lakes, a UNESCO World Heritage site.',
-            sq: 'Një nga liqenet më të vjetra dhe më të thella të Evropës, një sit i Trashëgimisë Botërore të UNESCO-s.'
-        },
-        trivia: {
-            en: 'Lake Ohrid is over 3 million years old and is home to more than 200 endemic species.',
-            sq: 'Liqeni i Ohrit është mbi 3 milionë vjet i vjetër dhe është shtëpia e më shumë se 200 specieve endemike.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Lake_Ohrid',
-        bookingsLink: 'https://www.booking.com/city/al/pogradec.html'
-    },
-    {
-        name: 'Theth National Park',
-        lat: 42.3950,
-        lng: 19.7736,
-        type: 'nature',
-        description: {
-            en: 'A stunningly beautiful area in the Albanian Alps, perfect for hiking.',
-            sq: 'Një zonë mahnitëse e bukur në Alpet Shqiptare, e përkryer për ecje.'
-        },
-        trivia: {
-            en: 'Theth is home to the "Lock-in Tower", a historical form of protection for families involved in blood feuds.',
-            sq: 'Thethi është shtëpia e "Kullës së Ngujimit", një formë historike e mbrojtjes për familjet e përfshira në gjakmarrje.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Theth_National_Park',
-        bookingsLink: 'https://www.booking.com/city/al/theth.html'
-    },
-    {
-        name: 'Ksamil',
-        lat: 39.7667,
-        lng: 20.0000,
-        type: 'beach',
-        description: {
-            en: 'A beautiful village with pristine beaches and four small islands.',
-            sq: 'Një fshat i bukur me plazhe të pacenuara dhe katër ishuj të vegjël.'
-        },
-        trivia: {
-            en: 'The four rocky islands in Ksamil are uninhabited and can be reached by boat or even by swimming.',
-            sq: 'Katër ishujt shkëmborë në Ksamil janë të pabanuar dhe mund të arrihen me varkë apo edhe me not.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Ksamil',
-        bookingsLink: 'https://www.booking.com/city/al/ksamil.html'
-    },
-    {
-        name: 'Rozafa Castle',
-        lat: 42.0469,
-        lng: 19.4928,
-        type: 'history',
-        description: {
-            en: 'A legendary castle near Shkodër with panoramic views.',
-            sq: 'Një kështjellë legjendare pranë Shkodrës me pamje panoramike.'
-        },
-        trivia: {
-            en: 'The castle\'s legend tells of a woman who was walled up in the foundations as a sacrifice for its construction.',
-            sq: 'Legjenda e kalasë tregon për një grua që u murosua në themele si një sakrificë për ndërtimin e saj.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Rozafa_Castle',
-        bookingsLink: 'https://www.booking.com/city/al/shkoder.html'
-    },
-    {
-        name: 'Butrint',
-        lat: 39.7464,
-        lng: 20.0194,
-        type: 'history',
-        description: {
-            en: 'An ancient Greek and Roman city, a UNESCO World Heritage site.',
-            sq: 'Një qytet i lashtë grek dhe romak, një sit i Trashëgimisë Botërore të UNESCO-s.'
-        },
-        trivia: {
-            en: 'Butrint was abandoned in the late Middle Ages after marshes and malaria-carrying mosquitos took over the area.',
-            sq: 'Butrinti u braktis në Mesjetën e vonë pasi kënetat dhe mushkonjat që mbanin malarien pushtuan zonën.'
-        },
-        moreInfoLink: 'https://en.wikipedia.org/wiki/Butrint',
-        bookingsLink: 'https://www.booking.com/attraction/al/butrint-national-park.html'
-    }
-];
+const attractions = attractionsData;
 
 // Initialize the map and set its view to Albania
 var map = L.map('map', { tap: false }).setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
@@ -223,18 +66,22 @@ const allMarkers = [];
 
 // Helper function to generate popup content
 function generatePopupContent(attraction) {
-    const t = translations[currentLanguage];
-    const description = attractions.find(a => a.name === attraction.name)?.description[currentLanguage] || `Discover the beauty of ${attraction.name}. More details coming soon!`;
+    const t = translations[appState.language];
+    const description = attractions.find(a => a.name === attraction.name)?.description[appState.language] || `Discover the beauty of ${attraction.name}. More details coming soon!`;
     const moreInfoLink = attractions.find(a => a.name === attraction.name)?.moreInfoLink || '#';
     const bookingsLink = attractions.find(a => a.name === attraction.name)?.bookingsLink || '#';
 
     // Rating and Review related content
-    const reviews = attractionReviews[attraction.name] || [];
+    const reviews = appState.getReviews(attraction.name);
     const avgRating = calculateAverageRating(attraction.name);
     let ratingDisplay = t.noReviewsYetPopup; // Default text
     if (reviews.length > 0) {
         ratingDisplay = `${t.averageRatingPopup}: ${avgRating.toFixed(1)} <span class="star-icon">&#9733;</span> (${reviews.length} ${reviews.length === 1 ? t.reviewCountSingular : t.reviewCountPlural})`;
     }
+
+    const isInMission = appState.isInItinerary(attraction.name);
+    const missionBtnText = isInMission ? t.removeFromItinerary : t.addToItinerary;
+    const missionBtnClass = isInMission ? 'mission-btn remove' : 'mission-btn add';
 
     return `
         <h3>${attraction.name}</h3>
@@ -242,8 +89,11 @@ function generatePopupContent(attraction) {
         <div class="popup-rating-summary">
             <span class="avg-rating-text">${ratingDisplay}</span>
         </div>
-        <button class="view-reviews-btn" data-name="${attraction.name}">${t.viewAddReviewBtn}</button>
-        <button class="trivia-btn" data-name="${attraction.name}">${t.triviaButton}</button>
+        <div class="popup-actions">
+            <button class="view-reviews-btn" data-name="${attraction.name}">${t.viewAddReviewBtn}</button>
+            <button class="trivia-btn" data-name="${attraction.name}">${t.triviaButton}</button>
+            <button class="${missionBtnClass}" data-name="${attraction.name}">${missionBtnText}</button>
+        </div>
         <hr style="margin: 8px 0;">
         <a href="${moreInfoLink}" target="_blank">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank">${t.bookingsLink}</a>
     `;
@@ -268,25 +118,37 @@ attractions.forEach(function(attraction) {
     marker.addTo(map);
     allMarkers.push(marker);
 
-    // Initialize review array for each attraction
-    if (!attractionReviews[attraction.name]) {
-        attractionReviews[attraction.name] = [];
-    }
+    // Initial check for mission status styling
+    // We need to wait for the marker to be added to DOM to access .getElement(),
+    // but addTo(map) should handle that if the map is initialized.
+    // However, custom icons might take a split second.
+    // Let's just do it in the next tick or trust it works if we add a class to the divIcon options initially if we wanted.
+    // But since I'm modifying classList of the element, I'll rely on the subscription or a one-time init.
 });
+
+// One-time init for marker styles after they are added
+setTimeout(() => {
+    allMarkers.forEach(marker => {
+         const icon = marker.getElement();
+         if (icon && appState.isInItinerary(marker.attractionData.name)) {
+             icon.classList.add('mission-target');
+         }
+    });
+}, 0);
 
 // --- Review Functions ---
 
 function calculateAverageRating(attractionName) {
-    const reviews = attractionReviews[attractionName] || [];
+    const reviews = appState.getReviews(attractionName);
     if (reviews.length === 0) return 0;
     const totalStars = reviews.reduce((sum, review) => sum + review.stars, 0);
     return totalStars / reviews.length;
 }
 
 function renderReviews(attractionName) {
-    const t = translations[currentLanguage];
+    const t = translations[appState.language];
     reviewsListElement.innerHTML = ''; // Clear current reviews
-    const reviews = attractionReviews[attractionName] || [];
+    const reviews = appState.getReviews(attractionName);
     const avgRating = calculateAverageRating(attractionName);
 
     avgRatingValueElement.textContent = reviews.length > 0 ? `${avgRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? t.reviewCountSingular : t.reviewCountPlural})` : t.noReviewsYet;
@@ -317,7 +179,7 @@ function renderReviews(attractionName) {
 function openReviewModal(attractionName) {
     lastFocusedElement = document.activeElement;
     currentlyReviewedAttraction = attractionName;
-    const t = translations[currentLanguage];
+    const t = translations[appState.language];
     reviewModalTitle.textContent = `${t.reviewsFor} ${attractionName}`;
 
     renderReviews(attractionName);
@@ -347,9 +209,9 @@ function openTriviaModal(attractionName) {
     const attraction = attractions.find(a => a.name === attractionName);
     if (!attraction || !attraction.trivia) return;
 
-    const t = translations[currentLanguage];
+    const t = translations[appState.language];
     triviaModalTitle.textContent = t.triviaModalTitle || "Did you know?";
-triviaModalContent.textContent = attraction.trivia[currentLanguage] ?? attraction.trivia.en;
+triviaModalContent.textContent = attraction.trivia[appState.language] ?? attraction.trivia.en;
     triviaModal.style.display = 'flex';
     closeTriviaModalBtn.focus();
 }
@@ -396,7 +258,7 @@ starRatingContainer.querySelectorAll('.star').forEach(star => {
 
 reviewForm.addEventListener('submit', function(event) {
     event.preventDefault();
-    const t = translations[currentLanguage];
+    const t = translations[appState.language];
     const userName = userNameInput.value.trim() || t.anonymousUser;
     const rating = parseInt(ratingValueInput.value);
     const reviewText = reviewTextInput.value.trim();
@@ -417,10 +279,7 @@ reviewForm.addEventListener('submit', function(event) {
         date: new Date().toISOString() // Optional: store review date
     };
 
-    if (!attractionReviews[currentlyReviewedAttraction]) {
-        attractionReviews[currentlyReviewedAttraction] = [];
-    }
-    attractionReviews[currentlyReviewedAttraction].push(newReview);
+    appState.addReview(currentlyReviewedAttraction, newReview);
 
     // Show confirmation
     const confirmation = reviewModal.querySelector('.confirmation-message');
@@ -484,6 +343,17 @@ function attachPopupListeners(popupNode, attractionData) {
     if (triviaButton) {
         triviaButton.onclick = function() {
             openTriviaModal(attractionData.name);
+        };
+    }
+
+    const missionButton = popupNode.querySelector('.mission-btn');
+    if (missionButton) {
+        missionButton.onclick = function() {
+            if (appState.isInItinerary(attractionData.name)) {
+                appState.removeFromItinerary(attractionData.name);
+            } else {
+                appState.addToItinerary(attractionData.name);
+            }
         };
     }
 }
@@ -562,8 +432,8 @@ function setLanguage(lang) {
         console.warn(`Language "${lang}" not found. Falling back to English.`);
         lang = 'en';
     }
-    currentLanguage = lang;
-    const t = translations[currentLanguage];
+    appState.setLanguage(lang);
+    const t = translations[appState.language];
 
     // Update general UI elements
     dreamModeBtn.textContent = t.dreamModeButton;
@@ -590,7 +460,7 @@ function setLanguage(lang) {
 
 
     langButtons.forEach(button => {
-        button.classList.toggle('activeLang', button.dataset.lang === currentLanguage);
+        button.classList.toggle('activeLang', button.dataset.lang === appState.language);
     });
 
     // Refresh the currently open popup, if any
@@ -645,19 +515,6 @@ exploreBtn.addEventListener('click', () => {
     }, 2600); // Wait for the flight animation to finish
 });
 
-// Initial render and language setting
-// Sample reviews data (can be expanded)
-attractionReviews = {
-    'Tirana': [
-        { user: 'Alex', stars: 5, review: 'Vibrant city with lots to see!' },
-        { user: 'Maria', stars: 4, review: 'Good coffee, friendly people.' }
-    ],
-    'Berat': [
-        { user: 'John D.', stars: 5, review: 'Absolutely stunning, a must-see.' }
-    ],
-    // ... add more sample reviews for other attractions if desired
-};
-
 // --- Filtering Logic ---
 function filterMarkers() {
     const searchTerm = searchBox.value.toLowerCase();
@@ -679,4 +536,81 @@ function filterMarkers() {
 searchBox.addEventListener('input', filterMarkers);
 typeFilter.addEventListener('change', filterMarkers);
 
-setLanguage(currentLanguage);
+// --- Mission Control Logic ---
+
+function toggleMissionControl() {
+    missionControlPanel.classList.toggle('open');
+    missionControlToggle.classList.toggle('active');
+    const isHidden = !missionControlPanel.classList.contains('open');
+    missionControlPanel.setAttribute('aria-hidden', isHidden);
+}
+
+missionControlToggle.addEventListener('click', toggleMissionControl);
+closeMissionControlBtn.addEventListener('click', toggleMissionControl);
+
+function renderMissionList(itinerary) {
+    const t = translations[appState.language];
+    missionCountElement.textContent = itinerary.length;
+
+    if (itinerary.length === 0) {
+        missionListElement.innerHTML = `<p class="empty-state">${t.noReviewsYet ? 'No targets selected.' : 'No targets selected.'}</p>`; // Fallback string handling
+        return;
+    }
+
+    missionListElement.innerHTML = '';
+    itinerary.forEach(attractionName => {
+        const item = document.createElement('div');
+        item.className = 'mission-item';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'item-name';
+        nameSpan.textContent = attractionName;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.setAttribute('aria-label', `${t.removeFromItinerary} ${attractionName}`);
+        removeBtn.dataset.name = attractionName;
+        removeBtn.innerHTML = '&times;';
+
+        removeBtn.addEventListener('click', () => {
+            appState.removeFromItinerary(attractionName);
+        });
+
+        item.appendChild(nameSpan);
+        item.appendChild(removeBtn);
+        missionListElement.appendChild(item);
+    });
+}
+
+// Initial Render of Mission List
+renderMissionList(appState.itinerary);
+
+// Listen for itinerary changes
+appState.subscribe('itineraryChanged', (itinerary) => {
+    renderMissionList(itinerary);
+
+    // Refresh popups to update button state
+    allMarkers.forEach(marker => {
+        // Update marker style
+        const icon = marker.getElement();
+        if (icon) {
+            if (appState.isInItinerary(marker.attractionData.name)) {
+                icon.classList.add('mission-target');
+            } else {
+                icon.classList.remove('mission-target');
+            }
+        }
+
+        if (marker.isPopupOpen()) {
+            marker.setPopupContent(generatePopupContent(marker.attractionData));
+            const popupNode = marker.getPopup()._contentNode;
+            attachPopupListeners(popupNode, marker.attractionData);
+        }
+    });
+});
+
+clearMissionBtn.addEventListener('click', () => {
+    appState.clearItinerary();
+});
+
+setLanguage(appState.language);
