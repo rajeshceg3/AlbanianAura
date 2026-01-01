@@ -34,7 +34,8 @@ const translations = {
         exploreButton: "Explore",
         triviaButton: "Trivia",
         triviaModalTitle: "Did you know?",
-        generativeModeButton: "Generative"
+        generativeModeButton: "Generative",
+        starRatingAriaLabel: "{score} out of 5 stars"
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -71,6 +72,7 @@ const translations = {
         exploreButton: "Eksploro",
         triviaButton: "Trivia",
         triviaModalTitle: "A e dini?",
-        generativeModeButton: "Gjenerues"
+        generativeModeButton: "Gjenerues",
+        starRatingAriaLabel: "{score} nga 5 yje"
     }
 };
