@@ -303,11 +303,13 @@ function renderReviews(attractionName) {
 
         let starsDisplay = '';
         for (let i = 0; i < 5; i++) {
-            starsDisplay += `<span class="star-icon">${i < review.stars ? '&#9733;' : '&#9734;'}</span>`; // Filled or empty star
+            starsDisplay += `<span class="star-icon" aria-hidden="true">${i < review.stars ? '&#9733;' : '&#9734;'}</span>`; // Filled or empty star
         }
 
+        const ariaLabel = t.starRatingAriaLabel.replace('{score}', review.stars);
+
         reviewItem.innerHTML = `
-            <p class="user-name">${review.user || t.anonymousUser} <span class="rating-static">${starsDisplay}</span></p>
+            <p class="user-name">${review.user || t.anonymousUser} <span class="rating-static" role="img" aria-label="${ariaLabel}">${starsDisplay}</span></p>
             <p class="review-text">${review.review}</p>
         `;
         reviewsListElement.appendChild(reviewItem);
