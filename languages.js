@@ -42,7 +42,13 @@ const translations = {
         abortMissionBtn: "Abort Mission",
         closeMissionControlAria: "Close Mission Control",
         searchAria: "Search attractions",
-        filterAria: "Filter attractions by type"
+        filterAria: "Filter attractions by type",
+        noTargets: "No targets selected.",
+        moveUpAria: "Move {name} up",
+        moveDownAria: "Move {name} down",
+        missionAborted: "Mission aborted: No targets selected.",
+        totalDistance: "Total Distance",
+        executeRecon: "Execute Recon"
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -87,6 +93,12 @@ const translations = {
         abortMissionBtn: "Anulo Misionin",
         closeMissionControlAria: "Mbyll Kontrollin e Misionit",
         searchAria: "Kërko atraksionet",
-        filterAria: "Filtro atraksionet sipas llojit"
+        filterAria: "Filtro atraksionet sipas llojit",
+        noTargets: "Asnjë objektiv i zgjedhur.",
+        moveUpAria: "Lëviz {name} lart",
+        moveDownAria: "Lëviz {name} poshtë",
+        missionAborted: "Misioni u anulua: Asnjë objektiv i zgjedhur.",
+        totalDistance: "Distanca Totale",
+        executeRecon: "Ekzekuto Zbulimin"
     }
 };

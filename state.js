@@ -49,6 +49,22 @@ class AppState {
         this.saveItinerary();
     }
 
+    moveItemUp(attractionName) {
+        const index = this.itinerary.indexOf(attractionName);
+        if (index > 0) {
+            [this.itinerary[index], this.itinerary[index - 1]] = [this.itinerary[index - 1], this.itinerary[index]];
+            this.saveItinerary();
+        }
+    }
+
+    moveItemDown(attractionName) {
+        const index = this.itinerary.indexOf(attractionName);
+        if (index < this.itinerary.length - 1) {
+            [this.itinerary[index], this.itinerary[index + 1]] = [this.itinerary[index + 1], this.itinerary[index]];
+            this.saveItinerary();
+        }
+    }
+
     clearItinerary() {
         this.itinerary = [];
         this.saveItinerary();

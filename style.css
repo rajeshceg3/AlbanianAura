@@ -213,6 +213,75 @@ html, body { height: 100%; }
     background-color: var(--background);
 }
 
+.mission-distance {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-family: monospace;
+}
+
+.mission-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.mission-btn-group {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.move-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 2px;
+}
+
+.move-btn:hover {
+    color: var(--primary-color);
+}
+
+.recon-btn {
+    background-color: var(--primary-color);
+    color: white;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Tactical Path Animation */
+@keyframes dash {
+    to {
+        stroke-dashoffset: -100;
+    }
+}
+
+.tactical-path {
+    animation: dash 5s linear infinite;
+}
+
+/* Recon Mode */
+.recon-active .leaflet-control-container {
+    display: none;
+}
+
+.mission-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.item-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
 .mission-stats p {
     margin: 0 0 15px 0;
     font-weight: 600;
