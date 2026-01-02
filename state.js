@@ -1,7 +1,18 @@
 class AppState {
     constructor() {
         this.language = 'en';
-        this.reviews = {
+        this.reviews = this.loadReviews();
+        this.itinerary = this.loadItinerary();
+        this.listeners = {};
+    }
+
+    loadReviews() {
+        const saved = localStorage.getItem('albania_reviews');
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        // Default initial reviews if none saved
+        return {
             'Tirana': [
                 { user: 'Alex', stars: 5, review: 'Vibrant city with lots to see!' },
                 { user: 'Maria', stars: 4, review: 'Good coffee, friendly people.' }
@@ -10,8 +21,10 @@ class AppState {
                 { user: 'John D.', stars: 5, review: 'Absolutely stunning, a must-see.' }
             ]
         };
-        this.itinerary = this.loadItinerary();
-        this.listeners = {};
+    }
+
+    saveReviews() {
+        localStorage.setItem('albania_reviews', JSON.stringify(this.reviews));
     }
 
     loadItinerary() {
@@ -50,6 +63,7 @@ class AppState {
             this.reviews[attractionName] = [];
         }
         this.reviews[attractionName].push(review);
+        this.saveReviews();
         this.notify('reviewAdded', { attractionName, review });
     }
 
