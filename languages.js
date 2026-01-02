@@ -35,7 +35,14 @@ const translations = {
         triviaButton: "Trivia",
         triviaModalTitle: "Did you know?",
         generativeModeButton: "Generative",
-        starRatingAriaLabel: "{score} out of 5 stars"
+        starRatingAriaLabel: "{score} out of 5 stars",
+        missionPlanTitle: "Mission Plan",
+        missionControlToggle: "Mission Control",
+        targetsStats: "Targets",
+        abortMissionBtn: "Abort Mission",
+        closeMissionControlAria: "Close Mission Control",
+        searchAria: "Search attractions",
+        filterAria: "Filter attractions by type"
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -73,6 +80,13 @@ const translations = {
         triviaButton: "Trivia",
         triviaModalTitle: "A e dini?",
         generativeModeButton: "Gjenerues",
-        starRatingAriaLabel: "{score} nga 5 yje"
+        starRatingAriaLabel: "{score} nga 5 yje",
+        missionPlanTitle: "Plani i Misionit",
+        missionControlToggle: "Kontrolli i Misionit",
+        targetsStats: "Objektivat",
+        abortMissionBtn: "Anulo Misionin",
+        closeMissionControlAria: "Mbyll Kontrollin e Misionit",
+        searchAria: "Kërko atraksionet",
+        filterAria: "Filtro atraksionet sipas llojit"
     }
 };
