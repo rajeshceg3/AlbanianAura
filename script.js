@@ -49,6 +49,12 @@ const attractions = attractionsData;
 // Initialize the map and set its view to Albania
 var map = L.map('map', { tap: false }).setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
 
+// Initialize Mission Planner
+let missionPlanner;
+setTimeout(() => {
+    missionPlanner = new MissionPlanner(map, appState, attractions);
+}, 100);
+
 // Add a tile layer to the map (using a pastel-themed layer)
 const baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -471,6 +477,18 @@ function setLanguage(lang) {
     searchBox.setAttribute('aria-label', t.searchAria);
     typeFilter.setAttribute('aria-label', t.filterAria);
 
+    const missionDistanceEl = document.querySelector('.mission-distance');
+    if (missionDistanceEl) {
+        // Preserve the span value
+        const span = missionDistanceEl.querySelector('span');
+        missionDistanceEl.innerHTML = `${t.totalDistance}: `;
+        missionDistanceEl.appendChild(span);
+    }
+    const reconBtn = document.getElementById('reconBtn');
+    if (reconBtn) {
+        reconBtn.textContent = t.executeRecon;
+    }
+
     // Update Review Modal UI elements
     // reviewModalTitle.textContent = t.reviewsFor; // This will be set dynamically when modal opens
     currentAverageRatingElement.childNodes[0].nodeValue = `${t.averageRatingModal}: `; // Update text part of "Average Rating: N/A"
@@ -584,14 +602,18 @@ function renderMissionList(itinerary) {
     missionCountElement.textContent = itinerary.length;
 
     if (itinerary.length === 0) {
-        missionListElement.innerHTML = `<p class="empty-state">${t.noReviewsYet ? 'No targets selected.' : 'No targets selected.'}</p>`; // Fallback string handling
+        missionListElement.innerHTML = `<p class="empty-state">${t.noTargets}</p>`;
         return;
     }
 
     missionListElement.innerHTML = '';
-    itinerary.forEach(attractionName => {
+    itinerary.forEach((attractionName, index) => {
         const item = document.createElement('div');
         item.className = 'mission-item';
+
+        // Content wrapper for name and remove button
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'item-content';
 
         const nameSpan = document.createElement('span');
         nameSpan.className = 'item-name';
@@ -602,13 +624,36 @@ function renderMissionList(itinerary) {
         removeBtn.setAttribute('aria-label', `${t.removeFromItinerary} ${attractionName}`);
         removeBtn.dataset.name = attractionName;
         removeBtn.innerHTML = '&times;';
-
         removeBtn.addEventListener('click', () => {
             appState.removeFromItinerary(attractionName);
         });
 
-        item.appendChild(nameSpan);
-        item.appendChild(removeBtn);
+        contentDiv.appendChild(nameSpan);
+        contentDiv.appendChild(removeBtn);
+
+        // Sequence Controls (Up/Down)
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'mission-btn-group';
+
+        const upBtn = document.createElement('button');
+        upBtn.className = 'move-btn';
+        upBtn.innerHTML = '&#9650;'; // Up Arrow
+        upBtn.setAttribute('aria-label', t.moveUpAria.replace('{name}', attractionName));
+        upBtn.disabled = index === 0;
+        upBtn.addEventListener('click', () => appState.moveItemUp(attractionName));
+
+        const downBtn = document.createElement('button');
+        downBtn.className = 'move-btn';
+        downBtn.innerHTML = '&#9660;'; // Down Arrow
+        downBtn.setAttribute('aria-label', t.moveDownAria.replace('{name}', attractionName));
+        downBtn.disabled = index === itinerary.length - 1;
+        downBtn.addEventListener('click', () => appState.moveItemDown(attractionName));
+
+        btnGroup.appendChild(upBtn);
+        btnGroup.appendChild(downBtn);
+
+        item.appendChild(contentDiv);
+        item.appendChild(btnGroup);
         missionListElement.appendChild(item);
     });
 }
@@ -643,5 +688,15 @@ appState.subscribe('itineraryChanged', (itinerary) => {
 clearMissionBtn.addEventListener('click', () => {
     appState.clearItinerary();
 });
+
+// Recon Button Event Listener
+const reconBtn = document.getElementById('reconBtn');
+if (reconBtn) {
+    reconBtn.addEventListener('click', () => {
+        if (missionPlanner) {
+            missionPlanner.executeRecon();
+        }
+    });
+}
 
 setLanguage(appState.language);

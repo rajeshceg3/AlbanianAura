@@ -29,6 +29,8 @@
             <p class="empty-state">No targets selected.</p>
         </div>
         <div class="mission-stats">
+            <p class="mission-distance">Total Distance: <span id="missionDistance">0.0 km</span></p>
+            <button id="reconBtn" class="control-button recon-btn">Execute Recon</button>
             <p><span id="targetsLabel">Targets</span>: <span id="missionCount">0</span></p>
             <button id="clearMissionBtn" class="control-button danger">Abort Mission</button>
         </div>
@@ -103,6 +105,7 @@
   <script src="data.js"></script>
   <script src="state.js"></script>
   <script src="languages.js"></script>
+  <script src="mission-planner.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
