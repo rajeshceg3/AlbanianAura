@@ -12,6 +12,11 @@ const attractionsData = [
             en: 'Tirana is one of the few European capitals without a McDonald\'s restaurant.',
             sq: 'Tirana është një nga kryeqytetet e pakta evropiane pa një restorant McDonald\'s.'
         },
+        crowdStats: {
+            maxDensity: 0.8,
+            peakHour: 19,
+            duration: 120
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Tirana',
         bookingsLink: 'https://www.booking.com/city/al/tirana.html'
     },
@@ -27,6 +32,11 @@ const attractionsData = [
         trivia: {
             en: 'Berat is known as the "City of a Thousand Windows" due to the appearance of its houses.',
             sq: 'Berati njihet si "Qyteti i një mijë dritareve" për shkak të pamjes së shtëpive të tij.'
+        },
+        crowdStats: {
+            maxDensity: 0.7,
+            peakHour: 18,
+            duration: 90
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Berat',
         bookingsLink: 'https://www.booking.com/city/al/berat.html'
@@ -44,6 +54,11 @@ const attractionsData = [
             en: 'Gjirokastër\'s name means "Silver Fortress" in Greek, and it is also known as the "City of Stone".',
             sq: 'Emri Gjirokastër do të thotë "Kalaja e Argjendtë" në greqisht, dhe njihet gjithashtu si "Qyteti i Gurit".'
         },
+        crowdStats: {
+            maxDensity: 0.6,
+            peakHour: 11,
+            duration: 120
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Gjirokastër',
         bookingsLink: 'https://www.booking.com/city/al/gjirokaster.html'
     },
@@ -59,6 +74,11 @@ const attractionsData = [
         trivia: {
             en: 'The Albanian Riviera has some of the finest beaches in Europe, often compared to those in Italy and Greece.',
             sq: 'Riviera Shqiptare ka disa nga plazhet më të bukura në Evropë, shpesh të krahasuara me ato në Itali dhe Greqi.'
+        },
+        crowdStats: {
+            maxDensity: 0.9,
+            peakHour: 14,
+            duration: 180
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Albanian_Riviera',
         bookingsLink: 'https://www.booking.com/region/al/albanian-riviera.html'
@@ -76,6 +96,11 @@ const attractionsData = [
             en: 'Julius Caesar\'s troops passed through Llogara Pass in 48 B.C. to chase his rival Pompey.',
             sq: 'Trupat e Jul Çezarit kaluan nëpër Qafën e Llogarasë në vitin 48 para Krishtit për të ndjekur rivalin e tij Pompeun.'
         },
+        crowdStats: {
+            maxDensity: 0.4,
+            peakHour: 12,
+            duration: 30
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Llogara_Pass',
         bookingsLink: 'https://www.booking.com/hotel/al/llogara-tourist-village.html'
     },
@@ -91,6 +116,11 @@ const attractionsData = [
         trivia: {
             en: 'Lake Ohrid is over 3 million years old and is home to more than 200 endemic species.',
             sq: 'Liqeni i Ohrit është mbi 3 milionë vjet i vjetër dhe është shtëpia e më shumë se 200 specieve endemike.'
+        },
+        crowdStats: {
+            maxDensity: 0.6,
+            peakHour: 13,
+            duration: 120
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Lake_Ohrid',
         bookingsLink: 'https://www.booking.com/city/al/pogradec.html'
@@ -108,6 +138,11 @@ const attractionsData = [
             en: 'Theth is home to the "Lock-in Tower", a historical form of protection for families involved in blood feuds.',
             sq: 'Thethi është shtëpia e "Kullës së Ngujimit", një formë historike e mbrojtjes për familjet e përfshira në gjakmarrje.'
         },
+        crowdStats: {
+            maxDensity: 0.5,
+            peakHour: 10,
+            duration: 240
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Theth_National_Park',
         bookingsLink: 'https://www.booking.com/city/al/theth.html'
     },
@@ -123,6 +158,11 @@ const attractionsData = [
         trivia: {
             en: 'The four rocky islands in Ksamil are uninhabited and can be reached by boat or even by swimming.',
             sq: 'Katër ishujt shkëmborë në Ksamil janë të pabanuar dhe mund të arrihen me varkë apo edhe me not.'
+        },
+        crowdStats: {
+            maxDensity: 0.95,
+            peakHour: 13,
+            duration: 240
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Ksamil',
         bookingsLink: 'https://www.booking.com/city/al/ksamil.html'
@@ -140,6 +180,11 @@ const attractionsData = [
             en: 'The castle\'s legend tells of a woman who was walled up in the foundations as a sacrifice for its construction.',
             sq: 'Legjenda e kalasë tregon për një grua që u murosua në themele si një sakrificë për ndërtimin e saj.'
         },
+        crowdStats: {
+            maxDensity: 0.7,
+            peakHour: 17, // Sunset views
+            duration: 90
+        },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Rozafa_Castle',
         bookingsLink: 'https://www.booking.com/city/al/shkoder.html'
     },
@@ -155,6 +200,11 @@ const attractionsData = [
         trivia: {
             en: 'Butrint was abandoned in the late Middle Ages after marshes and malaria-carrying mosquitos took over the area.',
             sq: 'Butrinti u braktis në Mesjetën e vonë pasi kënetat dhe mushkonjat që mbanin malarien pushtuan zonën.'
+        },
+        crowdStats: {
+            maxDensity: 0.6,
+            peakHour: 11,
+            duration: 180
         },
         moreInfoLink: 'https://en.wikipedia.org/wiki/Butrint',
         bookingsLink: 'https://www.booking.com/attraction/al/butrint-national-park.html'

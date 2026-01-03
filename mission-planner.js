@@ -128,3 +128,81 @@ class MissionPlanner {
         this.map.closePopup();
     }
 }
+
+/**
+ * CrowdIntelSystem - Analyzes and visualizes threat levels (crowd density)
+ * based on temporal data.
+ */
+class CrowdIntelSystem {
+    constructor(map, attractions) {
+        this.map = map;
+        this.attractions = attractions;
+        this.layerGroup = L.layerGroup().addTo(map);
+        this.active = false;
+        this.currentHour = 12; // Default 12:00
+    }
+
+    toggleSystem(active) {
+        this.active = active;
+        if (active) {
+            this.updateVisualization();
+            document.body.classList.add('crowd-intel-active');
+        } else {
+            this.layerGroup.clearLayers();
+            document.body.classList.remove('crowd-intel-active');
+        }
+    }
+
+    setHour(hour) {
+        this.currentHour = hour;
+        if (this.active) {
+            this.updateVisualization();
+        }
+    }
+
+    /**
+     * Calculates density (0-1) for a specific attraction at the current hour.
+     * Uses a Gaussian-like distribution around the peak hour.
+     */
+    calculateDensity(attraction) {
+        if (!attraction.crowdStats) return 0.2; // Default low density
+
+        const { maxDensity, peakHour } = attraction.crowdStats;
+        const diff = Math.abs(this.currentHour - peakHour);
+
+        // Simple decay: density drops as we move away from peak
+        // Standard deviation approx 3 hours
+        const decay = Math.exp(-(diff * diff) / (2 * 3 * 3));
+
+        return maxDensity * decay;
+    }
+
+    updateVisualization() {
+        this.layerGroup.clearLayers();
+
+        this.attractions.forEach(attr => {
+            const density = this.calculateDensity(attr);
+            const color = this.getThreatColor(density);
+            const radius = 500 + (density * 1000); // Visual radius based on density
+
+            L.circle([attr.lat, attr.lng], {
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.3 * density,
+                radius: radius,
+                weight: 2,
+                className: density > 0.7 ? 'pulse-circle' : '' // Add CSS animation for high density
+            }).addTo(this.layerGroup)
+            .bindTooltip(`Crowd Level: ${Math.round(density * 100)}%`, {
+                className: 'tactical-tooltip',
+                direction: 'top'
+            });
+        });
+    }
+
+    getThreatColor(density) {
+        if (density < 0.3) return '#00ffcc'; // Green/Cyan (Safe)
+        if (density < 0.6) return '#ffcc00'; // Yellow (Caution)
+        return '#ff3333'; // Red (High Threat)
+    }
+}
