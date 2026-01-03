@@ -44,7 +44,10 @@ let generativeMode = false;
 let lastFocusedElement = null; // For accessibility: track element that opened modal
 
 // Define attractions
-const attractions = attractionsData;
+if (typeof attractionsData === 'undefined') {
+    console.error('attractionsData is not defined. Ensure data.js is loaded correctly.');
+}
+const attractions = typeof attractionsData !== 'undefined' ? attractionsData : [];
 
 // Initialize the map and set its view to Albania
 var map = L.map('map', { tap: false }).setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
@@ -100,7 +103,7 @@ function generatePopupContent(attraction) {
             <button class="${missionBtnClass}" data-name="${attraction.name}">${missionBtnText}</button>
         </div>
         <hr style="margin: 8px 0;">
-        <a href="${moreInfoLink}" target="_blank">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank">${t.bookingsLink}</a>
+        <a href="${moreInfoLink}" target="_blank" rel="noopener noreferrer">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank" rel="noopener noreferrer">${t.bookingsLink}</a>
     `;
 }
 
@@ -424,6 +427,15 @@ function toggleDreamMode() {
         if (!document.getElementById('dreamOverlay')) {
             const overlay = document.createElement('div');
             overlay.id = 'dreamOverlay';
+
+            // Add a status message to the overlay
+            const t = translations[appState.language] || translations['en'];
+            const message = document.createElement('div');
+            message.id = 'dreamStatusMsg';
+            message.textContent = t.dreamModeActive || "Dream Mode Active: Map interaction disabled";
+            message.setAttribute('role', 'status');
+            overlay.appendChild(message);
+
             // Insert it inside the map container but before the controls
             const mapContainer = document.getElementById('map');
             mapContainer.insertBefore(overlay, mapContainer.firstChild);
