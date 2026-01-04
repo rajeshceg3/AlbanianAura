@@ -980,3 +980,55 @@ input:checked + .slider:before {
 .tactical-tooltip::before {
     border-top-color: var(--accent);
 }
+
+.optimize-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--white) 0%, #f0f4ff 100%);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.optimize-btn:hover {
+    background: var(--accent);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(184, 162, 224, 0.4);
+}
+
+.threat-profile-container {
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 15px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.threat-profile-container h4 {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+#threatProfileGraph {
+    width: 100%;
+    height: 100px;
+}
+
+/* S.C.O.U.T. specific SVG styles */
+#threatProfileGraph rect {
+    transition: fill 0.3s ease;
+}
+
+#threatProfileGraph rect:hover {
+    opacity: 1;
+    stroke: #333;
+    stroke-width: 1px;
+}

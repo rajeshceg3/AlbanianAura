@@ -55,6 +55,7 @@ var map = L.map('map', { tap: false }).setView([41.1533, 20.1683], 7); // Coordi
 // Initialize Mission Planner and Crowd Intel System
 let missionPlanner = new MissionPlanner(map, appState, attractions);
 let crowdIntelSystem = new CrowdIntelSystem(map, attractions);
+let pathfinderSystem = new PathfinderSystem(map, attractions, crowdIntelSystem);
 
 // Initialize S.C.O.U.T. UI Logic
 initScoutInterface();
@@ -64,10 +65,13 @@ function initScoutInterface() {
     const timeSlider = document.getElementById('missionTimeSlider');
     const timeDisplay = document.getElementById('missionTimeDisplay');
     const exportBtn = document.getElementById('exportMissionBtn');
+    const optimizeBtn = document.getElementById('optimizeRouteBtn');
 
     if (crowdToggle) {
         crowdToggle.addEventListener('change', (e) => {
             crowdIntelSystem.toggleSystem(e.target.checked);
+            // Refresh profile if available
+            pathfinderSystem.renderProfile(appState.itinerary, 'threatProfileGraph');
         });
     }
 
@@ -76,11 +80,34 @@ function initScoutInterface() {
             const hour = parseInt(e.target.value);
             timeDisplay.textContent = `${hour.toString().padStart(2, '0')}:00`;
             crowdIntelSystem.setHour(hour);
+            // Live update of threat profile
+            pathfinderSystem.renderProfile(appState.itinerary, 'threatProfileGraph');
         });
     }
 
     if (exportBtn) {
         exportBtn.addEventListener('click', generateMissionDossier);
+    }
+
+    if (optimizeBtn) {
+        optimizeBtn.addEventListener('click', () => {
+            const optimized = pathfinderSystem.optimizeRoute(appState.itinerary);
+
+            // Update state
+            // Since we can't easily replace the whole array via AppState methods without a setter,
+            // we will clear and re-add. But better if AppState had a setter or we modify the array in place?
+            // Actually, modifying appState.itinerary directly and calling saveItinerary works because it's a reference?
+            // Wait, appState.itinerary is an array.
+
+            appState.itinerary = optimized;
+            appState.saveItinerary();
+
+            // Visual feedback
+            optimizeBtn.innerHTML = '<span class="icon">✓</span> Optimized';
+            setTimeout(() => {
+                optimizeBtn.innerHTML = '<span class="icon">⚡</span> Optimize Route';
+            }, 2000);
+        });
     }
 }
 
@@ -771,6 +798,11 @@ renderMissionList(appState.itinerary);
 // Listen for itinerary changes
 appState.subscribe('itineraryChanged', (itinerary) => {
     renderMissionList(itinerary);
+
+    // Update Threat Profile
+    if (pathfinderSystem) {
+        pathfinderSystem.renderProfile(itinerary, 'threatProfileGraph');
+    }
 
     // Refresh popups to update button state
     allMarkers.forEach(marker => {

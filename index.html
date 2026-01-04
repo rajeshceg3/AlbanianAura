@@ -51,6 +51,17 @@
                     <label for="missionTimeSlider">Mission Time: <span id="missionTimeDisplay">12:00</span></label>
                     <input type="range" id="missionTimeSlider" min="6" max="23" value="12" step="1" aria-label="Adjust Mission Time">
                 </div>
+
+                <hr class="tactical-divider">
+
+                <button id="optimizeRouteBtn" class="control-button optimize-btn" aria-label="Optimize Mission Route">
+                    <span class="icon">⚡</span> Optimize Route
+                </button>
+
+                <div id="threatProfileContainer" class="threat-profile-container" style="display: none;">
+                    <h4>Threat Assessment Profile</h4>
+                    <div id="threatProfileGraph"></div>
+                </div>
             </div>
 
             <button id="clearMissionBtn" class="control-button danger">Abort Mission</button>

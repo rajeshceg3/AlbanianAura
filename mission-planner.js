@@ -206,3 +206,123 @@ class CrowdIntelSystem {
         return '#ff3333'; // Red (High Threat)
     }
 }
+
+/**
+ * PathfinderSystem - Strategic Route Optimization & Threat Assessment Module.
+ * "Operation: Pathfinder"
+ */
+class PathfinderSystem {
+    constructor(map, attractions, crowdIntelSystem) {
+        this.map = map;
+        this.attractions = attractions;
+        this.crowdIntelSystem = crowdIntelSystem;
+    }
+
+    /**
+     * Optimizes the itinerary using a Nearest Neighbor algorithm.
+     * Keeps the first target as the fixed start point (Base of Operations).
+     * @param {string[]} itinerary - List of attraction names
+     * @returns {string[]} - Optimized list of attraction names
+     */
+    optimizeRoute(itinerary) {
+        if (itinerary.length <= 2) return itinerary;
+
+        const optimized = [itinerary[0]];
+        const remaining = itinerary.slice(1);
+
+        while (remaining.length > 0) {
+            const lastPoint = this.getLatLng(optimized[optimized.length - 1]);
+            let nearestIndex = -1;
+            let minDist = Infinity;
+
+            for (let i = 0; i < remaining.length; i++) {
+                const currentPoint = this.getLatLng(remaining[i]);
+                const dist = lastPoint.distanceTo(currentPoint);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearestIndex = i;
+                }
+            }
+
+            optimized.push(remaining[nearestIndex]);
+            remaining.splice(nearestIndex, 1);
+        }
+
+        return optimized;
+    }
+
+    getLatLng(name) {
+        const attr = this.attractions.find(a => a.name === name);
+        return new L.LatLng(attr.lat, attr.lng);
+    }
+
+    /**
+     * Generates and renders the Mission Threat Profile (Crowd Density over steps).
+     * @param {string[]} itinerary
+     * @param {string} containerId
+     */
+    renderProfile(itinerary, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (itinerary.length === 0) {
+            container.innerHTML = '';
+            container.parentElement.style.display = 'none';
+            return;
+        }
+
+        container.parentElement.style.display = 'block';
+        container.innerHTML = '';
+
+        // Data Preparation
+        const data = itinerary.map((name, index) => {
+            const attr = this.attractions.find(a => a.name === name);
+            // Use current time from CrowdIntelSystem or default to peak for assessment
+            // For a static profile, we might show "Peak Potential Threat" or "Current Threat"
+            // Let's show "Current Projected Threat" based on current slider time.
+            const density = this.crowdIntelSystem ? this.crowdIntelSystem.calculateDensity(attr) : 0.5;
+            return { name, density };
+        });
+
+        // SVG Dimensions
+        const width = container.clientWidth || 280;
+        const height = 100;
+        const barWidth = (width / data.length) - 4;
+        const maxBarHeight = 80;
+
+        let svgContent = `<svg width="100%" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+
+        // Define gradients
+        svgContent += `
+            <defs>
+                <linearGradient id="barGradient" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stop-color="#ff3333"/>
+                    <stop offset="50%" stop-color="#ffcc00"/>
+                    <stop offset="100%" stop-color="#00ffcc"/>
+                </linearGradient>
+            </defs>
+        `;
+
+        data.forEach((d, i) => {
+            const h = Math.max(d.density * maxBarHeight, 5); // Min height 5
+            const x = i * (width / data.length) + 2;
+            const y = height - h - 15; // Leave room for labels
+
+            // Threat Level Color
+            let fill = '#00ffcc';
+            if (d.density > 0.3) fill = '#ffcc00';
+            if (d.density > 0.6) fill = '#ff3333';
+
+            svgContent += `
+                <rect x="${x}" y="${y}" width="${barWidth}" height="${h}" rx="2" fill="${fill}" opacity="0.8">
+                    <animate attributeName="height" from="0" to="${h}" dur="0.5s" fill="freeze" />
+                    <animate attributeName="y" from="${height - 15}" to="${y}" dur="0.5s" fill="freeze" />
+                </rect>
+                <text x="${x + barWidth/2}" y="${height-2}" font-family="monospace" font-size="10" fill="#666" text-anchor="middle">${i+1}</text>
+            `;
+        });
+
+        svgContent += `</svg>`;
+        container.innerHTML = svgContent;
+    }
+}
