@@ -7,11 +7,15 @@ class AppState {
     }
 
     loadReviews() {
-        const saved = localStorage.getItem('albania_reviews');
-        if (saved) {
-            return JSON.parse(saved);
+        try {
+            const saved = localStorage.getItem('albania_reviews');
+            if (saved) {
+                return JSON.parse(saved);
+            }
+        } catch (e) {
+            console.warn('LocalStorage access denied or error:', e);
         }
-        // Default initial reviews if none saved
+        // Default initial reviews if none saved or error
         return {
             'Tirana': [
                 { user: 'Alex', stars: 5, review: 'Vibrant city with lots to see!' },
@@ -24,16 +28,29 @@ class AppState {
     }
 
     saveReviews() {
-        localStorage.setItem('albania_reviews', JSON.stringify(this.reviews));
+        try {
+            localStorage.setItem('albania_reviews', JSON.stringify(this.reviews));
+        } catch (e) {
+            console.warn('LocalStorage access denied or error:', e);
+        }
     }
 
     loadItinerary() {
-        const saved = localStorage.getItem('albania_itinerary');
-        return saved ? JSON.parse(saved) : [];
+        try {
+            const saved = localStorage.getItem('albania_itinerary');
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            console.warn('LocalStorage access denied or error:', e);
+            return [];
+        }
     }
 
     saveItinerary() {
-        localStorage.setItem('albania_itinerary', JSON.stringify(this.itinerary));
+        try {
+            localStorage.setItem('albania_itinerary', JSON.stringify(this.itinerary));
+        } catch (e) {
+            console.warn('LocalStorage access denied or error:', e);
+        }
         this.notify('itineraryChanged', this.itinerary);
     }
 
