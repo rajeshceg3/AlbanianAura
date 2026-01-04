@@ -53,16 +53,11 @@ const attractions = typeof attractionsData !== 'undefined' ? attractionsData : [
 var map = L.map('map', { tap: false }).setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
 
 // Initialize Mission Planner and Crowd Intel System
-let missionPlanner;
-let crowdIntelSystem;
+let missionPlanner = new MissionPlanner(map, appState, attractions);
+let crowdIntelSystem = new CrowdIntelSystem(map, attractions);
 
-setTimeout(() => {
-    missionPlanner = new MissionPlanner(map, appState, attractions);
-    crowdIntelSystem = new CrowdIntelSystem(map, attractions);
-
-    // Initialize S.C.O.U.T. UI Logic
-    initScoutInterface();
-}, 100);
+// Initialize S.C.O.U.T. UI Logic
+initScoutInterface();
 
 function initScoutInterface() {
     const crowdToggle = document.getElementById('crowdIntelToggle');
@@ -111,7 +106,7 @@ DIRECTIVES:
     itinerary.forEach((name, index) => {
         const attr = attractions.find(a => a.name === name);
         const crowd = attr.crowdStats ?
-            `Peak Crowds: ${attr.crowdStats.peakHour}:00` : "Intel N/A";
+            `Peak Crowds: ${attr.crowdStats.peakHour.toString().padStart(2, '0')}:00` : "Intel N/A";
 
         content += `
 ${index + 1}. TARGET: ${name.toUpperCase()}
@@ -299,7 +294,10 @@ function openReviewModal(attractionName) {
     ratingValueInput.value = "0"; // Reset hidden star value
     // Reset visual stars
     const stars = starRatingContainer.querySelectorAll('.star');
-    stars.forEach(star => star.classList.remove('selected'));
+    stars.forEach(star => {
+        star.classList.remove('selected');
+        star.setAttribute('aria-checked', 'false');
+    });
 
     reviewModal.style.display = 'flex';
     closeReviewModalBtn.focus();
@@ -339,7 +337,22 @@ starRatingContainer.querySelectorAll('.star').forEach(star => {
     function setRating(value) {
         ratingValueInput.value = value;
         starRatingContainer.querySelectorAll('.star').forEach(s => {
-            s.classList.toggle('selected', parseInt(s.dataset.value) <= parseInt(value));
+            const isSelected = parseInt(s.dataset.value) <= parseInt(value);
+            s.classList.toggle('selected', isSelected);
+            // For role="radio", only the specific selected value is usually checked,
+            // but for star rating, it's a bit ambiguous. Usually, the highest selected is the "value".
+            // However, visually we light up all previous ones.
+            // Semantically, if I click 4 stars, the rating is 4. So the 4th star is checked?
+            // Or is it a range?
+            // A common pattern for star ratings is that the clicked star is aria-checked="true", others false?
+            // Or maybe all up to it?
+            // Best practice: The container represents the value. But individual radio buttons?
+            // Let's set aria-checked="true" on the one matching the value, and false on others.
+            if (parseInt(s.dataset.value) === parseInt(value)) {
+                 s.setAttribute('aria-checked', 'true');
+            } else {
+                 s.setAttribute('aria-checked', 'false');
+            }
         });
     }
 
@@ -400,7 +413,10 @@ reviewForm.addEventListener('submit', function(event) {
         renderReviews(currentlyReviewedAttraction); // Re-render reviews in modal
         reviewForm.reset();
         ratingValueInput.value = "0";
-        starRatingContainer.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+        starRatingContainer.querySelectorAll('.star').forEach(s => {
+            s.classList.remove('selected');
+            s.setAttribute('aria-checked', 'false');
+        });
     }, 1500);
 
 
