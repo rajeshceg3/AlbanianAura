@@ -33,6 +33,26 @@
             <p class="mission-distance">Total Distance: <span id="missionDistance">0.0 km</span></p>
             <button id="reconBtn" class="control-button recon-btn">Execute Recon</button>
             <p><span id="targetsLabel">Targets</span>: <span id="missionCount">0</span></p>
+
+            <div class="scout-interface">
+                <hr class="tactical-divider">
+                <div class="scout-controls">
+                    <label class="switch-label">
+                        <span>Crowd Intel</span>
+                        <input type="checkbox" id="crowdIntelToggle" aria-label="Toggle Crowd Intelligence Overlay">
+                        <span class="slider round"></span>
+                    </label>
+                    <button id="exportMissionBtn" class="control-button small-btn" aria-label="Export Mission Dossier">
+                        <span class="icon">📄</span> Dossier
+                    </button>
+                </div>
+
+                <div class="time-control">
+                    <label for="missionTimeSlider">Mission Time: <span id="missionTimeDisplay">12:00</span></label>
+                    <input type="range" id="missionTimeSlider" min="6" max="23" value="12" step="1" aria-label="Adjust Mission Time">
+                </div>
+            </div>
+
             <button id="clearMissionBtn" class="control-button danger">Abort Mission</button>
         </div>
     </div>

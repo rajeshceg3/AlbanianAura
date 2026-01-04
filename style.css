@@ -804,3 +804,176 @@ body.dream-mode #dreamOverlay {
     backdrop-filter: blur(4px);
     z-index: 1000;
 }
+
+/* S.C.O.U.T. Interface Styles */
+.scout-interface {
+    margin-top: 15px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.tactical-divider {
+    border: 0;
+    height: 1px;
+    background: var(--border-light);
+    margin: 10px 0 15px 0;
+}
+
+.scout-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Toggle Switch */
+.switch-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.switch-label input {
+    display: none;
+}
+
+.slider {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px);
+}
+
+/* Small Button */
+.small-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--white);
+    border: 1px solid var(--border-light);
+}
+
+.small-btn .icon {
+    font-size: 16px;
+}
+
+/* Time Slider */
+.time-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.time-control label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+}
+
+#missionTimeDisplay {
+    font-family: monospace;
+    color: var(--accent);
+    background: rgba(184, 162, 224, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+#missionTimeSlider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    outline: none;
+}
+
+#missionTimeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.8);
+    transition: background 0.2s, transform 0.2s;
+}
+
+#missionTimeSlider::-webkit-slider-thumb:hover {
+    background: var(--accent-hover);
+    transform: scale(1.1);
+}
+
+/* Pulse Animation for High Density Areas */
+@keyframes pulse-red {
+    0% {
+        stroke-width: 2;
+        stroke-opacity: 1;
+        fill-opacity: 0.3;
+    }
+    50% {
+        stroke-width: 4;
+        stroke-opacity: 0.5;
+        fill-opacity: 0.1;
+    }
+    100% {
+        stroke-width: 2;
+        stroke-opacity: 1;
+        fill-opacity: 0.3;
+    }
+}
+
+.pulse-circle {
+    animation: pulse-red 2s infinite;
+    transform-origin: center;
+}
+
+.tactical-tooltip {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid var(--accent);
+    color: var(--white);
+    font-family: monospace;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.tactical-tooltip::before {
+    border-top-color: var(--accent);
+}
