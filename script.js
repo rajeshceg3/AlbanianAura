@@ -57,6 +57,9 @@ let missionPlanner = new MissionPlanner(map, appState, attractions);
 let crowdIntelSystem = new CrowdIntelSystem(map, attractions);
 let pathfinderSystem = new PathfinderSystem(map, attractions, crowdIntelSystem);
 
+// Initialize S.C.O.U.T. Ops Center (New Feature)
+let scoutOpsCenter = new ScoutOpsCenter(map, appState, attractions);
+
 // Initialize S.C.O.U.T. UI Logic
 initScoutInterface();
 
@@ -204,6 +207,7 @@ function generatePopupContent(attraction) {
             <button class="view-reviews-btn" data-name="${attraction.name}">${t.viewAddReviewBtn}</button>
             <button class="trivia-btn" data-name="${attraction.name}">${t.triviaButton}</button>
             <button class="${missionBtnClass}" data-name="${attraction.name}">${missionBtnText}</button>
+            <button class="drone-btn" data-name="${attraction.name}" aria-label="Deploy Drone">🚁 Deploy</button>
         </div>
         <hr style="margin: 8px 0;">
         <a href="${moreInfoLink}" target="_blank" rel="noopener noreferrer">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank" rel="noopener noreferrer">${t.bookingsLink}</a>
@@ -555,6 +559,17 @@ function attachPopupListeners(popupNode, attractionData) {
             } else {
                 appState.addToItinerary(attractionData.name);
             }
+        };
+    }
+
+    const droneButton = popupNode.querySelector('.drone-btn');
+    if (droneButton) {
+        droneButton.onclick = function() {
+             if (scoutOpsCenter && !scoutOpsCenter.isOpsActive) {
+                 scoutOpsCenter.toggleOpsCenter();
+             }
+             scoutOpsCenter.deployDrone(attractionData.name);
+             map.closePopup();
         };
     }
 }
