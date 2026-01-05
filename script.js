@@ -176,8 +176,10 @@ const allMarkers = [];
 // Helper function to generate popup content
 function generatePopupContent(attraction) {
     const t = translations[appState.language];
-    const description = attractions.find(a => a.name === attraction.name)?.description[appState.language] || `Discover the beauty of ${attraction.name}. More details coming soon!`;
-    const moreInfoLink = attractions.find(a => a.name === attraction.name)?.moreInfoLink || '#';
+    const attrData = attractions.find(a => a.name === attraction.name);
+    // Fix: Fallback to English description if current language is missing
+    const description = (attrData?.description[appState.language] || attrData?.description['en']) || `Discover the beauty of ${attraction.name}. More details coming soon!`;
+    const moreInfoLink = attrData?.moreInfoLink || '#';
     const bookingsLink = attractions.find(a => a.name === attraction.name)?.bookingsLink || '#';
 
     // Rating and Review related content
@@ -328,11 +330,13 @@ function openReviewModal(attractionName) {
 
     reviewModal.style.display = 'flex';
     closeReviewModalBtn.focus();
+    trapFocus(reviewModal);
 }
 
 function closeReviewModal() {
     reviewModal.style.display = 'none';
     currentlyReviewedAttraction = null;
+    removeTrapFocus(reviewModal);
     if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
         lastFocusedElement.focus();
         lastFocusedElement = null;
@@ -346,13 +350,17 @@ function openTriviaModal(attractionName) {
 
     const t = translations[appState.language];
     triviaModalTitle.textContent = t.triviaModalTitle || "Did you know?";
-triviaModalContent.textContent = attraction.trivia[appState.language] ?? attraction.trivia.en;
+    // Fix: Fallback to English if current language is missing
+    triviaModalContent.textContent = (attraction.trivia[appState.language] || attraction.trivia['en']) || "Trivia unavailable.";
+
     triviaModal.style.display = 'flex';
     closeTriviaModalBtn.focus();
+    trapFocus(triviaModal);
 }
 
 function closeTriviaModal() {
     triviaModal.style.display = 'none';
+    removeTrapFocus(triviaModal);
     if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
         lastFocusedElement.focus();
         lastFocusedElement = null;
@@ -480,6 +488,46 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
+
+// Accessibility: Focus Trap Logic
+function trapFocus(modal) {
+    const focusableElementsString = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+    let focusableElements = modal.querySelectorAll(focusableElementsString);
+    focusableElements = Array.prototype.slice.call(focusableElements);
+
+    const firstTabStop = focusableElements[0];
+    const lastTabStop = focusableElements[focusableElements.length - 1];
+
+    function trap(e) {
+        if (e.key === 'Tab') {
+            // Shift + Tab
+            if (e.shiftKey) {
+                if (document.activeElement === firstTabStop) {
+                    e.preventDefault();
+                    lastTabStop.focus();
+                }
+            }
+            // Tab
+            else {
+                if (document.activeElement === lastTabStop) {
+                    e.preventDefault();
+                    firstTabStop.focus();
+                }
+            }
+        }
+    }
+
+    modal.addEventListener('keydown', trap);
+    // Store the listener so we can remove it later
+    modal._trapListener = trap;
+}
+
+function removeTrapFocus(modal) {
+    if (modal._trapListener) {
+        modal.removeEventListener('keydown', modal._trapListener);
+        delete modal._trapListener;
+    }
+}
 
 
 

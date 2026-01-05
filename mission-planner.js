@@ -82,6 +82,7 @@ class MissionPlanner {
         }
 
         this.isSimulating = true;
+        // Apply class to body to trigger CSS locks (disables UI interactions)
         document.body.classList.add('recon-active');
 
         // Close sidebar for better view

@@ -1,7 +1,7 @@
 :root {
     --background: #fdfcfa;
     --text-primary: #5c5c62;
-    --text-secondary: #9a9a9f;
+    --text-secondary: #6e6e73;
     --accent: #b8a2e0;
     --accent-hover: #a68ecf;
     --white: #ffffff;
@@ -266,6 +266,14 @@ html, body { height: 100%; }
 /* Recon Mode */
 .recon-active .leaflet-control-container {
     display: none;
+}
+
+/* Disable Mission Control interactions during Recon */
+.recon-active .mission-list,
+.recon-active .mission-stats {
+    pointer-events: none;
+    opacity: 0.7;
+    filter: grayscale(100%);
 }
 
 .mission-item {
@@ -690,8 +698,18 @@ body.dream-mode #dreamOverlay {
     outline-offset: 4px;
     border-radius: 4px;
 }
-#starRatingContainer .star.selected,
-#starRatingContainer .star.hovered {
+/* Default state: empty stars */
+#starRatingContainer .star {
+    color: #dcdce0;
+}
+
+/* If container is NOT hovered, show selected stars */
+#starRatingContainer:not(:hover) .star.selected {
+    color: var(--star-gold);
+}
+
+/* If container IS hovered, ignore selected class and use hovered class */
+#starRatingContainer:hover .star.hovered {
     color: var(--star-gold);
 }
 
