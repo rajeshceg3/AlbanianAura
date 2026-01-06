@@ -82,6 +82,11 @@ class AppState {
         }
     }
 
+    setItinerary(newItinerary) {
+        this.itinerary = newItinerary;
+        this.saveItinerary();
+    }
+
     clearItinerary() {
         this.itinerary = [];
         this.saveItinerary();

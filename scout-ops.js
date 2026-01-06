@@ -23,6 +23,10 @@ class ScoutOpsCenter {
             "Flash sale at local markets near {target}."
         ];
 
+        this.appState.subscribe('languageChanged', (lang) => {
+            this.updateLanguage(lang);
+        });
+
         this.initUI();
         this.startIntelFeed();
     }
@@ -33,27 +37,31 @@ class ScoutOpsCenter {
         opsPanel.id = 'scoutOpsPanel';
         opsPanel.className = 'scout-ops-panel';
         opsPanel.setAttribute('aria-hidden', 'true');
+
+        // Initial strings based on current language
+        const t = translations[this.appState.language] || translations['en'];
+
         opsPanel.innerHTML = `
             <div class="ops-header">
-                <h3>S.C.O.U.T. OPS CENTER</h3>
+                <h3 id="opsCenterTitle">${t.opsCenterTitle}</h3>
                 <span class="status-indicator">ONLINE</span>
                 <button id="closeOpsCenter" aria-label="Close Ops Center">&times;</button>
             </div>
             <div class="ops-grid">
                 <div class="intel-feed-section">
-                    <h4>LIVE INTEL FEED</h4>
+                    <h4 id="liveIntelFeedTitle">${t.liveIntelFeed}</h4>
                     <div id="intelFeed" class="intel-feed" role="log" aria-live="polite">
-                        <div class="feed-item system">System initialized... awaiting data.</div>
+                        <div class="feed-item system" id="systemInitMsg">${t.systemInitialized}</div>
                     </div>
                 </div>
                 <div class="drone-control-section">
-                    <h4>DRONE UPLINK</h4>
+                    <h4 id="droneUplinkTitle">${t.droneUplink}</h4>
                     <div id="droneStatus" class="drone-status">
-                        <p>Active Drones: <span id="activeDroneCount">0</span>/3</p>
-                        <p>Signal Strength: <span class="signal-bar">█████</span> 100%</p>
+                        <p><span id="activeDronesLabel">${t.activeDrones}</span>: <span id="activeDroneCount">0</span>/3</p>
+                        <p><span id="signalStrengthLabel">${t.signalStrength}</span>: <span class="signal-bar">█████</span> 100%</p>
                     </div>
                     <div class="drone-actions">
-                        <p class="instruction">Select a target on map to deploy.</p>
+                        <p class="instruction" id="deployInstruction">${t.deployInstruction}</p>
                     </div>
                 </div>
             </div>
@@ -64,12 +72,49 @@ class ScoutOpsCenter {
         const toggleBtn = document.createElement('button');
         toggleBtn.id = 'opsCenterToggle';
         toggleBtn.className = 'control-button ops-toggle';
-        toggleBtn.innerHTML = '<span class="icon">📡</span> OPS CENTER';
+        toggleBtn.innerHTML = `<span class="icon">📡</span> <span id="opsCenterBtnText">${t.opsCenterBtn}</span>`;
         toggleBtn.onclick = () => this.toggleOpsCenter();
-        document.querySelector('.ui-controls').insertBefore(toggleBtn, document.getElementById('exploreBtn'));
+
+        const uiControls = document.querySelector('.ui-controls');
+        const exploreBtn = document.getElementById('exploreBtn');
+        if (uiControls && exploreBtn) {
+             uiControls.insertBefore(toggleBtn, exploreBtn);
+        } else if (uiControls) {
+             uiControls.appendChild(toggleBtn);
+        }
 
         // Event Listeners
-        document.getElementById('closeOpsCenter').addEventListener('click', () => this.toggleOpsCenter());
+        const closeBtn = document.getElementById('closeOpsCenter');
+        if (closeBtn) closeBtn.addEventListener('click', () => this.toggleOpsCenter());
+    }
+
+    updateLanguage(lang) {
+        const t = translations[lang] || translations['en'];
+
+        // Update Static Labels
+        const title = document.getElementById('opsCenterTitle');
+        if (title) title.textContent = t.opsCenterTitle;
+
+        const liveFeedTitle = document.getElementById('liveIntelFeedTitle');
+        if (liveFeedTitle) liveFeedTitle.textContent = t.liveIntelFeed;
+
+        const initMsg = document.getElementById('systemInitMsg');
+        if (initMsg) initMsg.textContent = t.systemInitialized;
+
+        const droneUplinkTitle = document.getElementById('droneUplinkTitle');
+        if (droneUplinkTitle) droneUplinkTitle.textContent = t.droneUplink;
+
+        const activeDronesLabel = document.getElementById('activeDronesLabel');
+        if (activeDronesLabel) activeDronesLabel.textContent = t.activeDrones;
+
+        const signalStrengthLabel = document.getElementById('signalStrengthLabel');
+        if (signalStrengthLabel) signalStrengthLabel.textContent = t.signalStrength;
+
+        const deployInstruction = document.getElementById('deployInstruction');
+        if (deployInstruction) deployInstruction.textContent = t.deployInstruction;
+
+        const opsCenterBtnText = document.getElementById('opsCenterBtnText');
+        if (opsCenterBtnText) opsCenterBtnText.textContent = t.opsCenterBtn;
     }
 
     toggleOpsCenter() {
@@ -92,18 +137,17 @@ class ScoutOpsCenter {
     }
 
     generateRandomEvent() {
+        if (!this.attractions || this.attractions.length === 0) return;
+
         const target = this.attractions[Math.floor(Math.random() * this.attractions.length)];
+        // Ideally intelEvents should also be translated, but they are random simulation strings.
+        // For now, we keep them in English as "Intercepted Chatter" style, or we could add them to translations.
+        // Let's assume they remain English for "Realism" or simplicity in this refactor.
         const template = this.intelEvents[Math.floor(Math.random() * this.intelEvents.length)];
         const message = template.replace('{target}', target.name);
         const timestamp = new Date().toLocaleTimeString([], { hour12: false });
 
         this.addLogEntry(`[${timestamp}] ${message}`, 'event');
-
-        // Randomly affect crowd density (simulation)
-        if (message.includes("Crowd") || message.includes("Festival")) {
-            // This would hook into CrowdIntelSystem if we wanted to be fancy,
-            // for now it's just flavor text.
-        }
     }
 
     addLogEntry(text, type = 'info') {
@@ -125,8 +169,10 @@ class ScoutOpsCenter {
      * @param {string} attractionName
      */
     deployDrone(attractionName) {
+        const t = translations[this.appState.language] || translations['en'];
+
         if (this.activeDrones.length >= 3) {
-            alert("Maximum drone capacity reached. Recall a drone first.");
+            alert(t.droneMaxCapacity);
             return;
         }
 
@@ -146,7 +192,7 @@ class ScoutOpsCenter {
 
         this.activeDrones.push({ name: attractionName, marker: droneMarker });
         this.updateDroneCount();
-        this.addLogEntry(`Launching drone to ${attractionName}...`, 'system');
+        this.addLogEntry(t.launchingDrone.replace('{target}', attractionName), 'system');
 
         // Animate
         let progress = 0;
@@ -165,7 +211,8 @@ class ScoutOpsCenter {
     }
 
     onDroneArrival(attractionName, droneMarker) {
-        this.addLogEntry(`Drone arrived at ${attractionName}. Scanning...`, 'success');
+        const t = translations[this.appState.language] || translations['en'];
+        this.addLogEntry(t.droneArrived.replace('{target}', attractionName), 'success');
 
         setTimeout(() => {
             // Remove drone
@@ -179,17 +226,26 @@ class ScoutOpsCenter {
     }
 
     unlockIntel(attractionName) {
-        // Find attraction and get hidden info (simulated for now)
+        const t = translations[this.appState.language] || translations['en'];
         const target = this.attractions.find(a => a.name === attractionName);
 
         // Generate dynamic "Live" stats
         const liveDensity = Math.floor(Math.random() * 100);
         const waitTime = Math.floor(Math.random() * 45);
 
-        const intelMsg = `SCAN COMPLETE: ${attractionName} | Density: ${liveDensity}% | Wait: ${waitTime}m`;
+        const intelMsg = t.scanComplete
+            .replace('{target}', attractionName)
+            .replace('{density}', liveDensity)
+            .replace('{wait}', waitTime);
+
         this.addLogEntry(intelMsg, 'highlight');
 
-        alert(`CLASSIFIED INTEL UNLOCKED FOR ${attractionName.toUpperCase()}:\n\nCurrent Crowd Density: ${liveDensity}%\nEstimated Wait Time: ${waitTime} mins\n\nSecret: Locals recommend visiting the nearby back-alley cafe for the best view.`);
+        const alertMsg = t.intelUnlockedAlert
+            .replace('{target}', attractionName.toUpperCase())
+            .replace('{density}', liveDensity)
+            .replace('{wait}', waitTime);
+
+        alert(alertMsg);
     }
 
     updateDroneCount() {

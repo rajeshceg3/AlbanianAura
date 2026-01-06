@@ -387,6 +387,14 @@ body.dream-mode #dreamOverlay {
     z-index: 1000 !important;
 }
 
+/* Crowd Intel Active State */
+body.crowd-intel-active #map {
+    filter: saturate(0.5) contrast(1.1) brightness(0.9);
+}
+body.crowd-intel-active .leaflet-layer {
+    opacity: 0.8;
+}
+
 .custom-marker:hover {
     transform: rotate(-45deg) scale(1.1);
 }
@@ -858,9 +866,13 @@ body.dream-mode #dreamOverlay {
 
 .switch-label input {
     position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+    clip: rect(0 0 0 0);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    white-space: nowrap;
+    border: 0;
 }
 
 .slider {
