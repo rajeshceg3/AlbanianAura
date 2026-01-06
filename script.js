@@ -60,6 +60,9 @@ let pathfinderSystem = new PathfinderSystem(map, attractions, crowdIntelSystem);
 // Initialize S.C.O.U.T. Ops Center (New Feature)
 let scoutOpsCenter = new ScoutOpsCenter(map, appState, attractions);
 
+// Initialize Logistics System (Temporal Operations Grid)
+let logisticsSystem = new LogisticsSystem(map, appState, attractions);
+
 // Initialize S.C.O.U.T. UI Logic
 initScoutInterface();
 
