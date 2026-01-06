@@ -97,13 +97,7 @@ function initScoutInterface() {
             const optimized = pathfinderSystem.optimizeRoute(appState.itinerary);
 
             // Update state
-            // Since we can't easily replace the whole array via AppState methods without a setter,
-            // we will clear and re-add. But better if AppState had a setter or we modify the array in place?
-            // Actually, modifying appState.itinerary directly and calling saveItinerary works because it's a reference?
-            // Wait, appState.itinerary is an array.
-
-            appState.itinerary = optimized;
-            appState.saveItinerary();
+            appState.setItinerary(optimized);
 
             // Visual feedback
             optimizeBtn.innerHTML = '<span class="icon">✓</span> Optimized';

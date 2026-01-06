@@ -49,7 +49,20 @@ const translations = {
         moveDownAria: "Move {name} down",
         missionAborted: "Mission aborted: No targets selected.",
         totalDistance: "Total Distance",
-        executeRecon: "Execute Recon"
+        executeRecon: "Execute Recon",
+        opsCenterTitle: "S.C.O.U.T. OPS CENTER",
+        systemInitialized: "System initialized... awaiting data.",
+        droneUplink: "DRONE UPLINK",
+        liveIntelFeed: "LIVE INTEL FEED",
+        activeDrones: "Active Drones",
+        signalStrength: "Signal Strength",
+        deployInstruction: "Select a target on map to deploy.",
+        opsCenterBtn: "OPS CENTER",
+        droneMaxCapacity: "Maximum drone capacity reached. Recall a drone first.",
+        launchingDrone: "Launching drone to {target}...",
+        droneArrived: "Drone arrived at {target}. Scanning...",
+        scanComplete: "SCAN COMPLETE: {target} | Density: {density}% | Wait: {wait}m",
+        intelUnlockedAlert: "CLASSIFIED INTEL UNLOCKED FOR {target}:\n\nCurrent Crowd Density: {density}%\nEstimated Wait Time: {wait} mins\n\nSecret: Locals recommend visiting the nearby back-alley cafe for the best view."
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -101,6 +114,19 @@ const translations = {
         moveDownAria: "Lëviz {name} poshtë",
         missionAborted: "Misioni u anulua: Asnjë objektiv i zgjedhur.",
         totalDistance: "Distanca Totale",
-        executeRecon: "Ekzekuto Zbulimin"
+        executeRecon: "Ekzekuto Zbulimin",
+        opsCenterTitle: "QENDRA OPERACIONALE S.C.O.U.T.",
+        systemInitialized: "Sistemi u inicializua... në pritje të të dhënave.",
+        droneUplink: "LIDHJA E DRONIT",
+        liveIntelFeed: "FURNIZIMI I DREJTPËRDREJTË I INTELIGJENCËS",
+        activeDrones: "Dronë Aktivë",
+        signalStrength: "Fuqia e Sinjalit",
+        deployInstruction: "Zgjidhni një objektiv në hartë për të vendosur.",
+        opsCenterBtn: "QENDRA OPS",
+        droneMaxCapacity: "Kapaciteti maksimal i dronëve u arrit. Ktheni një dron fillimisht.",
+        launchingDrone: "Duke lëshuar dronin në {target}...",
+        droneArrived: "Droni mbërriti në {target}. Duke skanuar...",
+        scanComplete: "SKANIM I PLOTË: {target} | Dendësia: {density}% | Pritja: {wait}m",
+        intelUnlockedAlert: "INTELIGJENCA E KLASIFIKUAR U HAP PËR {target}:\n\nDendësia Aktuale e Turmës: {density}%\nKoha e Vlerësuar e Pritjes: {wait} minuta\n\nSekret: Vendasit rekomandojnë vizitën në kafenenë e fshehur aty pranë për pamjen më të mirë."
     }
 };
