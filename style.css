@@ -1251,3 +1251,142 @@ input:checked + .slider:before {
     background: #00ffcc;
     color: #2c2c35;
 }
+
+/* MISSION TIMELINE STYLES (T.O.G.) */
+.mission-timeline {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-light);
+    background: #fdfcfa;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.timeline-header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.start-time-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.start-time-control input {
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-family: monospace;
+    color: var(--accent);
+    background: white;
+}
+
+.timeline-list {
+    position: relative;
+    padding-left: 15px;
+    border-left: 2px solid var(--border-light);
+    margin-left: 5px;
+}
+
+.timeline-node {
+    position: relative;
+    margin-bottom: 15px;
+    padding-left: 15px;
+}
+
+.timeline-node::before {
+    content: '';
+    position: absolute;
+    left: -21px; /* Align with border-left */
+    top: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--text-secondary);
+}
+
+.timeline-node.start::before { border-color: #00ffcc; background: #00ffcc; }
+.timeline-node.end::before { border-color: #00ffcc; background: #00ffcc; }
+.timeline-node.target::before { border-color: var(--accent); }
+
+.node-time {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.node-content {
+    background: var(--white);
+    padding: 8px 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-light);
+}
+
+.node-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.node-details {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.risk-badge {
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+.risk-badge.low { background: #ccffcc; color: #006600; }
+.risk-badge.moderate { background: #fff2cc; color: #996600; }
+.risk-badge.high { background: #ffcccc; color: #cc0000; }
+.risk-badge.unknown { background: #eee; color: #999; }
+
+.node-departure {
+    font-size: 10px;
+    color: #aaa;
+    margin-top: 4px;
+    font-style: italic;
+    border-top: 1px dashed var(--border-light);
+    padding-top: 2px;
+}
+
+.timeline-segment {
+    margin: 10px 0 10px 15px;
+    font-size: 11px;
+    color: #bbb;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.travel-icon {
+    font-size: 10px;
+}
+
+.empty-timeline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
