@@ -157,7 +157,13 @@ class CrowdIntelSystem {
     setHour(hour) {
         this.currentHour = hour;
         if (this.active) {
-            this.updateVisualization();
+            if (this.rafId) {
+                cancelAnimationFrame(this.rafId);
+            }
+            this.rafId = requestAnimationFrame(() => {
+                this.updateVisualization();
+                this.rafId = null;
+            });
         }
     }
 
