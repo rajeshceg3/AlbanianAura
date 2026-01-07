@@ -46,6 +46,8 @@ let lastFocusedElement = null; // For accessibility: track element that opened m
 // Define attractions
 if (typeof attractionsData === 'undefined') {
     console.error('attractionsData is not defined. Ensure data.js is loaded correctly.');
+    // Fallback if data is missing to prevent crash
+    window.attractionsData = [];
 }
 const attractions = typeof attractionsData !== 'undefined' ? attractionsData : [];
 
@@ -97,6 +99,13 @@ function initScoutInterface() {
 
     if (optimizeBtn) {
         optimizeBtn.addEventListener('click', () => {
+            if (appState.itinerary.length <= 2) {
+                // UX: No optimization needed for 0-2 items
+                const t = translations[appState.language];
+                showToast(t.noOptimizationNeeded || "Not enough targets to optimize.");
+                return;
+            }
+
             const optimized = pathfinderSystem.optimizeRoute(appState.itinerary);
 
             // Update state
@@ -161,7 +170,9 @@ ${index + 1}. TARGET: ${name.toUpperCase()}
 
 // Add a tile layer to the map (using a pastel-themed layer)
 const baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
 }).addTo(map);
 
 // Using CartoDB Dark Matter for the "Generative" mode as a stable alternative to Stamen Watercolor
@@ -194,17 +205,34 @@ function generatePopupContent(attraction) {
     const missionBtnText = isInMission ? t.removeFromItinerary : t.addToItinerary;
     const missionBtnClass = isInMission ? 'mission-btn remove' : 'mission-btn add';
 
+    // Security: Use DOM creation instead of innerHTML for user content where possible,
+    // or ensure content is safe. Here description is from data.js (static), but good to be careful.
+    // We will build the popup content as a string but ensure no user input is directly injected.
+    // The only dynamic user part here is ratings which are numbers.
+    // However, attraction.name could theoretically be unsafe if data.js was dynamic.
+    // For now, we trust data.js but sanitize just in case.
+
+    // Function to escape HTML
+    const escapeHtml = (unsafe) => {
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    }
+
     return `
-        <h3>${attraction.name}</h3>
-        <p>${description}</p>
+        <h3>${escapeHtml(attraction.name)}</h3>
+        <p>${escapeHtml(description)}</p>
         <div class="popup-rating-summary">
             <span class="avg-rating-text">${ratingDisplay}</span>
         </div>
         <div class="popup-actions">
-            <button class="view-reviews-btn" data-name="${attraction.name}">${t.viewAddReviewBtn}</button>
-            <button class="trivia-btn" data-name="${attraction.name}">${t.triviaButton}</button>
-            <button class="${missionBtnClass}" data-name="${attraction.name}">${missionBtnText}</button>
-            <button class="drone-btn" data-name="${attraction.name}" aria-label="Deploy Drone">🚁 Deploy</button>
+            <button class="view-reviews-btn" data-name="${escapeHtml(attraction.name)}">${t.viewAddReviewBtn}</button>
+            <button class="trivia-btn" data-name="${escapeHtml(attraction.name)}">${t.triviaButton}</button>
+            <button class="${missionBtnClass}" data-name="${escapeHtml(attraction.name)}">${missionBtnText}</button>
+            <button class="drone-btn" data-name="${escapeHtml(attraction.name)}" aria-label="Deploy Drone">🚁 Deploy</button>
         </div>
         <hr style="margin: 8px 0;">
         <a href="${moreInfoLink}" target="_blank" rel="noopener noreferrer">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank" rel="noopener noreferrer">${t.bookingsLink}</a>
@@ -292,6 +320,7 @@ function renderReviews(attractionName) {
 
         const userNameP = document.createElement('p');
         userNameP.className = 'user-name';
+        // Security: textContent escapes HTML automatically, so this is safe even if review.user contains script
         userNameP.textContent = (review.user || t.anonymousUser) + ' ';
 
         const starsSpan = document.createElement('span');
@@ -303,7 +332,8 @@ function renderReviews(attractionName) {
 
         const reviewTextP = document.createElement('p');
         reviewTextP.className = 'review-text';
-        reviewTextP.textContent = review.review; // Safe text insertion
+        // Security: textContent escapes HTML automatically, so this is safe
+        reviewTextP.textContent = review.review;
 
         reviewItem.appendChild(userNameP);
         reviewItem.appendChild(reviewTextP);
@@ -390,6 +420,8 @@ starRatingContainer.querySelectorAll('.star').forEach(star => {
                  s.setAttribute('aria-checked', 'false');
             }
         });
+        // Accessibility: Update live region or help text if needed, but aria-checked handles the state.
+        // We ensure the container has a label.
     }
 
     star.addEventListener('click', function() {
@@ -432,9 +464,9 @@ reviewForm.addEventListener('submit', function(event) {
     }
 
     const newReview = {
-        user: userName,
+        user: userName, // stored as is, but must be escaped when rendered
         stars: rating,
-        review: reviewText,
+        review: reviewText, // stored as is, but must be escaped when rendered
         date: new Date().toISOString() // Optional: store review date
     };
 
@@ -644,9 +676,43 @@ function toggleDreamMode() {
         if (overlay) {
             overlay.remove();
         }
+
+        // UX: Ensure Generative Mode button state reflects reality
+        // If we kept Generative Mode on (because it was on before), button should be active.
+        // If we turned it off (because it was off before), button should be inactive.
+        generativeModeBtn.classList.toggle('active', generativeMode);
     }
 }
 
+
+// --- Toast Notification ---
+function showToast(message, duration = 3000) {
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        document.body.appendChild(toastContainer);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toast.setAttribute('role', 'alert');
+
+    toastContainer.appendChild(toast);
+
+    // Trigger reflow to enable transition
+    requestAnimationFrame(() => {
+        toast.classList.add('show');
+    });
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        toast.addEventListener('transitionend', () => {
+            toast.remove();
+        });
+    }, duration);
+}
 
 // --- Language Functions ---
 function setLanguage(lang) {
@@ -776,7 +842,20 @@ function filterMarkers() {
     });
 }
 
-searchBox.addEventListener('input', filterMarkers);
+// Performance: Debounce search input to prevent layout thrashing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+searchBox.addEventListener('input', debounce(filterMarkers, 300));
 typeFilter.addEventListener('change', filterMarkers);
 
 // --- Mission Control Logic ---
@@ -786,6 +865,14 @@ function toggleMissionControl() {
     missionControlToggle.classList.toggle('active');
     const isHidden = !missionControlPanel.classList.contains('open');
     missionControlPanel.setAttribute('aria-hidden', isHidden);
+    if (!isHidden) {
+        // Accessibility: Move focus to the panel when opened
+        const closeBtn = document.getElementById('closeMissionControl');
+        if (closeBtn) closeBtn.focus();
+    } else {
+        // Return focus to toggle button when closed
+        missionControlToggle.focus();
+    }
 }
 
 missionControlToggle.addEventListener('click', toggleMissionControl);
