@@ -65,11 +65,15 @@ let scoutOpsCenter = new ScoutOpsCenter(map, appState, attractions);
 // Initialize Logistics System (Temporal Operations Grid)
 let logisticsSystem = new LogisticsSystem(map, appState, attractions);
 
+// Initialize SIGINT System
+let sigintSystem = new SigintSystem(map, appState, attractions);
+
 // Initialize S.C.O.U.T. UI Logic
 initScoutInterface();
 
 function initScoutInterface() {
     const crowdToggle = document.getElementById('crowdIntelToggle');
+    const sigintToggle = document.getElementById('sigintToggle');
     const timeSlider = document.getElementById('missionTimeSlider');
     const timeDisplay = document.getElementById('missionTimeDisplay');
     const exportBtn = document.getElementById('exportMissionBtn');
@@ -80,6 +84,12 @@ function initScoutInterface() {
             crowdIntelSystem.toggleSystem(e.target.checked);
             // Refresh profile if available
             pathfinderSystem.renderProfile(appState.itinerary, 'threatProfileGraph');
+        });
+    }
+
+    if (sigintToggle) {
+        sigintToggle.addEventListener('change', (e) => {
+            sigintSystem.toggleSystem(e.target.checked);
         });
     }
 
@@ -514,12 +524,27 @@ reviewForm.addEventListener('submit', function(event) {
 
 closeReviewModalBtn.addEventListener('click', closeReviewModal);
 closeTriviaModalBtn.addEventListener('click', closeTriviaModal);
+
+// Close SIGINT Modal logic
+const closeSigintModalBtn = document.getElementById('closeSigintModal');
+const sigintModal = document.getElementById('sigintModal');
+
+if (closeSigintModalBtn) {
+    closeSigintModalBtn.addEventListener('click', () => {
+        sigintModal.classList.remove('active');
+    });
+}
+
 window.addEventListener('click', function(event) { // Close modal if clicked outside
     if (event.target === reviewModal) {
         closeReviewModal();
     }
     if (event.target === triviaModal) {
         closeTriviaModal();
+    }
+    // Note: SIGINT Modal uses 'active' class, not display style directly in CSS logic provided
+    if (event.target === sigintModal) {
+        sigintModal.classList.remove('active');
     }
 });
 

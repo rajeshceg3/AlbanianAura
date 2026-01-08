@@ -897,3 +897,158 @@ input:checked + .slider::before {
         border-bottom: 1px solid rgba(0, 255, 204, 0.3);
     }
 }
+
+/* --- SIGINT System --- */
+.sigint-active #map {
+    filter: hue-rotate(45deg) contrast(1.2);
+}
+
+.sigint-marker {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid;
+    border-radius: 50%;
+    animation: radarPulse 2s infinite;
+}
+
+.signal-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px currentColor;
+}
+
+@keyframes radarPulse {
+    0% { width: 10px; height: 10px; opacity: 1; border-width: 2px; }
+    100% { width: 60px; height: 60px; opacity: 0; border-width: 0px; }
+}
+
+/* Terminal Modal */
+.terminal-modal {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.terminal-content {
+    background: #000;
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+    font-family: 'Courier New', monospace;
+    box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+}
+
+.terminal-content h3 {
+    border-bottom: 1px dashed #00ffcc;
+    padding-bottom: 10px;
+}
+
+.terminal-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.signal-viz {
+    border: 1px solid #004d3d;
+    background: #001a14;
+    padding: 5px;
+}
+
+.encryption-status {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+}
+
+.instruction {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+}
+
+.freq-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #333;
+    outline: none;
+}
+
+.freq-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 10px;
+    background: #00ffcc;
+    cursor: pointer;
+}
+
+.terminal-btn {
+    background: transparent;
+    border: 1px solid #00ffcc;
+    color: #00ffcc;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: not-allowed;
+    opacity: 0.5;
+    transition: all 0.3s;
+}
+
+.terminal-btn.ready {
+    background: rgba(0, 255, 204, 0.2);
+    cursor: pointer;
+    opacity: 1;
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+.terminal-btn:hover.ready {
+    background: #00ffcc;
+    color: #000;
+}
+
+/* Decrypted Intel */
+.intel-dossier {
+    border: 1px solid #33ff99;
+    padding: 15px;
+    background: rgba(51, 255, 153, 0.05);
+}
+
+.intel-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #33ff99;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.intel-body.typewriter {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.intel-footer {
+    margin-top: 15px;
+    font-size: 0.7rem;
+    text-align: right;
+    opacity: 0.7;
+}
+
+.blink {
+    animation: blink 1s infinite;
+}
