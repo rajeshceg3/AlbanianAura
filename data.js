@@ -210,3 +210,7 @@ const attractionsData = [
         bookingsLink: 'https://www.booking.com/attraction/al/butrint-national-park.html'
     }
 ];
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { attractionsData };
+}

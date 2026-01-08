@@ -333,3 +333,7 @@ class PathfinderSystem {
         container.innerHTML = svgContent;
     }
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { MissionPlanner, CrowdIntelSystem, PathfinderSystem };
+}
