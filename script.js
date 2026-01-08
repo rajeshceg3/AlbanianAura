@@ -123,7 +123,7 @@ function initScoutInterface() {
 function generateMissionDossier() {
     const itinerary = appState.itinerary;
     if (itinerary.length === 0) {
-        alert("Mission Dossier Aborted: No targets designated.");
+        showToast("Mission Dossier Aborted: No targets designated.");
         return;
     }
 
@@ -190,8 +190,8 @@ function generatePopupContent(attraction) {
     const attrData = attractions.find(a => a.name === attraction.name);
     // Fix: Fallback to English description if current language is missing
     const description = (attrData?.description[appState.language] || attrData?.description['en']) || `Discover the beauty of ${attraction.name}. More details coming soon!`;
-    const moreInfoLink = attrData?.moreInfoLink || '#';
-    const bookingsLink = attractions.find(a => a.name === attraction.name)?.bookingsLink || '#';
+    const moreInfoLink = sanitizeUrl(attrData?.moreInfoLink) || '#';
+    const bookingsLink = sanitizeUrl(attractions.find(a => a.name === attraction.name)?.bookingsLink) || '#';
 
     // Rating and Review related content
     const reviews = appState.getReviews(attraction.name);
@@ -237,6 +237,19 @@ function generatePopupContent(attraction) {
         <hr style="margin: 8px 0;">
         <a href="${moreInfoLink}" target="_blank" rel="noopener noreferrer">${t.moreInfoLink}</a> | <a href="${bookingsLink}" target="_blank" rel="noopener noreferrer">${t.bookingsLink}</a>
     `;
+}
+
+function sanitizeUrl(url) {
+    if (!url) return '';
+    try {
+        const parsed = new URL(url);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+            return url;
+        }
+    } catch (e) {
+        // invalid url
+    }
+    return '#';
 }
 
 // Helper function to create a custom icon
@@ -455,11 +468,11 @@ reviewForm.addEventListener('submit', function(event) {
     const reviewText = reviewTextInput.value.trim();
 
     if (rating === 0) {
-        alert(t.selectRatingAlert); // Or display this message in a less intrusive way
+        showToast(t.selectRatingAlert); // Or display this message in a less intrusive way
         return;
     }
     if (!reviewText) {
-        alert(t.writeReviewAlert); // Or display this message in a less intrusive way
+        showToast(t.writeReviewAlert); // Or display this message in a less intrusive way
         return;
     }
 

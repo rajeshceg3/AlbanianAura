@@ -77,7 +77,7 @@ class MissionPlanner {
         const itinerary = this.appState.itinerary;
         if (itinerary.length === 0) {
             const t = translations[this.appState.language];
-            alert(t.missionAborted);
+            showToast(t.missionAborted);
             return;
         }
 

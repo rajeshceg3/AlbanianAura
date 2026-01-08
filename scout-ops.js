@@ -172,7 +172,7 @@ class ScoutOpsCenter {
         const t = translations[this.appState.language] || translations['en'];
 
         if (this.activeDrones.length >= 3) {
-            alert(t.droneMaxCapacity);
+            showToast(t.droneMaxCapacity);
             return;
         }
 
@@ -245,7 +245,7 @@ class ScoutOpsCenter {
             .replace('{density}', liveDensity)
             .replace('{wait}', waitTime);
 
-        alert(alertMsg);
+        showToast(alertMsg, 8000); // Longer duration for detailed intel
     }
 
     updateDroneCount() {
