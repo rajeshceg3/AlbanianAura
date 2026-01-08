@@ -42,6 +42,13 @@
                         <input type="checkbox" id="crowdIntelToggle" aria-label="Toggle Crowd Intelligence Overlay">
                         <span class="slider round"></span>
                     </label>
+                    <label class="switch-label">
+                        <span>SIGINT Scan</span>
+                        <input type="checkbox" id="sigintToggle" aria-label="Toggle Signal Intelligence Scanner">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div style="margin-bottom: 10px; display: flex; justify-content: flex-end;">
                     <button id="exportMissionBtn" class="control-button small-btn" aria-label="Export Mission Dossier">
                         <span class="icon">📄</span> Dossier
                     </button>
@@ -133,6 +140,17 @@
     </div>
   </div>
 
+  <!-- SIGINT Modal -->
+  <div id="sigintModal" class="modal terminal-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="sigintTitle">
+    <div class="modal-content terminal-content">
+        <button class="close-button" id="closeSigintModal" aria-label="Close modal">&times;</button>
+        <h3 id="sigintTitle">SIGNAL INTERCEPT</h3>
+        <div id="sigintContent">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="data.js"></script>
   <script src="state.js"></script>
@@ -140,6 +158,7 @@
   <script src="mission-planner.js"></script>
   <script src="logistics.js"></script>
   <script src="scout-ops.js"></script>
+  <script src="sigint.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

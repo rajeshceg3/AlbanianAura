@@ -3,7 +3,43 @@ class AppState {
         this.language = 'en';
         this.reviews = this.loadReviews();
         this.itinerary = this.loadItinerary();
+        this.unlockedSignals = this.loadUnlockedSignals();
+        this.clearanceLevel = this.calculateClearanceLevel();
         this.listeners = {};
+    }
+
+    loadUnlockedSignals() {
+        try {
+            const saved = localStorage.getItem('albania_sigint');
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            console.warn('LocalStorage access denied or error:', e);
+            return [];
+        }
+    }
+
+    saveUnlockedSignals() {
+        try {
+            localStorage.setItem('albania_sigint', JSON.stringify(this.unlockedSignals));
+        } catch (e) {
+            console.warn('LocalStorage access denied or error:', e);
+        }
+    }
+
+    unlockSignal(attractionName) {
+        if (!this.unlockedSignals.includes(attractionName)) {
+            this.unlockedSignals.push(attractionName);
+            this.saveUnlockedSignals();
+            this.clearanceLevel = this.calculateClearanceLevel();
+            this.notify('signalUnlocked', attractionName);
+            this.notify('clearanceLevelChanged', this.clearanceLevel);
+        }
+    }
+
+    calculateClearanceLevel() {
+        // Simple logic: 1 level per 2 unlocked signals, starting at 1, max 5.
+        const unlockedCount = this.unlockedSignals.length;
+        return Math.min(5, Math.floor(unlockedCount / 2) + 1);
     }
 
     loadReviews() {
