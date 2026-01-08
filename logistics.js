@@ -194,3 +194,7 @@ class LogisticsSystem {
         container.appendChild(segment);
     }
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { LogisticsSystem };
+}

@@ -129,3 +129,7 @@ class AppState {
 }
 
 const appState = new AppState();
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { AppState };
+}
