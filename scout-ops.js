@@ -125,12 +125,29 @@ class ScoutOpsCenter {
         panel.classList.toggle('active', this.isOpsActive);
         panel.setAttribute('aria-hidden', !this.isOpsActive);
         toggle.classList.toggle('active', this.isOpsActive);
+
+        if (this.isOpsActive) {
+            // Accessibility: Trap focus
+            if (typeof trapFocus === 'function') {
+                trapFocus(panel);
+            }
+            // Focus close button or first element
+            const closeBtn = document.getElementById('closeOpsCenter');
+            if (closeBtn) closeBtn.focus();
+        } else {
+            if (typeof removeTrapFocus === 'function') {
+                removeTrapFocus(panel);
+            }
+            toggle.focus();
+        }
     }
 
     startIntelFeed() {
+        if (this.intelInterval) clearInterval(this.intelInterval);
+
         // Simulate incoming intel every 10-30 seconds
-        setInterval(() => {
-            if (Math.random() > 0.6) {
+        this.intelInterval = setInterval(() => {
+            if (this.isOpsActive && Math.random() > 0.6) {
                 this.generateRandomEvent();
             }
         }, 15000);

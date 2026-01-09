@@ -1,66 +1,53 @@
-# Tactical Intelligence Briefing / Bug Report
-**Date:** 2024-05-22
+# Tactical Intelligence Briefing: AlbanianAura Vulnerability Assessment
+
+**Date:** [Current Date]
 **Status:** CLASSIFIED
-**Prepared By:** Task Force QA Veteran (Jules)
+**Prepared By:** Jules (Task Force Veteran QA)
 
-## Executive Summary
-A comprehensive audit of the application's source code has revealed multiple vulnerabilities ranging from Critical Security Risks to User Experience degradation. Immediate remediation is required to ensure operational integrity.
+## 1. Executive Summary
+The "AlbanianAura" application is operational but suffers from critical architectural fragility, security risks, and accessibility violations. While unit tests pass, the codebase relies heavily on global state and implicit initialization order, making it prone to regression. Several memory leaks and race conditions were identified in the sub-systems (SIGINT, ScoutOps).
 
----
+## 2. Vulnerability Assessment
 
-## 1. Architectural Vulnerabilities
-*   **Severity:** High
-*   **Issue:** Hard dependency on Global Scope (`attractionsData`).
-*   **Details:** `script.js` relies on `attractionsData` being loaded into the global scope. If `data.js` fails to load or loads after `script.js`, the application will crash.
-*   **Recommendation:** Implement module pattern or strict loading order checks. For now, ensure robust error handling if data is missing.
+### Critical Severity (Mission Failure Risk)
+1.  **Event Listener Leaks (Memory & Logic):**
+    *   **Location:** `sigint.js`, `initDecryptionGame`.
+    *   **Issue:** Every time the terminal is opened, new event listeners are attached to `decryptBtn` and `slider` without removing old ones.
+    *   **Impact:** Multiple decryption processes trigger simultaneously, exponentially increasing operations and potentially crashing the browser session.
+2.  **Focus Traps Missing (Accessibility/Compliance):**
+    *   **Location:** `sigint.js`, `scout-ops.js`.
+    *   **Issue:** Modals open without trapping keyboard focus. Users can tab out of the modal into the background map, violating WCAG guidelines.
+    *   **Impact:** Severe degradation for users relying on assistive technology.
 
-## 2. Loading & Resources
-*   **Severity:** Medium
-*   **Issue:** CSP Violation Risk.
-*   **Details:** `Content-Security-Policy` allows `https://*.basemaps.cartocdn.com` but strict CSP might block subdomains if not explicitly defined or if wildcards are restricted in some environments.
-*   **Issue:** CSS Content Missing.
-*   **Details:** `style.css`: `.slider:before` has `content: "";` which is correct, but `.ops-grid h4` has `color: rgba(255, 255, 255, 0.7)` which might be low contrast on some monitors.
+### High Severity (Operational Risk)
+3.  **Global State Dependency (Architecture):**
+    *   **Location:** All modules (`MissionPlanner`, `CrowdIntelSystem`, etc.).
+    *   **Issue:** Heavy reliance on global variables (`attractionsData`, `appState`, `map`) makes isolation testing difficult and component reuse impossible.
+    *   **Impact:** High risk of side-effects when modifying core logic.
+4.  **Security Policy Weakness:**
+    *   **Location:** `index.html`.
+    *   **Issue:** CSP includes `'unsafe-inline'` for styles.
+    *   **Impact:** Increased attack surface for XSS, though mitigated somewhat by code practices.
+5.  **Race Condition in Recon Mode:**
+    *   **Location:** `MissionPlanner.js`, `flyToTarget`.
+    *   **Issue:** Relies on `moveend` event. If the map is already at the target, the event may not fire, causing the simulation to hang.
+    *   **Impact:** Recon mode stalls, requiring page refresh.
 
-## 3. Accessibility (A11y)
-*   **Severity:** High
-*   **Issue:** Mission Control Focus Management.
-*   **Details:** `missionControlPanel` toggles `aria-hidden` but does not properly manage focus moving into/out of the panel when opened/closed.
-*   **Issue:** Star Rating Ambiguity.
-*   **Details:** The "visual" hover state of stars conflicts with the "checked" state in `script.js`. The ARIA attributes (`aria-checked`) need to accurately reflect the *selected* value, not just the hovered one.
-*   **Issue:** Contrast Ratio.
-*   **Details:** `.ops-grid h4` color `rgba(255, 255, 255, 0.7)` on `#1a1a1e` background. Contrast ratio is ~4.9:1, which is acceptable for AA, but could be better. However, `review-item .review-text` color `var(--text-secondary)` (#6e6e73) on white is ~5.4:1 (Pass).
-*   **Issue:** Missing Form Labels.
-*   **Details:** Review form inputs have labels, but dynamic elements might miss them.
+### Medium Severity (Tactical Friction)
+6.  **Interval Leaks:**
+    *   **Location:** `scout-ops.js`.
+    *   **Issue:** `setInterval` for intel feed runs indefinitely.
+    *   **Impact:** Performance degradation over long sessions.
+7.  **UX Inconsistency:**
+    *   **Location:** `script.js` vs modules.
+    *   **Issue:** Some modals close on `Escape` key (Review, Trivia), but SIGINT and Ops Center might not be fully wired up to the same global handler or have their own conflicting ones.
 
-## 4. User Experience (UX)
-*   **Severity:** Medium
-*   **Issue:** "Dream Mode" State Sync.
-*   **Details:** Toggling Dream Mode might leave "Generative Mode" button in an inconsistent state if not carefully managed (e.g. if user turns off Dream Mode, does Generative stay on?). The logic exists but needs verification.
-*   **Issue:** Search Debouncing.
-*   **Details:** `searchBox` filters on every `input` event. With many markers, this causes layout thrashing.
-*   **Issue:** Alert Boxes.
-*   **Details:** Uses `alert()` for errors (e.g., "Mission Dossier Aborted"). This stops the thread and is poor UX. Should use custom modals or toasts.
+## 3. Recommended Remediation Plan
+1.  **Refactor SIGINT System:** Implement proper cleanup of event listeners and animation frames.
+2.  **Implement Universal Focus Trap:** Expose the `trapFocus` utility from `script.js` or duplicate it safely in modules to ensure all modals comply.
+3.  **Harden Recon Mode:** Add a timeout or check distance before waiting for `moveend` in `flyToTarget`.
+4.  **Secure CSP:** Move inline styles to `style.css` where possible (though strictly limited in scope here).
+5.  **Fix Interval Leaks:** Clear intervals on system shutdown/toggle.
 
-## 5. Security Breaches
-*   **Severity:** Critical
-*   **Issue:** XSS via `innerHTML`.
-*   **Details:** `generatePopupContent` uses `innerHTML`. If `attraction.description` or `name` contains malicious script (even if currently static), it's a vulnerability. `renderReviews` uses `innerHTML` for stars (safe) but `textContent` for text (safe). However, `userName` is inserted via `textContent` but then appended.
-*   **Mitigation:** Ensure all dynamic text insertion uses `textContent` or proper sanitization.
-
-## 6. Performance Degradation
-*   **Severity:** Low
-*   **Issue:** Unoptimized Loop in `CrowdIntelSystem`.
-*   **Details:** `updateVisualization` clears and recreates layers on every slider move. This is expensive.
-*   **Recommendation:** Throttle the slider input event.
-
-## 7. Edge Case Failure Scenarios
-*   **Severity:** Medium
-*   **Issue:** Empty Itinerary Optimization.
-*   **Details:** `PathfinderSystem.optimizeRoute` handles length <= 2, but UI might still show "Optimized" message even if nothing happened.
-*   **Issue:** LocalStorage Failure.
-*   **Details:** `AppState` wraps `localStorage` in try-catch, which is good. But if it fails, the app uses in-memory fallback which is lost on reload. User is not notified.
-
-## 8. Subtle UX Disruption
-*   **Severity:** Low
-*   **Issue:** Scrollbar Shift.
-*   **Details:** Opening modals might cause page shift if scrollbar disappears.
+## 4. Conclusion
+Immediate action is required to patch the memory leaks and accessibility voids. The architectural debt (globals) is a long-term risk but can be mitigated by robust error handling in the short term.
