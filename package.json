@@ -4,7 +4,9 @@
   "description": "AlbanianAura is a web-based interactive map designed to help tourists discover attractions in Albania. Users can explore various locations, filter them by type, search by name, and plan their trip itinerary. The application also supports multiple languages (English and Albanian).",
   "main": "data.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "repository": {
     "type": "git",

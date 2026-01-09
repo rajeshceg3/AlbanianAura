@@ -22,6 +22,14 @@ class SigintSystem {
         } else {
             this.clearSignals();
             document.body.classList.remove('sigint-active');
+            // Ensure modal is closed if open
+            const modal = document.getElementById('sigintModal');
+            if (modal && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                if (typeof removeTrapFocus === 'function') {
+                    removeTrapFocus(modal);
+                }
+            }
         }
     }
 
@@ -99,7 +107,9 @@ class SigintSystem {
         this.initDecryptionGame(attraction);
 
         // Accessibility: Trap focus
-        // (Assuming similar trapFocus function available or implementation here)
+        if (typeof trapFocus === 'function') {
+            trapFocus(modal);
+        }
         const closeBtn = document.getElementById('closeSigintModal');
         closeBtn.focus();
     }
@@ -160,12 +170,17 @@ class SigintSystem {
             }
         };
 
+        // Clean up previous listeners if any (though here we just recreated elements via innerHTML so they are fresh)
+        // Since openDecryptionTerminal rewrites innerHTML of 'sigintContent', the old listeners on slider/btn are garbage collected along with the DOM elements.
+        // However, the animationFrame might still be running if not careful.
+        // We added a check inside drawSignal: if (!active) stop.
+
         slider.addEventListener('input', (e) => {
             currentFreq = parseInt(e.target.value);
         });
 
         decryptBtn.addEventListener('click', () => {
-            cancelAnimationFrame(animationFrame);
+            if (animationFrame) cancelAnimationFrame(animationFrame);
             this.processDecryption(attraction);
         });
 

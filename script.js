@@ -561,7 +561,8 @@ document.addEventListener('keydown', function(event) {
 });
 
 // Accessibility: Focus Trap Logic
-function trapFocus(modal) {
+// Exporting to global scope for other modules to use
+window.trapFocus = function(modal) {
     const focusableElementsString = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
     let focusableElements = modal.querySelectorAll(focusableElementsString);
     focusableElements = Array.prototype.slice.call(focusableElements);
@@ -593,7 +594,7 @@ function trapFocus(modal) {
     modal._trapListener = trap;
 }
 
-function removeTrapFocus(modal) {
+window.removeTrapFocus = function(modal) {
     if (modal._trapListener) {
         modal.removeEventListener('keydown', modal._trapListener);
         delete modal._trapListener;

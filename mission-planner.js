@@ -109,17 +109,39 @@ class MissionPlanner {
      */
     flyToTarget(attraction) {
         return new Promise(resolve => {
+            const targetLatLng = L.latLng(attraction.lat, attraction.lng);
+            const currentCenter = this.map.getCenter();
+
+            // If already close enough, resolve immediately to avoid hanging
+            if (currentCenter.distanceTo(targetLatLng) < 100) {
+                 const marker = allMarkers.find(m => m.attractionData.name === attraction.name);
+                 if (marker) marker.openPopup();
+                 resolve();
+                 return;
+            }
+
             this.map.flyTo([attraction.lat, attraction.lng], 12, {
                 animate: true,
                 duration: 2
             });
 
-            this.map.once('moveend', () => {
+            // Handler for moveend
+            const onMoveEnd = () => {
+                clearTimeout(timeout);
                 // Open popup on arrival
                 const marker = allMarkers.find(m => m.attractionData.name === attraction.name);
                 if (marker) marker.openPopup();
                 resolve();
-            });
+            };
+
+            // Add a safety timeout in case moveend never fires
+            const timeout = setTimeout(() => {
+                // If timeout triggers, we must remove the listener to avoid side effects later
+                this.map.off('moveend', onMoveEnd);
+                resolve();
+            }, 3000);
+
+            this.map.once('moveend', onMoveEnd);
         });
     }
 
