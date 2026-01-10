@@ -122,15 +122,43 @@ class SigintSystem {
 
         let targetFreq = Math.random() * 80 + 10; // Random target between 10-90
         let currentFreq = 50;
-        let animationFrame;
+
+        // Cancel any existing animation frame to prevent leaks/overlap
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+        }
+
+        const styles = getComputedStyle(document.documentElement);
+        const accentColor = styles.getPropertyValue('--accent-color').trim() || '#00ffcc';
+        const successColor = styles.getPropertyValue('--success-color').trim() || '#33ff99';
+        const warningColor = styles.getPropertyValue('--warning-color').trim() || '#ffcc00';
+        // Parse hex to rgba for ghost wave
+        const hexToRgba = (hex, alpha) => {
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return hex; // Fallback
+        };
+        const ghostColor = hexToRgba(accentColor, 0.3);
+
 
         const drawSignal = () => {
+            if (!document.getElementById('sigintModal').classList.contains('active')) {
+                return; // Stop if modal closed
+            }
+
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw Target Wave (Ghost)
             ctx.beginPath();
-            ctx.strokeStyle = 'rgba(0, 255, 204, 0.3)';
+            ctx.strokeStyle = ghostColor;
             ctx.lineWidth = 2;
             for (let x = 0; x < canvas.width; x++) {
                 const y = canvas.height / 2 + Math.sin((x + Date.now() / 20) * (targetFreq / 500)) * 30;
@@ -142,7 +170,7 @@ class SigintSystem {
             // Draw User Wave
             ctx.beginPath();
             const proximity = 1 - Math.abs(currentFreq - targetFreq) / 100;
-            const color = proximity > 0.9 ? '#33ff99' : '#ffcc00'; // Green when close
+            const color = proximity > 0.9 ? successColor : warningColor; // Green when close
             ctx.strokeStyle = color;
             ctx.lineWidth = 2;
 
@@ -165,22 +193,15 @@ class SigintSystem {
                 decryptBtn.classList.remove('ready');
             }
 
-            if (document.getElementById('sigintModal').classList.contains('active')) {
-                animationFrame = requestAnimationFrame(drawSignal);
-            }
+            this.animationFrame = requestAnimationFrame(drawSignal);
         };
-
-        // Clean up previous listeners if any (though here we just recreated elements via innerHTML so they are fresh)
-        // Since openDecryptionTerminal rewrites innerHTML of 'sigintContent', the old listeners on slider/btn are garbage collected along with the DOM elements.
-        // However, the animationFrame might still be running if not careful.
-        // We added a check inside drawSignal: if (!active) stop.
 
         slider.addEventListener('input', (e) => {
             currentFreq = parseInt(e.target.value);
         });
 
         decryptBtn.addEventListener('click', () => {
-            if (animationFrame) cancelAnimationFrame(animationFrame);
+            if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
             this.processDecryption(attraction);
         });
 

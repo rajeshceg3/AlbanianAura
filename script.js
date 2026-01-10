@@ -198,10 +198,15 @@ const allMarkers = [];
 function generatePopupContent(attraction) {
     const t = translations[appState.language];
     const attrData = attractions.find(a => a.name === attraction.name);
+
+    if (!attrData) {
+        return `<h3>${attraction.name || 'Unknown Location'}</h3><p>Data unavailable.</p>`;
+    }
+
     // Fix: Fallback to English description if current language is missing
-    const description = (attrData?.description[appState.language] || attrData?.description['en']) || `Discover the beauty of ${attraction.name}. More details coming soon!`;
-    const moreInfoLink = sanitizeUrl(attrData?.moreInfoLink) || '#';
-    const bookingsLink = sanitizeUrl(attractions.find(a => a.name === attraction.name)?.bookingsLink) || '#';
+    const description = (attrData.description && (attrData.description[appState.language] || attrData.description['en'])) || `Discover the beauty of ${attraction.name}. More details coming soon!`;
+    const moreInfoLink = sanitizeUrl(attrData.moreInfoLink) || '#';
+    const bookingsLink = sanitizeUrl(attrData.bookingsLink) || '#';
 
     // Rating and Review related content
     const reviews = appState.getReviews(attraction.name);
@@ -364,8 +369,46 @@ function renderReviews(attractionName) {
     });
 }
 
-function openReviewModal(attractionName) {
+// Centralized Modal Management
+function openModal(modal) {
     lastFocusedElement = document.activeElement;
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden', 'false');
+
+    // Accessibility: Hide background content
+    document.getElementById('map').setAttribute('aria-hidden', 'true');
+    const controls = document.querySelector('.ui-controls');
+    if (controls) controls.setAttribute('aria-hidden', 'true');
+
+    // Focus first focusable element (usually close button or title)
+    const closeBtn = modal.querySelector('.close-button');
+    if (closeBtn) closeBtn.focus();
+
+    trapFocus(modal);
+}
+
+function closeModal(modal) {
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.classList.remove('active'); // Ensure active class is removed (for SIGINT)
+    modal.setAttribute('aria-hidden', 'true');
+
+    // Restore background accessibility
+    document.getElementById('map').removeAttribute('aria-hidden');
+    const controls = document.querySelector('.ui-controls');
+    if (controls) controls.removeAttribute('aria-hidden');
+
+    removeTrapFocus(modal);
+
+    if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
+        lastFocusedElement.focus();
+        lastFocusedElement = null;
+    }
+
+    if (modal === reviewModal) currentlyReviewedAttraction = null;
+}
+
+function openReviewModal(attractionName) {
     currentlyReviewedAttraction = attractionName;
     const t = translations[appState.language];
     reviewModalTitle.textContent = `${t.reviewsFor} ${attractionName}`;
@@ -374,51 +417,33 @@ function openReviewModal(attractionName) {
 
     // Reset form
     reviewForm.reset();
-    ratingValueInput.value = "0"; // Reset hidden star value
-    // Reset visual stars
+    ratingValueInput.value = "0";
     const stars = starRatingContainer.querySelectorAll('.star');
     stars.forEach(star => {
         star.classList.remove('selected');
         star.setAttribute('aria-checked', 'false');
     });
 
-    reviewModal.style.display = 'flex';
-    closeReviewModalBtn.focus();
-    trapFocus(reviewModal);
+    openModal(reviewModal);
 }
 
 function closeReviewModal() {
-    reviewModal.style.display = 'none';
-    currentlyReviewedAttraction = null;
-    removeTrapFocus(reviewModal);
-    if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
-        lastFocusedElement.focus();
-        lastFocusedElement = null;
-    }
+    closeModal(reviewModal);
 }
 
 function openTriviaModal(attractionName) {
-    lastFocusedElement = document.activeElement;
     const attraction = attractions.find(a => a.name === attractionName);
     if (!attraction || !attraction.trivia) return;
 
     const t = translations[appState.language];
     triviaModalTitle.textContent = t.triviaModalTitle || "Did you know?";
-    // Fix: Fallback to English if current language is missing
     triviaModalContent.textContent = (attraction.trivia[appState.language] || attraction.trivia['en']) || "Trivia unavailable.";
 
-    triviaModal.style.display = 'flex';
-    closeTriviaModalBtn.focus();
-    trapFocus(triviaModal);
+    openModal(triviaModal);
 }
 
 function closeTriviaModal() {
-    triviaModal.style.display = 'none';
-    removeTrapFocus(triviaModal);
-    if (lastFocusedElement && document.body.contains(lastFocusedElement)) {
-        lastFocusedElement.focus();
-        lastFocusedElement = null;
-    }
+    closeModal(triviaModal);
 }
 
 // Star rating interaction
@@ -478,48 +503,48 @@ reviewForm.addEventListener('submit', function(event) {
     const reviewText = reviewTextInput.value.trim();
 
     if (rating === 0) {
-        showToast(t.selectRatingAlert); // Or display this message in a less intrusive way
+        showToast(t.selectRatingAlert);
         return;
     }
     if (!reviewText) {
-        showToast(t.writeReviewAlert); // Or display this message in a less intrusive way
+        showToast(t.writeReviewAlert);
         return;
     }
 
     const newReview = {
-        user: userName, // stored as is, but must be escaped when rendered
+        user: userName,
         stars: rating,
-        review: reviewText, // stored as is, but must be escaped when rendered
-        date: new Date().toISOString() // Optional: store review date
+        review: reviewText,
+        date: new Date().toISOString()
     };
 
-    appState.addReview(currentlyReviewedAttraction, newReview);
+    const success = appState.addReview(currentlyReviewedAttraction, newReview);
 
-    // Show confirmation
-    const confirmation = reviewModal.querySelector('.confirmation-message');
-    confirmation.classList.add('visible');
+    if (success) {
+        const confirmation = reviewModal.querySelector('.confirmation-message');
+        confirmation.classList.add('visible');
 
-    setTimeout(() => {
-        confirmation.classList.remove('visible');
-        renderReviews(currentlyReviewedAttraction); // Re-render reviews in modal
-        reviewForm.reset();
-        ratingValueInput.value = "0";
-        starRatingContainer.querySelectorAll('.star').forEach(s => {
-            s.classList.remove('selected');
-            s.setAttribute('aria-checked', 'false');
+        setTimeout(() => {
+            confirmation.classList.remove('visible');
+            renderReviews(currentlyReviewedAttraction);
+            reviewForm.reset();
+            ratingValueInput.value = "0";
+            starRatingContainer.querySelectorAll('.star').forEach(s => {
+                s.classList.remove('selected');
+                s.setAttribute('aria-checked', 'false');
+            });
+        }, 1500);
+
+        allMarkers.forEach(marker => {
+            if (marker.attractionData.name === currentlyReviewedAttraction && marker.isPopupOpen()) {
+                marker.setPopupContent(generatePopupContent(marker.attractionData));
+                const popupNode = marker.getPopup()._contentNode;
+                attachPopupListeners(popupNode, marker.attractionData);
+            }
         });
-    }, 1500);
-
-
-    // Optionally, refresh the popup if it's open for this attraction
-    allMarkers.forEach(marker => {
-        if (marker.attractionData.name === currentlyReviewedAttraction && marker.isPopupOpen()) {
-            marker.setPopupContent(generatePopupContent(marker.attractionData));
-             // Re-attach listeners for the new popup content
-            const popupNode = marker.getPopup()._contentNode;
-            attachPopupListeners(popupNode, marker.attractionData);
-        }
-    });
+    } else {
+        showToast("Error saving review. Storage might be full.");
+    }
 });
 
 closeReviewModalBtn.addEventListener('click', closeReviewModal);
@@ -531,20 +556,19 @@ const sigintModal = document.getElementById('sigintModal');
 
 if (closeSigintModalBtn) {
     closeSigintModalBtn.addEventListener('click', () => {
-        sigintModal.classList.remove('active');
+        closeModal(sigintModal);
     });
 }
 
-window.addEventListener('click', function(event) { // Close modal if clicked outside
+window.addEventListener('click', function(event) {
     if (event.target === reviewModal) {
-        closeReviewModal();
+        closeModal(reviewModal);
     }
     if (event.target === triviaModal) {
-        closeTriviaModal();
+        closeModal(triviaModal);
     }
-    // Note: SIGINT Modal uses 'active' class, not display style directly in CSS logic provided
     if (event.target === sigintModal) {
-        sigintModal.classList.remove('active');
+        closeModal(sigintModal);
     }
 });
 
@@ -552,10 +576,14 @@ window.addEventListener('click', function(event) { // Close modal if clicked out
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         if (reviewModal.style.display === 'flex') {
-            closeReviewModal();
-        }
-        if (triviaModal.style.display === 'flex') {
-            closeTriviaModal();
+            closeModal(reviewModal);
+        } else if (triviaModal.style.display === 'flex') {
+            closeModal(triviaModal);
+        } else if (sigintModal && (sigintModal.style.display === 'flex' || sigintModal.classList.contains('active'))) {
+            closeModal(sigintModal);
+        } else if (dreamMode) {
+            // Exit Dream Mode on Escape
+            toggleDreamMode();
         }
     }
 });
@@ -774,6 +802,7 @@ function setLanguage(lang) {
     clearMissionBtn.textContent = t.abortMissionBtn;
     closeMissionControlBtn.setAttribute('aria-label', t.closeMissionControlAria);
     searchBox.setAttribute('aria-label', t.searchAria);
+    searchBox.setAttribute('placeholder', t.searchPlaceholder || t.searchAria); // Update placeholder
     typeFilter.setAttribute('aria-label', t.filterAria);
 
     const missionDistanceEl = document.querySelector('.mission-distance');
