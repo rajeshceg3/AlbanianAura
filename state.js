@@ -133,12 +133,18 @@ class AppState {
     }
 
     addReview(attractionName, review) {
-        if (!this.reviews[attractionName]) {
-            this.reviews[attractionName] = [];
+        try {
+            if (!this.reviews[attractionName]) {
+                this.reviews[attractionName] = [];
+            }
+            this.reviews[attractionName].push(review);
+            this.saveReviews();
+            this.notify('reviewAdded', { attractionName, review });
+            return true;
+        } catch (e) {
+            console.error("Failed to add review:", e);
+            return false;
         }
-        this.reviews[attractionName].push(review);
-        this.saveReviews();
-        this.notify('reviewAdded', { attractionName, review });
     }
 
     getReviews(attractionName) {
