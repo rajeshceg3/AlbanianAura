@@ -68,6 +68,9 @@ let logisticsSystem = new LogisticsSystem(map, appState, attractions);
 // Initialize SIGINT System
 let sigintSystem = new SigintSystem(map, appState, attractions);
 
+// Initialize Command HUD (Tactical 3D View)
+let commandHUD = new CommandHUD(map);
+
 // Initialize S.C.O.U.T. UI Logic
 initScoutInterface();
 

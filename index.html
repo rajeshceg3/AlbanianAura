@@ -25,6 +25,9 @@
             <h2 id="missionTitle">Mission Plan</h2>
             <button id="closeMissionControl" class="close-button" aria-label="Close Mission Control">&times;</button>
         </div>
+
+        <!-- Mission Selector injected by JS here -->
+
         <div id="missionList" class="mission-list">
             <!-- Itinerary items will be populated here -->
             <p class="empty-state">No targets selected.</p>
@@ -151,10 +154,35 @@
     </div>
   </div>
 
+  <!-- Analysis Modal -->
+  <div id="analysisModal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="analysisTitle">
+      <div class="modal-content" style="max-width: 700px;">
+          <button class="close-button" id="closeAnalysisModal" aria-label="Close modal" onclick="document.getElementById('analysisModal').style.display='none'">&times;</button>
+          <h3 id="analysisTitle">STRATEGIC ANALYSIS: MISSION PROFILES</h3>
+          <p>Comparative assessment of available Courses of Action (COA).</p>
+
+          <table class="analysis-table">
+              <thead>
+                  <tr>
+                      <th>Mission Profile</th>
+                      <th>Total Distance</th>
+                      <th>Est. Duration</th>
+                      <th>Risk Level</th>
+                      <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody id="analysisTableBody">
+                  <!-- Injected Rows -->
+              </tbody>
+          </table>
+      </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="data.js"></script>
   <script src="state.js"></script>
   <script src="languages.js"></script>
+  <script src="command-hud.js"></script>
   <script src="mission-planner.js"></script>
   <script src="logistics.js"></script>
   <script src="scout-ops.js"></script>

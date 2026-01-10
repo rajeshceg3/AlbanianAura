@@ -10,11 +10,163 @@ class MissionPlanner {
         this.vectorLayer = L.layerGroup().addTo(map);
         this.isSimulating = false;
 
+        this.initMissionControls();
+
         // Subscribe to state changes
         this.appState.subscribe('itineraryChanged', this.updateMission.bind(this));
+        this.appState.subscribe('missionsUpdated', this.refreshMissionSelector.bind(this));
+        this.appState.subscribe('missionSwitched', () => {
+             this.refreshMissionSelector();
+             this.updateMission(this.appState.itinerary);
+        });
 
         // Initial draw
         this.updateMission(this.appState.itinerary);
+    }
+
+    initMissionControls() {
+        const panel = document.getElementById('missionControlPanel');
+        const listContainer = document.getElementById('missionList');
+
+        // Create Mission Selector UI
+        const selectorContainer = document.createElement('div');
+        selectorContainer.className = 'mission-selector-container';
+
+        selectorContainer.innerHTML = `
+            <select id="missionSelector" aria-label="Select Mission Profile"></select>
+            <button id="newMissionBtn" class="control-button" aria-label="Create New Mission" title="New Mission">+</button>
+        `;
+
+        // Create Analysis Button
+        const analysisBtn = document.createElement('button');
+        analysisBtn.className = 'control-button analysis-btn';
+        analysisBtn.innerHTML = '<span class="icon">📊</span> Strategic Analysis';
+        analysisBtn.onclick = () => this.openAnalysisModal();
+
+        // Insert into DOM
+        // Selector goes above the list
+        panel.insertBefore(selectorContainer, listContainer);
+        // Analysis goes below selector
+        panel.insertBefore(analysisBtn, listContainer);
+
+        // Bind Events
+        document.getElementById('newMissionBtn').onclick = () => this.createNewMission();
+        document.getElementById('missionSelector').onchange = (e) => this.appState.switchMission(e.target.value);
+
+        this.refreshMissionSelector();
+    }
+
+    refreshMissionSelector() {
+        const selector = document.getElementById('missionSelector');
+        if (!selector) return;
+
+        selector.innerHTML = '';
+        const missions = this.appState.getMissions();
+        const currentId = this.appState.currentMissionId;
+
+        Object.values(missions).forEach(mission => {
+            const option = document.createElement('option');
+            option.value = mission.id;
+            option.textContent = mission.name;
+            option.selected = mission.id === currentId;
+            selector.appendChild(option);
+        });
+    }
+
+    createNewMission() {
+        const name = prompt("Enter Mission Codename:");
+        if (name) {
+            const id = this.appState.createMission(name);
+            this.appState.switchMission(id);
+        }
+    }
+
+    openAnalysisModal() {
+        // Find or create modal
+        let modal = document.getElementById('analysisModal');
+        if (!modal) {
+             // Let logic below handle creation if missing in HTML,
+             // but strictly we should add it to HTML.
+             // For now we assume HTML will have it or we create it here.
+             console.warn("Analysis modal not found in DOM");
+             return;
+        }
+
+        const missions = this.appState.getMissions();
+        const tbody = document.getElementById('analysisTableBody');
+        tbody.innerHTML = '';
+
+        // Helper to calc stats
+        const calcStats = (targets) => {
+            let dist = 0;
+            let duration = 0;
+            let risk = 0;
+
+            const points = targets.map(name => this.attractions.find(a => a.name === name)).filter(Boolean);
+
+            for(let i=0; i<points.length-1; i++) {
+                dist += new L.LatLng(points[i].lat, points[i].lng).distanceTo(new L.LatLng(points[i+1].lat, points[i+1].lng));
+            }
+
+            points.forEach(p => {
+                duration += (p.crowdStats ? p.crowdStats.duration : 60);
+                // Simple risk heuristic: peak hour proximity?
+                // Let's just sum maxDensity for "Risk Score"
+                if (p.crowdStats) risk += p.crowdStats.maxDensity;
+            });
+
+            // Add travel time approx (50km/h)
+            duration += (dist / 1000 / 50) * 60;
+
+            return {
+                dist: (dist/1000).toFixed(1),
+                duration: Math.round(duration / 60), // hours
+                risk: (risk / (points.length || 1)).toFixed(2) // avg density
+            };
+        };
+
+        // Find Max values for bars
+        let maxDist = 0;
+        const rows = [];
+
+        Object.values(missions).forEach(m => {
+            const stats = calcStats(m.targets);
+            if (parseFloat(stats.dist) > maxDist) maxDist = parseFloat(stats.dist);
+            rows.push({ mission: m, stats });
+        });
+
+        rows.forEach(({ mission, stats }) => {
+            const tr = document.createElement('tr');
+            if (mission.id === this.appState.currentMissionId) tr.classList.add('active-mission');
+
+            // Risk Color
+            const riskVal = parseFloat(stats.risk);
+            const riskColor = riskVal < 0.3 ? '#33ff99' : (riskVal < 0.6 ? '#ffcc00' : '#ff3333');
+
+            // Bar width
+            const barWidth = maxDist > 0 ? (stats.dist / maxDist) * 100 : 0;
+
+            tr.innerHTML = `
+                <td><strong>${mission.name}</strong>${mission.id === this.appState.currentMissionId ? ' (ACTIVE)' : ''}</td>
+                <td>
+                    ${stats.dist} km
+                    <div class="bar-container"><div class="bar-fill" style="width: ${barWidth}%;"></div></div>
+                </td>
+                <td>${stats.duration} hrs</td>
+                <td style="color: ${riskColor}">${stats.risk}</td>
+                <td>
+                    ${mission.id !== this.appState.currentMissionId ?
+                        `<button class="control-button small-btn" onclick="appState.switchMission('${mission.id}'); document.getElementById('closeAnalysisModal').click();">ACTIVATE</button>` :
+                        '<span style="font-size:0.8rem; color:#666;">ACTIVE</span>'
+                    }
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Open Modal
+        modal.style.display = 'flex';
+        modal.setAttribute('aria-hidden', 'false');
     }
 
     /**
@@ -24,7 +176,7 @@ class MissionPlanner {
     updateMission(itinerary) {
         this.vectorLayer.clearLayers();
 
-        if (itinerary.length < 2) {
+        if (!itinerary || itinerary.length < 2) {
             this.updateTelemetry(0);
             return;
         }
@@ -76,8 +228,10 @@ class MissionPlanner {
 
         const itinerary = this.appState.itinerary;
         if (itinerary.length === 0) {
-            const t = translations[this.appState.language];
-            showToast(t.missionAborted);
+            const t = (typeof translations !== 'undefined' && translations[this.appState.language])
+                      ? translations[this.appState.language]
+                      : (typeof translations !== 'undefined' ? translations['en'] : { missionAborted: "Mission Aborted" });
+            showToast(t.missionAborted || "Mission Aborted");
             return;
         }
 
