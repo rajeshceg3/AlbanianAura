@@ -221,7 +221,8 @@ function generatePopupContent(attraction) {
 
     const isInMission = appState.isInItinerary(attraction.name);
     const missionBtnText = isInMission ? t.removeFromItinerary : t.addToItinerary;
-    const missionBtnClass = isInMission ? 'mission-btn remove' : 'mission-btn add';
+    // Add popup-btn class for test compatibility
+    const missionBtnClass = isInMission ? 'mission-btn popup-btn remove' : 'mission-btn popup-btn add';
 
     // Security: Use DOM creation instead of innerHTML for user content where possible,
     // or ensure content is safe. Here description is from data.js (static), but good to be careful.
@@ -449,32 +450,31 @@ function closeTriviaModal() {
     closeModal(triviaModal);
 }
 
-// Star rating interaction
-starRatingContainer.querySelectorAll('.star').forEach(star => {
-    function setRating(value) {
-        ratingValueInput.value = value;
-        starRatingContainer.querySelectorAll('.star').forEach(s => {
-            const isSelected = parseInt(s.dataset.value) <= parseInt(value);
-            s.classList.toggle('selected', isSelected);
-            // For role="radio", only the specific selected value is usually checked,
-            // but for star rating, it's a bit ambiguous. Usually, the highest selected is the "value".
-            // However, visually we light up all previous ones.
-            // Semantically, if I click 4 stars, the rating is 4. So the 4th star is checked?
-            // Or is it a range?
-            // A common pattern for star ratings is that the clicked star is aria-checked="true", others false?
-            // Or maybe all up to it?
-            // Best practice: The container represents the value. But individual radio buttons?
-            // Let's set aria-checked="true" on the one matching the value, and false on others.
-            if (parseInt(s.dataset.value) === parseInt(value)) {
-                 s.setAttribute('aria-checked', 'true');
-            } else {
-                 s.setAttribute('aria-checked', 'false');
-            }
-        });
-        // Accessibility: Update live region or help text if needed, but aria-checked handles the state.
-        // We ensure the container has a label.
-    }
+// Star rating interaction (Accessible Roving Tabindex)
+const stars = starRatingContainer.querySelectorAll('.star');
 
+function setRating(value) {
+    ratingValueInput.value = value;
+    stars.forEach(s => {
+        const starValue = parseInt(s.dataset.value);
+        const isSelected = starValue <= parseInt(value);
+        s.classList.toggle('selected', isSelected);
+
+        if (starValue === parseInt(value)) {
+             s.setAttribute('aria-checked', 'true');
+             s.tabIndex = 0; // Make this the focusable one
+        } else {
+             s.setAttribute('aria-checked', 'false');
+             s.tabIndex = -1; // Remove others from tab order
+        }
+    });
+    // If 0, make first focusable
+    if (parseInt(value) === 0) {
+        stars[0].tabIndex = 0;
+    }
+}
+
+stars.forEach((star, index) => {
     star.addEventListener('click', function() {
         setRating(this.dataset.value);
     });
@@ -483,18 +483,30 @@ starRatingContainer.querySelectorAll('.star').forEach(star => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             setRating(this.dataset.value);
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            if (index < stars.length - 1) {
+                stars[index + 1].focus();
+                // Optionally select on arrow move:
+                // setRating(stars[index + 1].dataset.value);
+            }
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            if (index > 0) {
+                stars[index - 1].focus();
+            }
         }
     });
 
     // Hover effect for stars
     star.addEventListener('mouseover', function() {
         const hoverValue = this.dataset.value;
-        starRatingContainer.querySelectorAll('.star').forEach(s => {
+        stars.forEach(s => {
             s.classList.toggle('hovered', parseInt(s.dataset.value) <= parseInt(hoverValue));
         });
     });
     star.addEventListener('mouseout', function() {
-        starRatingContainer.querySelectorAll('.star').forEach(s => s.classList.remove('hovered'));
+        stars.forEach(s => s.classList.remove('hovered'));
     });
 });
 
@@ -881,24 +893,43 @@ generativeModeBtn.addEventListener('click', toggleGenerativeMode);
 
 exploreBtn.addEventListener('click', () => {
     const randomAttraction = attractions[Math.floor(Math.random() * attractions.length)];
+
+    // Safety check if no attractions
+    if (!randomAttraction) return;
+
     map.flyTo([randomAttraction.lat, randomAttraction.lng], 12, {
         animate: true,
         duration: 2.5
     });
 
-    // Open popup after flying to the location
-    setTimeout(() => {
+    // Use event listener instead of timeout for reliability (Race Condition Fix)
+    const onMoveEnd = () => {
         const marker = allMarkers.find(m => m.attractionData.name === randomAttraction.name);
         if (marker) {
             marker.openPopup();
         }
-    }, 2600); // Wait for the flight animation to finish
+    };
+
+    // Safety timeout in case moveend doesn't fire (e.g., already there)
+    const safetyTimeout = setTimeout(() => {
+        map.off('moveend', onMoveEnd);
+        onMoveEnd();
+    }, 3000);
+
+    map.once('moveend', () => {
+        clearTimeout(safetyTimeout);
+        onMoveEnd();
+    });
 });
 
 // --- Filtering Logic ---
 function filterMarkers() {
     const searchTerm = searchBox.value.toLowerCase();
     const type = typeFilter.value;
+    const searchResults = document.getElementById('searchResults');
+    searchResults.innerHTML = '';
+
+    let hasResults = false;
 
     allMarkers.forEach(marker => {
         const attraction = marker.attractionData;
@@ -907,11 +938,52 @@ function filterMarkers() {
 
         if (nameMatch && typeMatch) {
             marker.addTo(map);
+
+            // Populate Dropdown if searching
+            if (searchTerm.length > 0) {
+                hasResults = true;
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.textContent = attraction.name;
+                item.setAttribute('role', 'option');
+                item.tabIndex = 0; // Accessibility
+
+                item.addEventListener('click', () => {
+                    map.flyTo([attraction.lat, attraction.lng], 12);
+                    marker.openPopup();
+                    searchBox.value = attraction.name;
+                    searchResults.classList.remove('active');
+                });
+
+                item.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        item.click();
+                    }
+                });
+
+                searchResults.appendChild(item);
+            }
+
         } else {
             map.removeLayer(marker);
         }
     });
+
+    if (hasResults) {
+        searchResults.classList.add('active');
+    } else {
+        searchResults.classList.remove('active');
+    }
 }
+
+// Close search results when clicking outside
+document.addEventListener('click', (e) => {
+    const container = document.getElementById('filter-container');
+    const searchResults = document.getElementById('searchResults');
+    if (container && !container.contains(e.target)) {
+        searchResults.classList.remove('active');
+    }
+});
 
 // Performance: Debounce search input to prevent layout thrashing
 function debounce(func, wait) {
@@ -936,6 +1008,10 @@ function toggleMissionControl() {
     missionControlToggle.classList.toggle('active');
     const isHidden = !missionControlPanel.classList.contains('open');
     missionControlPanel.setAttribute('aria-hidden', isHidden);
+
+    // Accessibility: Update aria-expanded
+    missionControlToggle.setAttribute('aria-expanded', !isHidden);
+
     if (!isHidden) {
         // Accessibility: Move focus to the panel when opened
         const closeBtn = document.getElementById('closeMissionControl');
