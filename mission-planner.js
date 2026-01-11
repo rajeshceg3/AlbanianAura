@@ -3,10 +3,11 @@
  * Handles visual routing, telemetry calculations, and mission simulation.
  */
 class MissionPlanner {
-    constructor(map, appState, attractions) {
+    constructor(map, appState, attractions, riskSystem) {
         this.map = map;
         this.appState = appState;
         this.attractions = attractions;
+        this.riskSystem = riskSystem;
         this.vectorLayer = L.layerGroup().addTo(map);
         this.isSimulating = false;
 
@@ -188,21 +189,37 @@ class MissionPlanner {
 
         if (points.length < 2) return;
 
-        // Draw the flight path
-        const polyline = L.polyline(points, {
-            color: '#00ffcc', // Tactical cyan
-            weight: 3,
-            opacity: 0.8,
-            dashArray: '10, 10',
-            className: 'tactical-path'
-        });
-
-        this.vectorLayer.addLayer(polyline);
-
-        // Calculate total distance
+        // Draw the flight path segments
         let totalDistance = 0;
         for (let i = 0; i < points.length - 1; i++) {
-            totalDistance += points[i].distanceTo(points[i+1]);
+            const start = points[i];
+            const end = points[i+1];
+            const segDist = start.distanceTo(end);
+            totalDistance += segDist;
+
+            // Determine color based on risk
+            let color = '#00ffcc'; // Default tactical cyan
+            if (this.riskSystem) {
+                // Find attraction data for "end" point to check density risk
+                // This is an approximation since points are just latlngs here
+                // We'll search by proximity (inefficient but safe) or just pass names in future
+                const targetAttr = this.attractions.find(a =>
+                    Math.abs(a.lat - end.lat) < 0.0001 && Math.abs(a.lng - end.lng) < 0.0001
+                );
+
+                // Use default time 12:00 for map view visualization
+                const risk = this.riskSystem.calculateSegmentRisk(null, targetAttr, 12);
+                color = this.riskSystem.getRiskColor(risk);
+            }
+
+            const polyline = L.polyline([start, end], {
+                color: color,
+                weight: 3,
+                opacity: 0.8,
+                dashArray: '10, 10',
+                className: 'tactical-path'
+            });
+            this.vectorLayer.addLayer(polyline);
         }
 
         this.updateTelemetry(totalDistance);
