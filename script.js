@@ -665,10 +665,13 @@ function attachPopupListeners(popupNode, attractionData) {
     const missionButton = popupNode.querySelector('.mission-btn');
     if (missionButton) {
         missionButton.onclick = function() {
+            const t = translations[appState.language];
             if (appState.isInItinerary(attractionData.name)) {
                 appState.removeFromItinerary(attractionData.name);
+                showToast(t.targetRemoved || "Target removed");
             } else {
                 appState.addToItinerary(attractionData.name);
+                showToast(t.targetAdded || "Target added");
             }
         };
     }
