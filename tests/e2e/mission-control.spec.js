@@ -67,7 +67,7 @@ test.describe('Mission Control & Simulation', () => {
     await page.click('#missionControlToggle');
 
     // Toggle Crowd Intel
-    const crowdToggle = page.locator('label.switch-label');
+    const crowdToggle = page.locator('label.switch-label').filter({ hasText: 'Crowd Intel' });
     // Or specifically the input, but playwright can click label
     await crowdToggle.click();
 

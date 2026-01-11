@@ -169,6 +169,7 @@ body, html {
     padding: 8px 12px;
     border-radius: 4px;
     font-family: inherit;
+    width: 100%;
 }
 
 #searchBox::placeholder {
@@ -178,6 +179,43 @@ body, html {
 #searchBox:focus, #typeFilter:focus {
     outline: 2px solid var(--accent-color);
     border-color: transparent;
+}
+
+/* Search Results Dropdown */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    box-shadow: var(--shadow-md);
+}
+
+.search-results.active {
+    display: flex;
+}
+
+.search-result-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.2s;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover, .search-result-item:focus {
+    background: rgba(0, 255, 204, 0.1);
+    outline: none;
 }
 
 .control-button {
