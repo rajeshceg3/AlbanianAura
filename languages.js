@@ -62,7 +62,9 @@ const translations = {
         launchingDrone: "Launching drone to {target}...",
         droneArrived: "Drone arrived at {target}. Scanning...",
         scanComplete: "SCAN COMPLETE: {target} | Density: {density}% | Wait: {wait}m",
-        intelUnlockedAlert: "CLASSIFIED INTEL UNLOCKED FOR {target}:\n\nCurrent Crowd Density: {density}%\nEstimated Wait Time: {wait} mins\n\nSecret: Locals recommend visiting the nearby back-alley cafe for the best view."
+        intelUnlockedAlert: "CLASSIFIED INTEL UNLOCKED FOR {target}:\n\nCurrent Crowd Density: {density}%\nEstimated Wait Time: {wait} mins\n\nSecret: Locals recommend visiting the nearby back-alley cafe for the best view.",
+        targetAdded: "Target added",
+        targetRemoved: "Target removed"
     },
     sq: { // Albanian
         searchPlaceholder: "Kërko sipas emrit...",
@@ -127,6 +129,8 @@ const translations = {
         launchingDrone: "Duke lëshuar dronin në {target}...",
         droneArrived: "Droni mbërriti në {target}. Duke skanuar...",
         scanComplete: "SKANIM I PLOTË: {target} | Dendësia: {density}% | Pritja: {wait}m",
-        intelUnlockedAlert: "INTELIGJENCA E KLASIFIKUAR U HAP PËR {target}:\n\nDendësia Aktuale e Turmës: {density}%\nKoha e Vlerësuar e Pritjes: {wait} minuta\n\nSekret: Vendasit rekomandojnë vizitën në kafenenë e fshehur aty pranë për pamjen më të mirë."
+        intelUnlockedAlert: "INTELIGJENCA E KLASIFIKUAR U HAP PËR {target}:\n\nDendësia Aktuale e Turmës: {density}%\nKoha e Vlerësuar e Pritjes: {wait} minuta\n\nSekret: Vendasit rekomandojnë vizitën në kafenenë e fshehur aty pranë për pamjen më të mirë.",
+        targetAdded: "Objektivi u shtua",
+        targetRemoved: "Objektivi u hoq"
     }
 };
