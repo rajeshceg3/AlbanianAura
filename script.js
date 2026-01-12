@@ -75,6 +75,11 @@ let sigintSystem = new SigintSystem(map, appState, attractions);
 // Initialize Command HUD (Tactical 3D View)
 let commandHUD = new CommandHUD(map);
 
+// Global Error Handler for AppState
+appState.subscribe('error', (errorMessage) => {
+    showToast(errorMessage);
+});
+
 // Initialize S.C.O.U.T. UI Logic
 initScoutInterface();
 
@@ -516,8 +521,6 @@ reviewForm.addEventListener('submit', function(event) {
                 attachPopupListeners(popupNode, marker.attractionData);
             }
         });
-    } else {
-        showToast("Error saving review. Storage might be full.");
     }
 });
 
@@ -917,11 +920,8 @@ function filterMarkers() {
                     searchResults.classList.remove('active');
                 });
 
-                item.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        item.click();
-                    }
-                });
+                // Note: keydown listeners for item traversal are now handled by searchBox listener
+                // to avoid duplicate or conflicting logic.
 
                 searchResults.appendChild(item);
             }
@@ -962,6 +962,54 @@ function debounce(func, wait) {
 
 searchBox.addEventListener('input', debounce(filterMarkers, 300));
 typeFilter.addEventListener('change', filterMarkers);
+
+// Accessibility: Keyboard Navigation for Search Box
+searchBox.addEventListener('keydown', (e) => {
+    const resultsContainer = document.getElementById('searchResults');
+    const items = resultsContainer.querySelectorAll('.search-result-item');
+
+    if (items.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        items[0].focus();
+    } else if (e.key === 'Escape') {
+        e.preventDefault();
+        resultsContainer.classList.remove('active');
+        searchBox.focus();
+    }
+});
+
+// Event Delegation for Search Results Navigation (Arrows)
+document.getElementById('searchResults').addEventListener('keydown', (e) => {
+    const items = Array.from(document.querySelectorAll('.search-result-item'));
+    const currentIndex = items.indexOf(document.activeElement);
+
+    if (currentIndex === -1) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (currentIndex < items.length - 1) {
+            items[currentIndex + 1].focus();
+        }
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (currentIndex > 0) {
+            items[currentIndex - 1].focus();
+        } else {
+            // Back to search box
+            searchBox.focus();
+        }
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        document.activeElement.click();
+    } else if (e.key === 'Escape') {
+        e.preventDefault();
+        document.getElementById('searchResults').classList.remove('active');
+        searchBox.focus();
+    }
+});
+
 
 // --- Mission Control Logic ---
 

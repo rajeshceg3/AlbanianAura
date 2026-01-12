@@ -161,7 +161,8 @@ class ScoutOpsCenter {
         // For now, we keep them in English as "Intercepted Chatter" style, or we could add them to translations.
         // Let's assume they remain English for "Realism" or simplicity in this refactor.
         const template = this.intelEvents[Math.floor(Math.random() * this.intelEvents.length)];
-        const message = template.replace('{target}', target.name);
+        // Use a safer replacement for target name in case it contains regex special chars (though unlikely for city names)
+        const message = template.split('{target}').join(target.name);
         const timestamp = new Date().toLocaleTimeString([], { hour12: false });
 
         this.addLogEntry(`[${timestamp}] ${message}`, 'event');
@@ -169,6 +170,8 @@ class ScoutOpsCenter {
 
     addLogEntry(text, type = 'info') {
         const feed = document.getElementById('intelFeed');
+        if (!feed) return; // Guard clause if destroyed
+
         const item = document.createElement('div');
         item.className = `feed-item ${type}`;
         item.textContent = text;
@@ -203,25 +206,26 @@ class ScoutOpsCenter {
             iconSize: [24, 24]
         });
 
-        // Start from a random edge or user position? Let's start from center map for simplicity
+        // Start from center map for visibility
         const startPos = this.map.getCenter();
         const droneMarker = L.marker(startPos, { icon: droneIcon }).addTo(this.map);
 
-        this.activeDrones.push({ name: attractionName, marker: droneMarker });
+        const droneData = { name: attractionName, marker: droneMarker, interval: null };
+        this.activeDrones.push(droneData);
         this.updateDroneCount();
         this.addLogEntry(t.launchingDrone.replace('{target}', attractionName), 'system');
 
         // Animate
         let progress = 0;
         const steps = 100;
-        const interval = setInterval(() => {
+        droneData.interval = setInterval(() => {
             progress++;
             const lat = startPos.lat + (target.lat - startPos.lat) * (progress / steps);
             const lng = startPos.lng + (target.lng - startPos.lng) * (progress / steps);
             droneMarker.setLatLng([lat, lng]);
 
             if (progress >= steps) {
-                clearInterval(interval);
+                if (droneData.interval) clearInterval(droneData.interval);
                 this.onDroneArrival(attractionName, droneMarker);
             }
         }, 20);
@@ -233,7 +237,9 @@ class ScoutOpsCenter {
 
         setTimeout(() => {
             // Remove drone
-            this.map.removeLayer(droneMarker);
+            if (this.map.hasLayer(droneMarker)) {
+                this.map.removeLayer(droneMarker);
+            }
             this.activeDrones = this.activeDrones.filter(d => d.name !== attractionName);
             this.updateDroneCount();
 
@@ -266,6 +272,28 @@ class ScoutOpsCenter {
     }
 
     updateDroneCount() {
-        document.getElementById('activeDroneCount').textContent = this.activeDrones.length;
+        const el = document.getElementById('activeDroneCount');
+        if (el) el.textContent = this.activeDrones.length;
+    }
+
+    destroy() {
+        if (this.intelInterval) {
+            clearInterval(this.intelInterval);
+            this.intelInterval = null;
+        }
+
+        // Clear all active drones
+        this.activeDrones.forEach(d => {
+            if (d.interval) clearInterval(d.interval);
+            if (d.marker) this.map.removeLayer(d.marker);
+        });
+        this.activeDrones = [];
+
+        // Remove UI elements
+        const panel = document.getElementById('scoutOpsPanel');
+        if (panel) panel.remove();
+
+        const toggle = document.getElementById('opsCenterToggle');
+        if (toggle) toggle.remove();
     }
 }
