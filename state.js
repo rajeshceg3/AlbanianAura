@@ -1,6 +1,9 @@
 class AppState {
     constructor() {
         this.language = 'en';
+        this.listeners = {};
+
+        // Safely load initial state
         this.reviews = this.loadReviews();
         this.unlockedSignals = this.loadUnlockedSignals();
         this.clearanceLevel = this.calculateClearanceLevel();
@@ -11,8 +14,6 @@ class AppState {
 
         // Ensure valid state
         this.ensureValidMissionState();
-
-        this.listeners = {};
     }
 
     // --- Mission / Itinerary Management ---
@@ -153,6 +154,7 @@ class AppState {
             }
         } catch (e) {
             console.warn('LocalStorage error:', e);
+            this.notify('error', 'Storage Error: Unable to save mission data. Storage might be full.');
         }
     }
 
@@ -226,6 +228,7 @@ class AppState {
             localStorage.setItem('albania_sigint', JSON.stringify(this.unlockedSignals));
         } catch (e) {
             console.warn('LocalStorage error', e);
+            this.notify('error', 'Storage Error: Unable to save SIGINT progress.');
         }
     }
 
@@ -265,7 +268,10 @@ class AppState {
     saveReviews() {
         try {
             localStorage.setItem('albania_reviews', JSON.stringify(this.reviews));
-        } catch (e) {}
+        } catch (e) {
+             this.notify('error', 'Storage Error: Unable to save review.');
+             throw e; // Rethrow so caller knows it failed
+        }
     }
 
     addReview(attractionName, review) {
@@ -303,6 +309,10 @@ class AppState {
         if (this.listeners[event]) {
             this.listeners[event].forEach(callback => callback(data));
         }
+    }
+
+    destroy() {
+        this.listeners = {};
     }
 }
 
