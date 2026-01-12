@@ -32,7 +32,14 @@ class RiskAnalysisSystem {
         this.simulateWeather();
 
         // Auto-update weather every few minutes (simulated)
-        setInterval(() => this.simulateWeather(), 300000); // 5 mins
+        this.weatherInterval = setInterval(() => this.simulateWeather(), 300000); // 5 mins
+    }
+
+    destroy() {
+        if (this.weatherInterval) {
+            clearInterval(this.weatherInterval);
+            this.weatherInterval = null;
+        }
     }
 
     /**
