@@ -54,16 +54,20 @@ const attractions = typeof attractionsData !== 'undefined' ? attractionsData : [
 // Initialize the map and set its view to Albania
 var map = L.map('map', { tap: false }).setView([41.1533, 20.1683], 7); // Coordinates for Albania and zoom level
 
-// Initialize Mission Planner and Crowd Intel System
-let missionPlanner = new MissionPlanner(map, appState, attractions);
+// Initialize Core Systems
 let crowdIntelSystem = new CrowdIntelSystem(map, attractions);
+let riskAnalysisSystem = new RiskAnalysisSystem(crowdIntelSystem);
+let missionBriefingSystem = new MissionBriefingSystem(appState, attractions, riskAnalysisSystem);
+
+// Initialize Mission Planner with Risk System
+let missionPlanner = new MissionPlanner(map, appState, attractions, riskAnalysisSystem);
 let pathfinderSystem = new PathfinderSystem(map, attractions, crowdIntelSystem);
 
 // Initialize S.C.O.U.T. Ops Center (New Feature)
 let scoutOpsCenter = new ScoutOpsCenter(map, appState, attractions);
 
 // Initialize Logistics System (Temporal Operations Grid)
-let logisticsSystem = new LogisticsSystem(map, appState, attractions);
+let logisticsSystem = new LogisticsSystem(map, appState, attractions, riskAnalysisSystem);
 
 // Initialize SIGINT System
 let sigintSystem = new SigintSystem(map, appState, attractions);
@@ -107,7 +111,9 @@ function initScoutInterface() {
     }
 
     if (exportBtn) {
-        exportBtn.addEventListener('click', generateMissionDossier);
+        exportBtn.addEventListener('click', () => {
+            if (missionBriefingSystem) missionBriefingSystem.generateBriefing();
+        });
     }
 
     if (optimizeBtn) {
@@ -133,53 +139,6 @@ function initScoutInterface() {
     }
 }
 
-function generateMissionDossier() {
-    const itinerary = appState.itinerary;
-    if (itinerary.length === 0) {
-        showToast("Mission Dossier Aborted: No targets designated.");
-        return;
-    }
-
-    let content = `
-========================================
-       MISSION DOSSIER: ALBANIA
-========================================
-Status: CLASSIFIED
-Date: ${new Date().toLocaleDateString()}
-Targets: ${itinerary.length}
-========================================
-
-DIRECTIVES:
-`;
-
-    itinerary.forEach((name, index) => {
-        const attr = attractions.find(a => a.name === name);
-        const crowd = attr.crowdStats ?
-            `Peak Crowds: ${attr.crowdStats.peakHour.toString().padStart(2, '0')}:00` : "Intel N/A";
-
-        content += `
-${index + 1}. TARGET: ${name.toUpperCase()}
-   - Coordinates: ${attr.lat}, ${attr.lng}
-   - Intel: ${attr.description.en}
-   - Tactical Note: ${crowd}
-`;
-    });
-
-    content += `
-========================================
-       END OF TRANSMISSION
-========================================
-`;
-
-    // Create a temporary text file download
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `mission_dossier_${new Date().getTime()}.txt`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-}
 
 // Add a tile layer to the map (using a pastel-themed layer)
 const baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {

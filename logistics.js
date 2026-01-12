@@ -3,10 +3,11 @@
  * Handles mission timing, travel estimation, and risk assessment based on temporal factors.
  */
 class LogisticsSystem {
-    constructor(map, appState, attractions) {
+    constructor(map, appState, attractions, riskSystem) {
         this.map = map;
         this.appState = appState;
         this.attractions = attractions;
+        this.riskSystem = riskSystem;
         this.averageSpeed = 50; // km/h
         this.metersPerMinute = (this.averageSpeed * 1000) / 60;
         this.missionStartTime = 8 * 60; // 08:00 default (in minutes from midnight)
@@ -126,17 +127,23 @@ class LogisticsSystem {
     }
 
     assessRisk(attraction, arrivalTime, departureTime) {
-        if (!attraction.crowdStats) return 'UNKNOWN';
-
-        const arrivalHour = (arrivalTime / 60) % 24;
-        const peakHour = attraction.crowdStats.peakHour;
-
-        // Check if visit overlaps with peak hour (within +/- 1.5 hours)
-        const timeDiff = Math.abs(arrivalHour - peakHour);
-
-        if (timeDiff < 1.5) return 'HIGH';
-        if (timeDiff < 3) return 'MODERATE';
-        return 'LOW';
+        if (this.riskSystem) {
+            // Use unified risk system
+            const arrivalHour = (arrivalTime / 60) % 24;
+            const score = this.riskSystem.calculateSegmentRisk(null, attraction, arrivalHour);
+            if (score > 0.7) return 'HIGH';
+            if (score > 0.4) return 'MODERATE';
+            return 'LOW';
+        } else {
+            // Fallback legacy logic
+            if (!attraction.crowdStats) return 'UNKNOWN';
+            const arrivalHour = (arrivalTime / 60) % 24;
+            const peakHour = attraction.crowdStats.peakHour;
+            const timeDiff = Math.abs(arrivalHour - peakHour);
+            if (timeDiff < 1.5) return 'HIGH';
+            if (timeDiff < 3) return 'MODERATE';
+            return 'LOW';
+        }
     }
 
     formatTime(minutes) {
