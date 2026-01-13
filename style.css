@@ -178,6 +178,7 @@ body, html {
 
 #searchBox:focus, #typeFilter:focus {
     outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
     border-color: transparent;
 }
 
@@ -241,7 +242,8 @@ body, html {
     background: var(--accent-color);
     color: var(--bg-dark);
     box-shadow: 0 0 10px var(--accent-color);
-    outline: none;
+    outline: 2px solid var(--white);
+    outline-offset: 2px;
 }
 
 .control-button.danger {
