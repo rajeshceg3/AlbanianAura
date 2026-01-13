@@ -75,6 +75,9 @@ let sigintSystem = new SigintSystem(map, appState, attractions);
 // Initialize Command HUD (Tactical 3D View)
 let commandHUD = new CommandHUD(map);
 
+// Initialize Operation: CHRONOS (Temporal Recon)
+let chronosSystem = new ChronosSystem(map, appState);
+
 // Global Error Handler for AppState
 appState.subscribe('error', (errorMessage) => {
     showToast(errorMessage);
