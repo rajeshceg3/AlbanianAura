@@ -134,11 +134,15 @@ class ScoutOpsCenter {
             // Focus close button or first element
             const closeBtn = document.getElementById('closeOpsCenter');
             if (closeBtn) closeBtn.focus();
+
+            this.startIntelFeed();
         } else {
             if (typeof removeTrapFocus === 'function') {
                 removeTrapFocus(panel);
             }
             toggle.focus();
+
+            this.stopIntelFeed();
         }
     }
 
@@ -147,10 +151,17 @@ class ScoutOpsCenter {
 
         // Simulate incoming intel every 10-30 seconds
         this.intelInterval = setInterval(() => {
-            if (this.isOpsActive && Math.random() > 0.6) {
+            if (Math.random() > 0.6) {
                 this.generateRandomEvent();
             }
         }, 15000);
+    }
+
+    stopIntelFeed() {
+        if (this.intelInterval) {
+            clearInterval(this.intelInterval);
+            this.intelInterval = null;
+        }
     }
 
     generateRandomEvent() {

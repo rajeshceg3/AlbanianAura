@@ -575,6 +575,8 @@ window.trapFocus = function(modal) {
     let focusableElements = modal.querySelectorAll(focusableElementsString);
     focusableElements = Array.prototype.slice.call(focusableElements);
 
+    if (focusableElements.length === 0) return;
+
     const firstTabStop = focusableElements[0];
     const lastTabStop = focusableElements[focusableElements.length - 1];
 
