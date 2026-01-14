@@ -78,6 +78,22 @@ let commandHUD = new CommandHUD(map);
 // Initialize Operation: CHRONOS (Temporal Recon)
 let chronosSystem = new ChronosSystem(map, appState);
 
+// Initialize Operation: SANDTABLE (Tactical Simulation)
+let sandtableSystem = new SandtableSystem(map, appState);
+
+// Link Sandtable to Risk Analysis
+riskAnalysisSystem.setSandtableSystem(sandtableSystem);
+
+// Listen for Sandtable updates to refresh Mission Planner
+window.addEventListener('sandtableUpdated', (e) => {
+    // Re-calculate route risk
+    missionPlanner.updateMission(appState.itinerary);
+    // Refresh Threat Profile if visible
+    if (pathfinderSystem) {
+        pathfinderSystem.renderProfile(appState.itinerary, 'threatProfileGraph');
+    }
+});
+
 // Global Error Handler for AppState
 appState.subscribe('error', (errorMessage) => {
     showToast(errorMessage);

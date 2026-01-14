@@ -89,11 +89,27 @@ class RiskAnalysisSystem {
             }
         }
 
+        // 4. Tactical Simulation (Sandtable)
+        let tacticalModifier = 0;
+        if (this.sandtableSystem && to) {
+            // Check risk at destination
+            tacticalModifier += this.sandtableSystem.getRiskModifier(to.lat, to.lng);
+
+            // Optionally check midpoint? For now destination proximity is enough for "Area Denial" logic
+        }
+
         // Weighted Sum
         // Weather: 30%, Crowd: 40%, Traffic: 30%
-        const totalRisk = (weatherRisk * 0.3) + (crowdRisk * 0.4) + (trafficRisk * 0.3);
+        let totalRisk = (weatherRisk * 0.3) + (crowdRisk * 0.4) + (trafficRisk * 0.3);
+
+        // Apply Tactical Modifier (Additive)
+        totalRisk += tacticalModifier;
 
         return Math.min(1.0, Math.max(0.0, totalRisk));
+    }
+
+    setSandtableSystem(system) {
+        this.sandtableSystem = system;
     }
 
     /**
