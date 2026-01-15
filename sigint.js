@@ -91,6 +91,18 @@ class SigintSystem {
         const title = document.getElementById('sigintTitle');
         const content = document.getElementById('sigintContent');
 
+        // Check Satellite Link
+        let signalBoost = 1.0;
+        let isBoosted = false;
+
+        // Access global orbitalSystem if available
+        if (typeof orbitalSystem !== 'undefined' && orbitalSystem.isActive) {
+            if (orbitalSystem.checkVisibility(attraction.lat, attraction.lng)) {
+                signalBoost = 2.0; // 2x speed or easier locking
+                isBoosted = true;
+            }
+        }
+
         // Reset state and open modal
         if (typeof window.openModal === 'function') {
             window.openModal(modal);
@@ -111,7 +123,10 @@ class SigintSystem {
                 <div class="signal-viz">
                     <canvas id="signalCanvas" width="300" height="100"></canvas>
                 </div>
-                <div class="encryption-status">ENCRYPTION LEVEL: ${'█'.repeat(attraction.sigint.encryption)}</div>
+                <div class="encryption-status">
+                    ENCRYPTION LEVEL: ${'█'.repeat(attraction.sigint.encryption)}
+                    ${isBoosted ? '<span style="color:#00ffcc; margin-left:10px;">[SAT LINK: ACTIVE]</span>' : ''}
+                </div>
                 <p class="instruction">Align frequency to decrypt...</p>
 
                 <div class="slider-container">
@@ -200,8 +215,10 @@ class SigintSystem {
             }
             ctx.stroke();
 
-            // Check alignment
-            if (Math.abs(currentFreq - targetFreq) < 5) {
+            // Check alignment (Width increases if boosted)
+            const tolerance = isBoosted ? 15 : 5;
+
+            if (Math.abs(currentFreq - targetFreq) < tolerance) {
                 decryptBtn.disabled = false;
                 decryptBtn.classList.add('ready');
             } else {

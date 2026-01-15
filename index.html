@@ -20,6 +20,14 @@
         Mission Control
     </button>
 
+    <div id="sat-hud">
+        <div class="sat-hud-header">ORBITAL VIEW ACTIVE</div>
+        <div class="sat-hud-data">
+            <span>COORDS:</span> <span id="sat-status-coords">0.00, 0.00</span>
+        </div>
+        <div class="sat-hud-reticle"></div>
+    </div>
+
     <div id="missionControlPanel" class="sidebar" aria-hidden="true">
         <div class="sidebar-header">
             <h2 id="missionTitle">Mission Plan</h2>
@@ -50,6 +58,16 @@
                         <input type="checkbox" id="sigintToggle" aria-label="Toggle Signal Intelligence Scanner">
                         <span class="slider round"></span>
                     </label>
+                    <label class="switch-label">
+                        <span>Satellite Link</span>
+                        <input type="checkbox" id="satelliteToggle" aria-label="Toggle Satellite Uplink">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="scout-action-row" style="margin-top: 10px; display: none;" id="satControls">
+                     <button id="taskSatBtn" class="control-button small-btn" aria-label="Task Satellite">
+                        <span class="icon">📡</span> Task Satellite
+                    </button>
                 </div>
                 <div style="margin-bottom: 10px; display: flex; justify-content: flex-end;">
                     <button id="exportMissionBtn" class="control-button small-btn" aria-label="Export Mission Dossier">
@@ -195,6 +213,7 @@
   <script src="chronos-data.js"></script>
   <script src="chronos.js"></script>
   <script src="sandtable.js"></script>
+  <script src="orbital-surveillance.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

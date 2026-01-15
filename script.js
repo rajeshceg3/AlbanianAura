@@ -81,6 +81,9 @@ let chronosSystem = new ChronosSystem(map, appState);
 // Initialize Operation: SANDTABLE (Tactical Simulation)
 let sandtableSystem = new SandtableSystem(map, appState);
 
+// Initialize Operation: SKYWATCH (Orbital Surveillance)
+let orbitalSystem = new OrbitalSystem(map, appState);
+
 // Link Sandtable to Risk Analysis
 riskAnalysisSystem.setSandtableSystem(sandtableSystem);
 
@@ -121,6 +124,30 @@ function initScoutInterface() {
     if (sigintToggle) {
         sigintToggle.addEventListener('change', (e) => {
             sigintSystem.toggleSystem(e.target.checked);
+        });
+    }
+
+    const satelliteToggle = document.getElementById('satelliteToggle');
+    const satControls = document.getElementById('satControls');
+    const taskSatBtn = document.getElementById('taskSatBtn');
+
+    if (satelliteToggle) {
+        satelliteToggle.addEventListener('change', (e) => {
+            orbitalSystem.toggleSystem(e.target.checked);
+            if (satControls) satControls.style.display = e.target.checked ? 'block' : 'none';
+        });
+    }
+
+    if (taskSatBtn) {
+        taskSatBtn.addEventListener('click', () => {
+            document.body.style.cursor = 'crosshair';
+            showToast("SELECT TARGET FOR SATELLITE TASKING...");
+
+            // One-time click listener on map
+            map.once('click', (e) => {
+                orbitalSystem.taskSatellite(e.latlng.lat, e.latlng.lng);
+                document.body.style.cursor = 'default';
+            });
         });
     }
 
