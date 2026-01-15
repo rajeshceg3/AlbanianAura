@@ -360,6 +360,7 @@ function renderReviews(attractionName) {
 function openModal(modal) {
     lastFocusedElement = document.activeElement;
     modal.style.display = 'flex';
+    modal.classList.add('active'); // Add active class for consistency
     modal.setAttribute('aria-hidden', 'false');
 
     // Accessibility: Hide background content
