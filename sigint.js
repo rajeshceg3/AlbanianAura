@@ -6,6 +6,7 @@ class SigintSystem {
         this.isActive = false;
         this.signalLayers = [];
         this.activeSignal = null; // The signal currently being decrypted
+        this.animationFrame = null;
         this.init();
     }
 
@@ -21,13 +22,20 @@ class SigintSystem {
             showToast("SIGINT Scanner Activated. Searching for frequencies...", 2000);
         } else {
             this.clearSignals();
+            this.stopDecryption();
             document.body.classList.remove('sigint-active');
             // Ensure modal is closed if open
             const modal = document.getElementById('sigintModal');
             if (modal && modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                if (typeof removeTrapFocus === 'function') {
-                    removeTrapFocus(modal);
+                // If openModal is available, use closeModal for consistency
+                if (typeof window.closeModal === 'function') {
+                    window.closeModal(modal);
+                } else {
+                    modal.classList.remove('active');
+                    modal.style.display = 'none';
+                    if (typeof removeTrapFocus === 'function') {
+                        removeTrapFocus(modal);
+                    }
                 }
             }
         }
@@ -83,8 +91,18 @@ class SigintSystem {
         const title = document.getElementById('sigintTitle');
         const content = document.getElementById('sigintContent');
 
-        // Reset state
-        modal.classList.add('active');
+        // Reset state and open modal
+        if (typeof window.openModal === 'function') {
+            window.openModal(modal);
+        } else {
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            // Fallback accessibility
+             if (typeof trapFocus === 'function') {
+                trapFocus(modal);
+            }
+        }
+
         title.textContent = `SIGNAL DETECTED: ${attraction.sigint.frequency} MHz`;
 
         // Render the mini-game interface
@@ -106,16 +124,14 @@ class SigintSystem {
 
         this.initDecryptionGame(attraction);
 
-        // Accessibility: Trap focus
-        if (typeof trapFocus === 'function') {
-            trapFocus(modal);
-        }
-        const closeBtn = document.getElementById('closeSigintModal');
-        closeBtn.focus();
+        // Focus usually handled by openModal, but we can ensure focus is inside
+        // openModal focuses .close-button, which is fine.
     }
 
     initDecryptionGame(attraction) {
         const canvas = document.getElementById('signalCanvas');
+        if (!canvas) return; // Guard
+
         const ctx = canvas.getContext('2d');
         const slider = document.getElementById('freqSlider');
         const decryptBtn = document.getElementById('decryptBtn');
@@ -123,15 +139,13 @@ class SigintSystem {
         let targetFreq = Math.random() * 80 + 10; // Random target between 10-90
         let currentFreq = 50;
 
-        // Cancel any existing animation frame to prevent leaks/overlap
-        if (this.animationFrame) {
-            cancelAnimationFrame(this.animationFrame);
-        }
+        this.stopDecryption();
 
         const styles = getComputedStyle(document.documentElement);
         const accentColor = styles.getPropertyValue('--accent-color').trim() || '#00ffcc';
         const successColor = styles.getPropertyValue('--success-color').trim() || '#33ff99';
         const warningColor = styles.getPropertyValue('--warning-color').trim() || '#ffcc00';
+
         // Parse hex to rgba for ghost wave
         const hexToRgba = (hex, alpha) => {
             let c;
@@ -150,7 +164,9 @@ class SigintSystem {
 
         const drawSignal = () => {
             if (!document.getElementById('sigintModal').classList.contains('active')) {
-                return; // Stop if modal closed
+                // Modal closed, stop loop
+                this.stopDecryption();
+                return;
             }
 
             ctx.fillStyle = '#000';
@@ -196,16 +212,27 @@ class SigintSystem {
             this.animationFrame = requestAnimationFrame(drawSignal);
         };
 
-        slider.addEventListener('input', (e) => {
-            currentFreq = parseInt(e.target.value);
-        });
+        if (slider) {
+            slider.addEventListener('input', (e) => {
+                currentFreq = parseInt(e.target.value);
+            });
+        }
 
-        decryptBtn.addEventListener('click', () => {
-            if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
-            this.processDecryption(attraction);
-        });
+        if (decryptBtn) {
+            decryptBtn.addEventListener('click', () => {
+                this.stopDecryption();
+                this.processDecryption(attraction);
+            });
+        }
 
         drawSignal();
+    }
+
+    stopDecryption() {
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+            this.animationFrame = null;
+        }
     }
 
     processDecryption(attraction) {
@@ -225,7 +252,16 @@ class SigintSystem {
         const title = document.getElementById('sigintTitle');
         const content = document.getElementById('sigintContent');
 
-        modal.classList.add('active');
+        if (typeof window.openModal === 'function') {
+            window.openModal(modal);
+        } else {
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+             if (typeof trapFocus === 'function') {
+                trapFocus(modal);
+            }
+        }
+
         title.textContent = `DECRYPTED INTEL: ${attraction.name.toUpperCase()}`;
 
         const intelText = attraction.sigint.intel[this.appState.language] || attraction.sigint.intel['en'];

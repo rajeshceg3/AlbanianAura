@@ -28,7 +28,7 @@ class ScoutOpsCenter {
         });
 
         this.initUI();
-        this.startIntelFeed();
+        // intelFeed is started when the panel opens
     }
 
     initUI() {
@@ -127,6 +127,7 @@ class ScoutOpsCenter {
         toggle.classList.toggle('active', this.isOpsActive);
 
         if (this.isOpsActive) {
+            this.startIntelFeed();
             // Accessibility: Trap focus
             if (typeof trapFocus === 'function') {
                 trapFocus(panel);
@@ -135,6 +136,7 @@ class ScoutOpsCenter {
             const closeBtn = document.getElementById('closeOpsCenter');
             if (closeBtn) closeBtn.focus();
         } else {
+            this.stopIntelFeed();
             if (typeof removeTrapFocus === 'function') {
                 removeTrapFocus(panel);
             }
@@ -147,10 +149,17 @@ class ScoutOpsCenter {
 
         // Simulate incoming intel every 10-30 seconds
         this.intelInterval = setInterval(() => {
-            if (this.isOpsActive && Math.random() > 0.6) {
+            if (Math.random() > 0.6) {
                 this.generateRandomEvent();
             }
         }, 15000);
+    }
+
+    stopIntelFeed() {
+        if (this.intelInterval) {
+            clearInterval(this.intelInterval);
+            this.intelInterval = null;
+        }
     }
 
     generateRandomEvent() {
@@ -277,10 +286,7 @@ class ScoutOpsCenter {
     }
 
     destroy() {
-        if (this.intelInterval) {
-            clearInterval(this.intelInterval);
-            this.intelInterval = null;
-        }
+        this.stopIntelFeed();
 
         // Clear all active drones
         this.activeDrones.forEach(d => {
