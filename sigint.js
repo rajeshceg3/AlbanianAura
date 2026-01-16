@@ -137,13 +137,13 @@ class SigintSystem {
             </div>
         `;
 
-        this.initDecryptionGame(attraction);
+        this.initDecryptionGame(attraction, isBoosted);
 
         // Focus usually handled by openModal, but we can ensure focus is inside
         // openModal focuses .close-button, which is fine.
     }
 
-    initDecryptionGame(attraction) {
+    initDecryptionGame(attraction, isBoosted) {
         const canvas = document.getElementById('signalCanvas');
         if (!canvas) return; // Guard
 

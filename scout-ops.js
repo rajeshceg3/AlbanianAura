@@ -219,25 +219,32 @@ class ScoutOpsCenter {
         const startPos = this.map.getCenter();
         const droneMarker = L.marker(startPos, { icon: droneIcon }).addTo(this.map);
 
-        const droneData = { name: attractionName, marker: droneMarker, interval: null };
+        const droneData = { name: attractionName, marker: droneMarker, animationFrame: null };
         this.activeDrones.push(droneData);
         this.updateDroneCount();
         this.addLogEntry(t.launchingDrone.replace('{target}', attractionName), 'system');
 
         // Animate
-        let progress = 0;
-        const steps = 100;
-        droneData.interval = setInterval(() => {
-            progress++;
-            const lat = startPos.lat + (target.lat - startPos.lat) * (progress / steps);
-            const lng = startPos.lng + (target.lng - startPos.lng) * (progress / steps);
+        let startTime = null;
+        const duration = 2000; // 2 seconds
+
+        const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            const lat = startPos.lat + (target.lat - startPos.lat) * progress;
+            const lng = startPos.lng + (target.lng - startPos.lng) * progress;
             droneMarker.setLatLng([lat, lng]);
 
-            if (progress >= steps) {
-                if (droneData.interval) clearInterval(droneData.interval);
+            if (progress < 1) {
+                droneData.animationFrame = requestAnimationFrame(animate);
+            } else {
                 this.onDroneArrival(attractionName, droneMarker);
             }
-        }, 20);
+        };
+
+        droneData.animationFrame = requestAnimationFrame(animate);
     }
 
     onDroneArrival(attractionName, droneMarker) {
@@ -290,7 +297,7 @@ class ScoutOpsCenter {
 
         // Clear all active drones
         this.activeDrones.forEach(d => {
-            if (d.interval) clearInterval(d.interval);
+            if (d.animationFrame) cancelAnimationFrame(d.animationFrame);
             if (d.marker) this.map.removeLayer(d.marker);
         });
         this.activeDrones = [];
