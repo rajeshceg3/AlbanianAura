@@ -1150,6 +1150,13 @@ renderMissionList(appState.itinerary);
 appState.subscribe('itineraryChanged', (itinerary) => {
     renderMissionList(itinerary);
 
+    // UX: Pulse Mission Control button if items exist
+    if (itinerary.length > 0) {
+        missionControlToggle.classList.add('has-items');
+    } else {
+        missionControlToggle.classList.remove('has-items');
+    }
+
     // Update Threat Profile
     if (pathfinderSystem) {
         pathfinderSystem.renderProfile(itinerary, 'threatProfileGraph');
