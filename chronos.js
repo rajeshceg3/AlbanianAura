@@ -33,8 +33,8 @@ class ChronosSystem {
 
             // Insert before Generative Mode or at the end
             const genBtn = document.getElementById('generativeModeBtn');
-            if (genBtn) {
-                uiControls.insertBefore(this.toggleBtn, genBtn);
+            if (genBtn && genBtn.parentNode) {
+                genBtn.parentNode.insertBefore(this.toggleBtn, genBtn);
             } else {
                 uiControls.appendChild(this.toggleBtn);
             }

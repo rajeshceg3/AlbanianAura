@@ -46,9 +46,11 @@ class MissionPlanner {
 
         // Insert into DOM
         // Selector goes above the list
-        panel.insertBefore(selectorContainer, listContainer);
-        // Analysis goes below selector
-        panel.insertBefore(analysisBtn, listContainer);
+        if (panel && listContainer && listContainer.parentNode === panel) {
+            panel.insertBefore(selectorContainer, listContainer);
+            // Analysis goes below selector
+            panel.insertBefore(analysisBtn, listContainer);
+        }
 
         // Bind Events
         document.getElementById('newMissionBtn').onclick = () => this.createNewMission();

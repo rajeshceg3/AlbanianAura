@@ -60,28 +60,37 @@ let riskAnalysisSystem = new RiskAnalysisSystem(crowdIntelSystem);
 let missionBriefingSystem = new MissionBriefingSystem(appState, attractions, riskAnalysisSystem);
 
 // Initialize Mission Planner with Risk System
+console.log('Initializing MissionPlanner...');
 let missionPlanner = new MissionPlanner(map, appState, attractions, riskAnalysisSystem);
+console.log('MissionPlanner initialized.');
 let pathfinderSystem = new PathfinderSystem(map, attractions, crowdIntelSystem);
 
 // Initialize S.C.O.U.T. Ops Center (New Feature)
+console.log('Initializing ScoutOpsCenter...');
 let scoutOpsCenter = new ScoutOpsCenter(map, appState, attractions);
 
 // Initialize Logistics System (Temporal Operations Grid)
+console.log('Initializing LogisticsSystem...');
 let logisticsSystem = new LogisticsSystem(map, appState, attractions, riskAnalysisSystem);
 
 // Initialize SIGINT System
+console.log('Initializing SigintSystem...');
 let sigintSystem = new SigintSystem(map, appState, attractions);
 
 // Initialize Command HUD (Tactical 3D View)
+console.log('Initializing CommandHUD...');
 let commandHUD = new CommandHUD(map);
 
 // Initialize Operation: CHRONOS (Temporal Recon)
+console.log('Initializing ChronosSystem...');
 let chronosSystem = new ChronosSystem(map, appState);
 
 // Initialize Operation: SANDTABLE (Tactical Simulation)
+console.log('Initializing SandtableSystem...');
 let sandtableSystem = new SandtableSystem(map, appState);
 
 // Initialize Operation: SKYWATCH (Orbital Surveillance)
+console.log('Initializing OrbitalSystem...');
 let orbitalSystem = new OrbitalSystem(map, appState);
 
 // Link Sandtable to Risk Analysis
@@ -1197,3 +1206,50 @@ if (reconBtn) {
 }
 
 setLanguage(appState.language);
+
+// --- Tour System Initialization ---
+const tourSteps = [
+    {
+        target: '.ui-controls',
+        title: 'AGENCY PROTOCOL INITIATED',
+        text: 'Welcome to the Albania Tactical Map. This interface provides real-time intelligence and mission planning capabilities for field operatives.',
+        placement: 'bottom'
+    },
+    {
+        target: '#map',
+        title: 'OPERATIONAL AREA',
+        text: 'The primary viewport. Navigate the terrain using drag and scroll operations. Tactical layers update dynamically based on zoom level.',
+        placement: 'center'
+    },
+    {
+        target: '#filter-container',
+        title: 'TARGET ACQUISITION',
+        text: 'Use the search matrix to locate assets, safehouses, and points of interest. Filter intelligence by category.',
+        placement: 'bottom'
+    },
+    {
+        target: '#missionControlToggle',
+        title: 'MISSION LOG',
+        text: 'Access your active itinerary, deploy reconnaissance drones, and analyze route risks via the Mission Control panel.',
+        placement: 'left'
+    },
+    {
+        target: '#dreamModeBtn',
+        title: 'SIMULATION TOOLS',
+        text: 'Activate Dream Mode for hypothetical scenario planning, disabling standard map interactions for focused strategic review.',
+        placement: 'right'
+    }
+];
+
+// Initialize Tour System
+// Ensure TourSystem is defined (it's loaded before script.js)
+if (typeof TourSystem !== 'undefined') {
+    const tourSystem = new TourSystem(tourSteps);
+
+    const startTourBtn = document.getElementById('startTourBtn');
+    if (startTourBtn) {
+        startTourBtn.addEventListener('click', () => {
+            tourSystem.start();
+        });
+    }
+}
