@@ -1197,3 +1197,50 @@ if (reconBtn) {
 }
 
 setLanguage(appState.language);
+
+// --- Tour System Initialization ---
+const tourSteps = [
+    {
+        target: '.ui-controls',
+        title: 'AGENCY PROTOCOL INITIATED',
+        text: 'Welcome to the Albania Tactical Map. This interface provides real-time intelligence and mission planning capabilities for field operatives.',
+        placement: 'bottom'
+    },
+    {
+        target: '#map',
+        title: 'OPERATIONAL AREA',
+        text: 'The primary viewport. Navigate the terrain using drag and scroll operations. Tactical layers update dynamically based on zoom level.',
+        placement: 'center'
+    },
+    {
+        target: '#filter-container',
+        title: 'TARGET ACQUISITION',
+        text: 'Use the search matrix to locate assets, safehouses, and points of interest. Filter intelligence by category.',
+        placement: 'bottom'
+    },
+    {
+        target: '#missionControlToggle',
+        title: 'MISSION LOG',
+        text: 'Access your active itinerary, deploy reconnaissance drones, and analyze route risks via the Mission Control panel.',
+        placement: 'left'
+    },
+    {
+        target: '#dreamModeBtn',
+        title: 'SIMULATION TOOLS',
+        text: 'Activate Dream Mode for hypothetical scenario planning, disabling standard map interactions for focused strategic review.',
+        placement: 'right'
+    }
+];
+
+// Initialize Tour System
+// Ensure TourSystem is defined (it's loaded before script.js)
+if (typeof TourSystem !== 'undefined') {
+    const tourSystem = new TourSystem(tourSteps);
+
+    const startTourBtn = document.getElementById('startTourBtn');
+    if (startTourBtn) {
+        startTourBtn.addEventListener('click', () => {
+            tourSystem.start();
+        });
+    }
+}

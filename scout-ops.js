@@ -77,8 +77,10 @@ class ScoutOpsCenter {
 
         const uiControls = document.querySelector('.ui-controls');
         const exploreBtn = document.getElementById('exploreBtn');
-        if (uiControls && exploreBtn) {
-             uiControls.insertBefore(toggleBtn, exploreBtn);
+
+        // Fix: Ensure we insert into the correct parent (controls-row)
+        if (exploreBtn && exploreBtn.parentNode) {
+             exploreBtn.parentNode.insertBefore(toggleBtn, exploreBtn);
         } else if (uiControls) {
              uiControls.appendChild(toggleBtn);
         }
