@@ -1243,4 +1243,16 @@ if (typeof TourSystem !== 'undefined') {
             tourSystem.start();
         });
     }
+
+    // Auto-start tour for new users (disabled during tests to prevent overlay blocking)
+    if (!window.__PLAYWRIGHT_TEST__) {
+        const hasSeenTour = localStorage.getItem('albania_tour_seen');
+        if (!hasSeenTour) {
+            // Use a short timeout to ensure the map and UI are fully rendered
+            setTimeout(() => {
+                tourSystem.start();
+                localStorage.setItem('albania_tour_seen', 'true');
+            }, 1000);
+        }
+    }
 }
