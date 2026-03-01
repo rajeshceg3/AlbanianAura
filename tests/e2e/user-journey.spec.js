@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('User Journey', () => {
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.__PLAYWRIGHT_TEST__ = true;
+    });
     await page.goto('/');
     // Wait for map to load
     await page.waitForSelector('.leaflet-container');

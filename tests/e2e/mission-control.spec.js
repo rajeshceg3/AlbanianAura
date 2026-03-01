@@ -2,6 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Mission Control & Simulation', () => {
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      window.__PLAYWRIGHT_TEST__ = true;
+    });
     await page.goto('/');
     await page.waitForSelector('.leaflet-container');
 
