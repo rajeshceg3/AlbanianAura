@@ -4,6 +4,7 @@ const attractionsData = [
         lat: 41.3275,
         lng: 19.8187,
         type: 'city',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Skanderbeg_square_tirana_2016.jpg/500px-Skanderbeg_square_tirana_2016.jpg',
         description: {
             en: 'The vibrant capital of Albania, known for its colorful buildings and lively atmosphere.',
             sq: 'Kryeqyteti i gjallë i Shqipërisë, i njohur për ndërtesat e tij shumëngjyrëshe dhe atmosferën e gjallë.'
@@ -34,6 +35,7 @@ const attractionsData = [
         lat: 40.7050,
         lng: 19.9522,
         type: 'city',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Berat_57.jpg/500px-Berat_57.jpg',
         description: {
             en: 'A UNESCO World Heritage site, famous for its white Ottoman houses.',
             sq: 'Një sit i Trashëgimisë Botërore të UNESCO-s, i famshëm për shtëpitë e bardha osmane.'
@@ -64,6 +66,7 @@ const attractionsData = [
         lat: 40.0755,
         lng: 20.1397,
         type: 'city',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Gjirokaster_2016-2017.jpg/500px-Gjirokaster_2016-2017.jpg',
         description: {
             en: 'A well-preserved Ottoman town with a magnificent castle and stone houses.',
             sq: 'Një qytet osman i ruajtur mirë me një kështjellë madhështore dhe shtëpi guri.'
@@ -94,6 +97,7 @@ const attractionsData = [
         lat: 40.1500,
         lng: 19.7833,
         type: 'beach',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Karte_Albanische_Riviera.png/500px-Karte_Albanische_Riviera.png',
         description: {
             en: 'Stunning coastline with crystal clear waters and beautiful beaches.',
             sq: 'Bregdeti mahnitës me ujëra të kristalta dhe plazhe të bukura.'
@@ -124,6 +128,7 @@ const attractionsData = [
         lat: 40.2000,
         lng: 19.5833,
         type: 'nature',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Parku_Komb%C3%ABtar_Llogara.svg/500px-Parku_Komb%C3%ABtar_Llogara.svg.png',
         description: {
             en: 'A spectacular mountain pass with breathtaking views of the Ionian coast.',
             sq: 'Një kalim malor spektakolar me pamje mahnitëse të bregdetit Jon.'
@@ -154,6 +159,7 @@ const attractionsData = [
         lat: 41.0000,
         lng: 20.7000,
         type: 'nature',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Lake_Ohrid%2C_Macedonia-Albania_viewed_from_a_NASA_satellite.jpg/500px-Lake_Ohrid%2C_Macedonia-Albania_viewed_from_a_NASA_satellite.jpg',
         description: {
             en: 'One of Europe\'s oldest and deepest lakes, a UNESCO World Heritage site.',
             sq: 'Një nga liqenet më të vjetra dhe më të thella të Evropës, një sit i Trashëgimisë Botërore të UNESCO-s.'
@@ -184,6 +190,7 @@ const attractionsData = [
         lat: 42.3950,
         lng: 19.7736,
         type: 'nature',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Theth_Church_Albania.jpg/500px-Theth_Church_Albania.jpg',
         description: {
             en: 'A stunningly beautiful area in the Albanian Alps, perfect for hiking.',
             sq: 'Një zonë mahnitëse e bukur në Alpet Shqiptare, e përkryer për ecje.'
@@ -214,6 +221,7 @@ const attractionsData = [
         lat: 39.7667,
         lng: 20.0000,
         type: 'beach',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Ksamill-1.jpg/500px-Ksamill-1.jpg',
         description: {
             en: 'A beautiful village with pristine beaches and four small islands.',
             sq: 'Një fshat i bukur me plazhe të pacenuara dhe katër ishuj të vegjël.'
@@ -244,6 +252,7 @@ const attractionsData = [
         lat: 42.0469,
         lng: 19.4928,
         type: 'history',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Rozafa_Castle_in_July_2013_%285%29.JPG/500px-Rozafa_Castle_in_July_2013_%285%29.JPG',
         description: {
             en: 'A legendary castle near Shkodër with panoramic views.',
             sq: 'Një kështjellë legjendare pranë Shkodrës me pamje panoramike.'
@@ -274,6 +283,7 @@ const attractionsData = [
         lat: 39.7464,
         lng: 20.0194,
         type: 'history',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Amphitheatre_of_Butrint_2009.jpg/500px-Amphitheatre_of_Butrint_2009.jpg',
         description: {
             en: 'An ancient Greek and Roman city, a UNESCO World Heritage site.',
             sq: 'Një qytet i lashtë grek dhe romak, një sit i Trashëgimisë Botërore të UNESCO-s.'

@@ -251,7 +251,13 @@ function generatePopupContent(attraction) {
              .replace(/'/g, "&#039;");
     }
 
+    let imageHtml = '';
+    if (attrData.image) {
+        imageHtml = `<img src="${escapeHtml(attrData.image)}" alt="${escapeHtml(attraction.name)}" class="popup-image" />`;
+    }
+
     return `
+        ${imageHtml}
         <h3>${escapeHtml(attraction.name)}</h3>
         <p>${escapeHtml(description)}</p>
         <div class="popup-rating-summary">
