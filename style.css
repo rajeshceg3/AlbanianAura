@@ -756,6 +756,15 @@ input:checked + .slider::before {
 }
 
 /* --- Leaflet Popup Overrides --- */
+.popup-image {
+    width: 100%;
+    max-height: 150px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    margin-bottom: 10px;
+    border: 1px solid hsla(var(--hue-primary), 100%, 50%, 0.3);
+}
+
 .leaflet-popup-content-wrapper {
     background: var(--bg-panel);
     color: var(--text-primary);
