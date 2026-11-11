@@ -1,0 +1,305 @@
+class SigintSystem {
+    constructor(map, appState, attractions) {
+        this.map = map;
+        this.appState = appState;
+        this.attractions = attractions;
+        this.isActive = false;
+        this.signalLayers = [];
+        this.activeSignal = null; // The signal currently being decrypted
+        this.animationFrame = null;
+        this.init();
+    }
+
+    init() {
+        // Any pre-init logic
+    }
+
+    toggleSystem(active) {
+        this.isActive = active;
+        if (this.isActive) {
+            this.renderSignals();
+            document.body.classList.add('sigint-active');
+            showToast("SIGINT Scanner Activated. Searching for frequencies...", 2000);
+        } else {
+            this.clearSignals();
+            this.stopDecryption();
+            document.body.classList.remove('sigint-active');
+            // Ensure modal is closed if open
+            const modal = document.getElementById('sigintModal');
+            if (modal && modal.classList.contains('active')) {
+                // If openModal is available, use closeModal for consistency
+                if (typeof window.closeModal === 'function') {
+                    window.closeModal(modal);
+                } else {
+                    modal.classList.remove('active');
+                    modal.style.display = 'none';
+                    if (typeof removeTrapFocus === 'function') {
+                        removeTrapFocus(modal);
+                    }
+                }
+            }
+        }
+    }
+
+    clearSignals() {
+        this.signalLayers.forEach(layer => this.map.removeLayer(layer));
+        this.signalLayers = [];
+    }
+
+    renderSignals() {
+        this.clearSignals();
+        this.attractions.forEach(attraction => {
+            if (!attraction.sigint) return;
+
+            const isUnlocked = this.appState.unlockedSignals.includes(attraction.name);
+            const color = isUnlocked ? '#33ff99' : '#ffcc00'; // Green if unlocked, Amber if locked
+
+            // Create a pulsing circle marker
+            const pulseIcon = L.divIcon({
+                className: `sigint-marker ${isUnlocked ? 'unlocked' : 'locked'}`,
+                html: `<div class="pulse-ring" style="border-color: ${color}"></div><div class="signal-dot" style="background: ${color}"></div>`,
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+
+            const marker = L.marker([attraction.lat, attraction.lng], {
+                icon: pulseIcon,
+                zIndexOffset: 1000
+            }).addTo(this.map);
+
+            marker.on('click', () => {
+                this.handleSignalClick(attraction);
+            });
+
+            this.signalLayers.push(marker);
+        });
+    }
+
+    handleSignalClick(attraction) {
+        if (this.appState.unlockedSignals.includes(attraction.name)) {
+            // Already unlocked, show the intel directly
+            this.showDecryptedIntel(attraction);
+        } else {
+            // Start decryption process
+            this.openDecryptionTerminal(attraction);
+        }
+    }
+
+    openDecryptionTerminal(attraction) {
+        this.activeSignal = attraction;
+        const modal = document.getElementById('sigintModal');
+        const title = document.getElementById('sigintTitle');
+        const content = document.getElementById('sigintContent');
+
+        // Check Satellite Link
+        let signalBoost = 1.0;
+        let isBoosted = false;
+
+        // Access global orbitalSystem if available
+        if (typeof orbitalSystem !== 'undefined' && orbitalSystem.isActive) {
+            if (orbitalSystem.checkVisibility(attraction.lat, attraction.lng)) {
+                signalBoost = 2.0; // 2x speed or easier locking
+                isBoosted = true;
+            }
+        }
+
+        // Reset state and open modal
+        if (typeof window.openModal === 'function') {
+            window.openModal(modal);
+        } else {
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+            // Fallback accessibility
+             if (typeof trapFocus === 'function') {
+                trapFocus(modal);
+            }
+        }
+
+        title.textContent = `SIGNAL DETECTED: ${attraction.sigint.frequency} MHz`;
+
+        // Render the mini-game interface
+        content.innerHTML = `
+            <div class="terminal-screen">
+                <div class="signal-viz">
+                    <canvas id="signalCanvas" width="300" height="100"></canvas>
+                </div>
+                <div class="encryption-status">
+                    ENCRYPTION LEVEL: ${'█'.repeat(attraction.sigint.encryption)}
+                    ${isBoosted ? '<span style="color:#00ffcc; margin-left:10px;">[SAT LINK: ACTIVE]</span>' : ''}
+                </div>
+                <p class="instruction">Align frequency to decrypt...</p>
+
+                <div class="slider-container">
+                    <input type="range" id="freqSlider" min="0" max="100" value="50" class="freq-slider">
+                </div>
+
+                <button id="decryptBtn" class="terminal-btn" disabled>INITIATE DECRYPTION</button>
+            </div>
+        `;
+
+        this.initDecryptionGame(attraction, isBoosted);
+
+        // Focus usually handled by openModal, but we can ensure focus is inside
+        // openModal focuses .close-button, which is fine.
+    }
+
+    initDecryptionGame(attraction, isBoosted) {
+        const canvas = document.getElementById('signalCanvas');
+        if (!canvas) return; // Guard
+
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('freqSlider');
+        const decryptBtn = document.getElementById('decryptBtn');
+
+        let targetFreq = Math.random() * 80 + 10; // Random target between 10-90
+        let currentFreq = 50;
+
+        this.stopDecryption();
+
+        const styles = getComputedStyle(document.documentElement);
+        const accentColor = styles.getPropertyValue('--accent-color').trim() || '#00ffcc';
+        const successColor = styles.getPropertyValue('--success-color').trim() || '#33ff99';
+        const warningColor = styles.getPropertyValue('--warning-color').trim() || '#ffcc00';
+
+        // Parse hex to rgba for ghost wave
+        const hexToRgba = (hex, alpha) => {
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+            }
+            return hex; // Fallback
+        };
+        const ghostColor = hexToRgba(accentColor, 0.3);
+
+
+        const drawSignal = () => {
+            if (!document.getElementById('sigintModal').classList.contains('active')) {
+                // Modal closed, stop loop
+                this.stopDecryption();
+                return;
+            }
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Target Wave (Ghost)
+            ctx.beginPath();
+            ctx.strokeStyle = ghostColor;
+            ctx.lineWidth = 2;
+            for (let x = 0; x < canvas.width; x++) {
+                const y = canvas.height / 2 + Math.sin((x + Date.now() / 20) * (targetFreq / 500)) * 30;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Draw User Wave
+            ctx.beginPath();
+            const proximity = 1 - Math.abs(currentFreq - targetFreq) / 100;
+            const color = proximity > 0.9 ? successColor : warningColor; // Green when close
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+
+            // Add some noise if far away
+            const noise = (1 - proximity) * 10;
+
+            for (let x = 0; x < canvas.width; x++) {
+                const y = canvas.height / 2 + Math.sin((x + Date.now() / 20) * (currentFreq / 500)) * 30 + (Math.random() - 0.5) * noise;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Check alignment (Width increases if boosted)
+            const tolerance = isBoosted ? 15 : 5;
+
+            if (Math.abs(currentFreq - targetFreq) < tolerance) {
+                decryptBtn.disabled = false;
+                decryptBtn.classList.add('ready');
+            } else {
+                decryptBtn.disabled = true;
+                decryptBtn.classList.remove('ready');
+            }
+
+            this.animationFrame = requestAnimationFrame(drawSignal);
+        };
+
+        if (slider) {
+            slider.addEventListener('input', (e) => {
+                currentFreq = parseInt(e.target.value);
+            });
+        }
+
+        if (decryptBtn) {
+            decryptBtn.addEventListener('click', () => {
+                this.stopDecryption();
+                this.processDecryption(attraction);
+            });
+        }
+
+        drawSignal();
+    }
+
+    stopDecryption() {
+        if (this.animationFrame) {
+            cancelAnimationFrame(this.animationFrame);
+            this.animationFrame = null;
+        }
+    }
+
+    processDecryption(attraction) {
+        const content = document.getElementById('sigintContent');
+        content.innerHTML = `<div class="terminal-text">DECRYPTING... <span class="blink">_</span></div>`;
+
+        setTimeout(() => {
+            this.appState.unlockSignal(attraction.name);
+            this.showDecryptedIntel(attraction);
+            // Refresh markers to update color
+            this.renderSignals();
+        }, 1500);
+    }
+
+    showDecryptedIntel(attraction) {
+        const modal = document.getElementById('sigintModal');
+        const title = document.getElementById('sigintTitle');
+        const content = document.getElementById('sigintContent');
+
+        if (typeof window.openModal === 'function') {
+            window.openModal(modal);
+        } else {
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+             if (typeof trapFocus === 'function') {
+                trapFocus(modal);
+            }
+        }
+
+        title.textContent = `DECRYPTED INTEL: ${attraction.name.toUpperCase()}`;
+
+        const intelText = attraction.sigint.intel[this.appState.language] || attraction.sigint.intel['en'];
+
+        content.innerHTML = `
+            <div class="intel-dossier">
+                <div class="intel-header">
+                    <span>CLEARANCE: LEVEL ${attraction.sigint.encryption}</span>
+                    <span>TYPE: ${attraction.sigint.type}</span>
+                </div>
+                <div class="intel-body typewriter">
+                    ${intelText}
+                </div>
+                <div class="intel-footer">
+                    LOGGED IN ARCHIVE
+                </div>
+            </div>
+        `;
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { SigintSystem };
+}

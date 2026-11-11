@@ -11,7 +11,7 @@ test.describe('User Journey', () => {
   });
 
   test('should load the homepage and map', async ({ page }) => {
-    await expect(page).toHaveTitle(/Albania Tourist Map/i);
+    await expect(page).toHaveTitle(/Albania, at your pace/i);
     await expect(page.locator('#map')).toBeVisible();
   });
 

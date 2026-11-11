@@ -1,0 +1,1 @@
+const fs=require('fs'),path=require('path');fs.rmSync('dist',{recursive:true,force:true});fs.mkdirSync('dist');for(const f of fs.readdirSync('.')){if(/\.(html|css|js)$/.test(f)&&!['playwright.config.js','vitest.config.js'].includes(f))fs.copyFileSync(f,path.join('dist',f))}fs.cpSync('vendor','dist/vendor',{recursive:true});
