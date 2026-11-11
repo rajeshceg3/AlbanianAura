@@ -246,6 +246,12 @@ class ScoutOpsCenter {
             }
         };
 
+        if (window.prefersReducedMotion && window.prefersReducedMotion()) {
+            droneMarker.setLatLng([target.lat, target.lng]);
+            this.onDroneArrival(attractionName, droneMarker);
+            return;
+        }
+
         droneData.animationFrame = requestAnimationFrame(animate);
     }
 

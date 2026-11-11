@@ -116,7 +116,9 @@ class OrbitalSystem {
         }
 
         this.updateVisuals();
-        this.animationFrame = requestAnimationFrame(() => this.loop());
+        if (!window.prefersReducedMotion || !window.prefersReducedMotion()) {
+            this.animationFrame = requestAnimationFrame(() => this.loop());
+        }
     }
 
     updateVisuals() {
