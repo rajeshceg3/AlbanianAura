@@ -8,7 +8,7 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: process.env.PW_BASE_URL || 'http://localhost:8080',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 10000,
@@ -28,8 +28,8 @@ module.exports = defineConfig({
     },
   ],
   webServer: {
-    command: 'python3 -m http.server 8080',
-    port: 8080,
+    command: 'python3 -m http.server ' + (process.env.PW_PORT || '8080'),
+    url: process.env.PW_BASE_URL || 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
   },
 });
