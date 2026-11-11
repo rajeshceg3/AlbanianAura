@@ -321,3 +321,8 @@ const appState = new AppState();
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { AppState, appState };
 }
+
+// Shared reduced-motion check (fleet accessibility rule)
+window.prefersReducedMotion = function () {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};

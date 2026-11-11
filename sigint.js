@@ -226,12 +226,15 @@ class SigintSystem {
                 decryptBtn.classList.remove('ready');
             }
 
-            this.animationFrame = requestAnimationFrame(drawSignal);
+            if (!window.prefersReducedMotion || !window.prefersReducedMotion()) {
+                this.animationFrame = requestAnimationFrame(drawSignal);
+            }
         };
 
         if (slider) {
             slider.addEventListener('input', (e) => {
                 currentFreq = parseInt(e.target.value);
+                if (window.prefersReducedMotion && window.prefersReducedMotion()) drawSignal();
             });
         }
 
