@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Albania Tourist Map</title>
+    <title>Albania, at your pace</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://rsms.me https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://rsms.me https://fonts.gstatic.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://unpkg.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://rsms.me https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://rsms.me https://fonts.gstatic.com; img-src 'self' data: https://*.tile.opentopomap.org https://upload.wikimedia.org https://unpkg.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com;">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<link rel="stylesheet" href="readable-map.css">
 </head>
 <body>
+<header class="collection-header"><h1>Albania, at your pace</h1><nav aria-label="Map controls"><button id="resetMap">Reset map</button><button id="themeMap">Dark UI</button><button id="toolsToggle" aria-expanded="false" aria-controls="mapTools">Tools</button></nav></header>
+<p class="collection-note">A place collection and local trip planner. Simulation tools are fictional, not live travel or safety advice.</p>
     <div id="map"></div>
 
     <div id="dream-controls">
@@ -222,5 +225,6 @@
   <script src="orbital-surveillance.js"></script>
   <script src="tour-system.js"></script>
   <script src="script.js"></script>
+  <script src="readable-map.js"></script>
 </body>
 </html>

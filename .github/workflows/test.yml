@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install Dependencies
@@ -30,6 +30,15 @@ jobs:
 
       - name: Run E2E Tests
         run: npx playwright test --project=chromium --project=firefox
+
+      - name: Verify phone and desktop visual behavior
+        run: |
+          SHOTS=test-results/visual WIDTH=320 npm run verify:visual
+          SHOTS=test-results/visual WIDTH=390 npm run verify:visual
+          SHOTS=test-results/visual WIDTH=1440 npm run verify:visual
+
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
 
       - name: Upload Test Results
         if: always()

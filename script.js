@@ -192,19 +192,20 @@ function initScoutInterface() {
 
 
 // Add a tile layer to the map (using a pastel-themed layer)
-const baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
+const baseLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors SRTM | <a href="https://opentopomap.org/about">OpenTopoMap</a> <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA</a>',
+    subdomains: 'abc',
+    maxZoom: 17
 }).addTo(map);
 
 // Using CartoDB Dark Matter for the "Generative" mode as a stable alternative to Stamen Watercolor
-let generativeLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-	subdomains: 'abcd',
-	maxZoom: 20
+let generativeLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors SRTM | <a href="https://opentopomap.org/about">OpenTopoMap</a> <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA</a>',
+	subdomains: 'abc',
+	maxZoom: 17
 });
 
+const readablePopupPane=map.createPane('readablePopups',document.body);readablePopupPane.style.zIndex=1800;
 const allMarkers = [];
 
 // Helper function to generate popup content
@@ -253,11 +254,11 @@ function generatePopupContent(attraction) {
 
     let imageHtml = '';
     if (attrData.image) {
-        imageHtml = `<img src="${escapeHtml(attrData.image)}" alt="${escapeHtml(attraction.name)}" class="popup-image" />`;
+        imageHtml = `<img src="${escapeHtml(attrData.image)}" alt="${escapeHtml(attraction.name)} (inherited image)" class="popup-image" />`;
     }
 
     return `
-        ${imageHtml}
+        ${imageHtml}<p class="source-note">Inherited text and image. Image credit unverified; check the linked sources before travel.</p>
         <h3>${escapeHtml(attraction.name)}</h3>
         <p>${escapeHtml(description)}</p>
         <div class="popup-rating-summary">
@@ -303,7 +304,7 @@ attractions.forEach(function(attraction) {
     marker.attractionData = attraction;
 
     // Bind popup and add to map
-    marker.bindPopup();
+    marker.bindPopup('',{autoPan:false,pane:'readablePopups'});
     marker.addTo(map);
     allMarkers.push(marker);
 });
@@ -967,7 +968,7 @@ function filterMarkers() {
                 item.tabIndex = 0; // Accessibility
 
                 item.addEventListener('click', () => {
-                    map.flyTo([attraction.lat, attraction.lng], 12);
+                    map.stop();map.setView([attraction.lat, attraction.lng],12,{animate:false,reset:true});
                     marker.openPopup();
                     searchBox.value = attraction.name;
                     searchResults.classList.remove('active');
@@ -1208,26 +1209,26 @@ setLanguage(appState.language);
 const tourSteps = [
     {
         target: '.ui-controls',
-        title: 'AGENCY PROTOCOL INITIATED',
-        text: 'Welcome to the Albania Tactical Map. This interface provides real-time intelligence and mission planning capabilities for field operatives.',
+        title: 'Your Albania collection',
+        text: 'Explore the saved places, search by name or type, and keep itineraries in this browser. Simulation tools are fictional, not live information.',
         placement: 'bottom'
     },
     {
         target: '#map',
         title: 'OPERATIONAL AREA',
-        text: 'The primary viewport. Navigate the terrain using drag and scroll operations. Tactical layers update dynamically based on zoom level.',
+        text: 'Drag and zoom to explore the map. Reset map restores the Albania overview. Tiles are OpenTopoMap and may be unavailable; place markers still work.',
         placement: 'center'
     },
     {
         target: '#filter-container',
         title: 'TARGET ACQUISITION',
-        text: 'Use the search matrix to locate assets, safehouses, and points of interest. Filter intelligence by category.',
+        text: 'Search the ten inherited places or filter by city, beach, nature and history. Read the original guide text and follow its source links.',
         placement: 'bottom'
     },
     {
         target: '#missionControlToggle',
         title: 'MISSION LOG',
-        text: 'Access your active itinerary, deploy reconnaissance drones, and analyze route risks via the Mission Control panel.',
+        text: 'Keep more than one itinerary, reorder places and review straight-line distance estimates. Crowd, risk and drone displays are simulations, not travel advice.',
         placement: 'left'
     },
     {
@@ -1250,15 +1251,5 @@ if (typeof TourSystem !== 'undefined') {
         });
     }
 
-    // Auto-start tour for new users (disabled during tests to prevent overlay blocking)
-    if (!window.__PLAYWRIGHT_TEST__) {
-        const hasSeenTour = localStorage.getItem('albania_tour_seen');
-        if (!hasSeenTour) {
-            // Use a short timeout to ensure the map and UI are fully rendered
-            setTimeout(() => {
-                tourSystem.start();
-                localStorage.setItem('albania_tour_seen', 'true');
-            }, 1000);
-        }
-    }
+    // The guide opens only when requested.
 }

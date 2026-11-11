@@ -11,7 +11,7 @@ test.describe('User Journey', () => {
   });
 
   test('should load the homepage and map', async ({ page }) => {
-    await expect(page).toHaveTitle(/Albania Tourist Map/i);
+    await expect(page).toHaveTitle(/Albania, at your pace/i);
     await expect(page.locator('#map')).toBeVisible();
   });
 
@@ -58,4 +58,8 @@ test.describe('User Journey', () => {
     const searchBox = page.locator('#searchBox');
     await expect(searchBox).toHaveAttribute('placeholder', /Kërko/);
   });
+});
+
+test('local review persists after reload on a narrow phone', async ({page})=>{
+ await page.setViewportSize({width:390,height:844});await page.goto('/');await page.fill('#searchBox','Tirana');await page.locator('.search-result-item').first().click();await page.locator('.view-reviews-btn').click();await page.fill('#userName','Local test');await page.locator('#starRatingContainer .star[data-value="4"]').click();await page.fill('#reviewText','Private browser review verification');await page.locator('#reviewForm button[type=submit]').click();await expect(page.locator('#reviewsList')).toContainText('Private browser review verification');await page.reload();await page.fill('#searchBox','Tirana');await page.locator('.search-result-item').first().click();await page.locator('.view-reviews-btn').click();await expect(page.locator('#reviewsList')).toContainText('Private browser review verification');await page.screenshot({path:process.env.CI?'test-results/albania-review390.png':'/downloads/worlds-rank/albania-review390.png'});
 });

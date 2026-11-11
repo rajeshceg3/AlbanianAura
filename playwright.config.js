@@ -16,7 +16,7 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], launchOptions: {executablePath:process.env.CHROME || '/usr/bin/google-chrome'} },
     },
     {
       name: 'firefox',

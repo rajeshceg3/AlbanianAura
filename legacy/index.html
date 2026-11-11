@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Albania Tourist Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://rsms.me https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://rsms.me https://fonts.gstatic.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://unpkg.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com;">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+</head>
+<body>
+    <div id="map"></div>
+
+    <div id="dream-controls">
+        <button id="dreamModeBtn" class="control-button">Dream Mode</button>
+    </div>
+
+    <button id="missionControlToggle" class="control-button" aria-label="Toggle Mission Control" aria-expanded="false">
+        Mission Control
+    </button>
+
+    <div id="sat-hud">
+        <div class="sat-hud-header">ORBITAL VIEW ACTIVE</div>
+        <div class="sat-hud-data">
+            <span>COORDS:</span> <span id="sat-status-coords">0.00, 0.00</span>
+        </div>
+        <div class="sat-hud-reticle"></div>
+    </div>
+
+    <div id="missionControlPanel" class="sidebar" aria-hidden="true">
+        <div class="sidebar-header">
+            <h2 id="missionTitle">Mission Plan</h2>
+            <button id="closeMissionControl" class="close-button" aria-label="Close Mission Control">&times;</button>
+        </div>
+
+        <!-- Mission Selector injected by JS here -->
+
+        <div id="missionList" class="mission-list">
+            <!-- Itinerary items will be populated here -->
+            <p class="empty-state">No targets selected.</p>
+        </div>
+        <div class="mission-stats">
+            <p class="mission-distance">Total Distance: <span id="missionDistance">0.0 km</span></p>
+            <button id="reconBtn" class="control-button recon-btn">Execute Recon</button>
+            <p><span id="targetsLabel">Targets</span>: <span id="missionCount">0</span></p>
+
+            <div class="scout-interface">
+                <hr class="tactical-divider">
+                <div class="scout-controls">
+                    <label class="switch-label">
+                        <span>Crowd Intel</span>
+                        <input type="checkbox" id="crowdIntelToggle" aria-label="Toggle Crowd Intelligence Overlay">
+                        <span class="slider round"></span>
+                    </label>
+                    <label class="switch-label">
+                        <span>SIGINT Scan</span>
+                        <input type="checkbox" id="sigintToggle" aria-label="Toggle Signal Intelligence Scanner">
+                        <span class="slider round"></span>
+                    </label>
+                    <label class="switch-label">
+                        <span>Satellite Link</span>
+                        <input type="checkbox" id="satelliteToggle" aria-label="Toggle Satellite Uplink">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="scout-action-row" style="margin-top: 10px; display: none;" id="satControls">
+                     <button id="taskSatBtn" class="control-button small-btn" aria-label="Task Satellite">
+                        <span class="icon">📡</span> Task Satellite
+                    </button>
+                </div>
+                <div style="margin-bottom: 10px; display: flex; justify-content: flex-end;">
+                    <button id="exportMissionBtn" class="control-button small-btn" aria-label="Export Mission Dossier">
+                        <span class="icon">📄</span> Dossier
+                    </button>
+                </div>
+
+                <div class="time-control">
+                    <label for="missionTimeSlider">Mission Time: <span id="missionTimeDisplay">12:00</span></label>
+                    <input type="range" id="missionTimeSlider" min="6" max="23" value="12" step="1" aria-label="Adjust Mission Time">
+                </div>
+
+                <hr class="tactical-divider">
+
+                <button id="optimizeRouteBtn" class="control-button optimize-btn" aria-label="Optimize Mission Route">
+                    <span class="icon">⚡</span> Optimize Route
+                </button>
+
+                <div id="threatProfileContainer" class="threat-profile-container" style="display: none;">
+                    <h4>Threat Assessment Profile</h4>
+                    <div id="threatProfileGraph"></div>
+                </div>
+            </div>
+
+            <button id="clearMissionBtn" class="control-button danger">Abort Mission</button>
+        </div>
+    </div>
+
+    <div class="ui-controls">
+        <div id="filter-container">
+            <div style="position: relative; flex: 1;">
+                <input type="text" id="searchBox" placeholder="Search..." aria-label="Search attractions" autocomplete="off">
+                <div id="searchResults" class="search-results" aria-live="polite"></div>
+            </div>
+            <select id="typeFilter" aria-label="Filter attractions by type">
+                <option value="all">All Types</option>
+                <option value="city">City</option>
+                <option value="beach">Beach</option>
+                <option value="nature">Nature</option>
+                <option value="history">History</option>
+            </select>
+        </div>
+        <div class="controls-row">
+            <div id="langSwitcher">
+                <button data-lang="en">EN</button>
+                <button data-lang="sq">SQ</button>
+            </div>
+            <button id="exploreBtn" class="control-button">Explore</button>
+            <button id="generativeModeBtn" class="control-button">Generative</button>
+            <button id="startTourBtn" class="control-button">Guide</button>
+        </div>
+    </div>
+
+  <!-- Review Modal -->
+  <div id="reviewModal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+    <div class="modal-content">
+      <button class="close-button" id="closeReviewModal" aria-label="Close modal">&times;</button>
+      <h3 id="reviewModalTitle">Reviews for Attraction</h3>
+      <div id="currentAverageRating">Average Rating: <span id="avgRatingValue">N/A</span></div>
+      <div id="reviewsList">
+        <!-- Reviews will be populated here by JavaScript -->
+      </div>
+      <hr>
+      <h4 id="addReviewTitle">Add Your Review</h4>
+      <div class="confirmation-message" role="status" aria-live="polite">Review Submitted!</div>
+      <form id="reviewForm">
+        <label for="userName" id="userNameLabel">Name (Optional):</label>
+        <input type="text" id="userName" name="userName">
+
+        <label for="rating" id="ratingLabel">Rating:</label>
+        <div id="starRatingContainer" role="radiogroup" aria-label="Rating">
+          <!-- Stars will be generated by JavaScript or manually placed here -->
+          <span class="star" data-value="1" role="radio" aria-checked="false" tabindex="0" aria-label="1 star">&#9733;</span>
+          <span class="star" data-value="2" role="radio" aria-checked="false" tabindex="-1" aria-label="2 stars">&#9733;</span>
+          <span class="star" data-value="3" role="radio" aria-checked="false" tabindex="-1" aria-label="3 stars">&#9733;</span>
+          <span class="star" data-value="4" role="radio" aria-checked="false" tabindex="-1" aria-label="4 stars">&#9733;</span>
+          <span class="star" data-value="5" role="radio" aria-checked="false" tabindex="-1" aria-label="5 stars">&#9733;</span>
+        </div>
+        <input type="hidden" id="ratingValue" name="ratingValue" value="0">
+
+        <label for="reviewText" id="reviewTextLabel">Review:</label>
+        <textarea id="reviewText" name="reviewText" rows="3" required></textarea>
+
+        <button type="submit" id="submitReviewBtn">Submit Review</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Trivia Modal -->
+  <div id="triviaModal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="triviaModalTitle">
+    <div class="modal-content">
+        <button class="close-button" id="closeTriviaModal" aria-label="Close modal">&times;</button>
+        <h3 id="triviaModalTitle">Did you know?</h3>
+        <div id="triviaModalContent">
+            <!-- Trivia content will be populated here by JavaScript -->
+        </div>
+    </div>
+  </div>
+
+  <!-- SIGINT Modal -->
+  <div id="sigintModal" class="modal terminal-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="sigintTitle">
+    <div class="modal-content terminal-content">
+        <button class="close-button" id="closeSigintModal" aria-label="Close modal">&times;</button>
+        <h3 id="sigintTitle">SIGNAL INTERCEPT</h3>
+        <div id="sigintContent">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+  </div>
+
+  <!-- Analysis Modal -->
+  <div id="analysisModal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="analysisTitle">
+      <div class="modal-content" style="max-width: 700px;">
+          <button class="close-button" id="closeAnalysisModal" aria-label="Close modal" onclick="document.getElementById('analysisModal').style.display='none'">&times;</button>
+          <h3 id="analysisTitle">STRATEGIC ANALYSIS: MISSION PROFILES</h3>
+          <p>Comparative assessment of available Courses of Action (COA).</p>
+
+          <table class="analysis-table">
+              <thead>
+                  <tr>
+                      <th>Mission Profile</th>
+                      <th>Total Distance</th>
+                      <th>Est. Duration</th>
+                      <th>Risk Level</th>
+                      <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody id="analysisTableBody">
+                  <!-- Injected Rows -->
+              </tbody>
+          </table>
+      </div>
+  </div>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="data.js"></script>
+  <script src="state.js"></script>
+  <script src="languages.js"></script>
+  <script src="command-hud.js"></script>
+  <script src="mission-planner.js"></script>
+  <script src="logistics.js"></script>
+  <script src="scout-ops.js"></script>
+  <script src="sigint.js"></script>
+  <script src="risk-analysis.js"></script>
+  <script src="briefing-system.js"></script>
+  <script src="chronos-data.js"></script>
+  <script src="chronos.js"></script>
+  <script src="sandtable.js"></script>
+  <script src="orbital-surveillance.js"></script>
+  <script src="tour-system.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
