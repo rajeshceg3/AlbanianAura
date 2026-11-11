@@ -5104,6 +5104,60 @@
   },
   {
     "width": 1440,
+    "state": "0-reviews",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 178
+  },
+  {
+    "width": 1440,
+    "state": "0-reviews",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 228
+  },
+  {
+    "width": 1440,
+    "state": "0-reviewform",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 178
+  },
+  {
+    "width": 1440,
+    "state": "0-reviewform",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 228
+  },
+  {
+    "width": 1440,
+    "state": "0-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 830
+  },
+  {
+    "width": 1440,
+    "state": "0-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 400
+  },
+  {
+    "width": 1440,
     "state": "1-overview",
     "element": 0,
     "text": "Albania, at your pace",
@@ -6824,7 +6878,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 34,
+    "element": 35,
     "text": "\n        Inherited text and image. Image credit unverified; ",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6833,7 +6887,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 35,
+    "element": 36,
     "text": "Inherited text and image. Image credit unverified; check the",
     "minimum": 9.134034689095786,
     "font": "14px",
@@ -6842,7 +6896,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 35,
+    "element": 36,
     "text": "Inherited text and image. Image credit unverified; check the",
     "minimum": 9.134034689095786,
     "font": "14px",
@@ -6851,7 +6905,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 36,
+    "element": 37,
     "text": "Albanian Riviera",
     "minimum": 8.447004160754966,
     "font": "25px",
@@ -6860,7 +6914,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6869,7 +6923,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6878,7 +6932,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6887,7 +6941,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6896,7 +6950,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6905,7 +6959,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6914,7 +6968,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6923,7 +6977,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6932,7 +6986,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6941,7 +6995,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6950,7 +7004,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Albanian Riviera is a breathtaking stretch of pristine c",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -6959,7 +7013,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 38,
+    "element": 39,
     "text": "No reviews yet",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -6968,7 +7022,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 45,
+    "element": 46,
     "text": "\u00d7",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -6977,7 +7031,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 46,
+    "element": 47,
     "text": "\u00a9 OpenStreetMap contributors SRTM | OpenTopoMap CC BY-SA",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -6986,7 +7040,7 @@
   {
     "width": 1440,
     "state": "1-place3bottom",
-    "element": 46,
+    "element": 47,
     "text": "\u00a9 OpenStreetMap contributors SRTM | OpenTopoMap CC BY-SA",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7040,7 +7094,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 35,
+    "element": 36,
     "text": "Inherited text and image. Image credit unverified; check the",
     "minimum": 9.134034689095786,
     "font": "14px",
@@ -7049,7 +7103,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 35,
+    "element": 36,
     "text": "Inherited text and image. Image credit unverified; check the",
     "minimum": 9.134034689095786,
     "font": "14px",
@@ -7058,7 +7112,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 36,
+    "element": 37,
     "text": "Llogara Pass",
     "minimum": 8.447004160754966,
     "font": "25px",
@@ -7067,7 +7121,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7076,7 +7130,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7085,7 +7139,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7094,7 +7148,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7103,7 +7157,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7112,7 +7166,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7121,7 +7175,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7130,7 +7184,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7139,7 +7193,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7148,7 +7202,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7157,7 +7211,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 38,
+    "element": 39,
     "text": "No reviews yet",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7166,7 +7220,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 45,
+    "element": 46,
     "text": "\u00d7",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7175,7 +7229,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 46,
+    "element": 47,
     "text": "\u00a9 OpenStreetMap contributors SRTM | OpenTopoMap CC BY-SA",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7184,7 +7238,7 @@
   {
     "width": 1440,
     "state": "1-place4",
-    "element": 46,
+    "element": 47,
     "text": "\u00a9 OpenStreetMap contributors SRTM | OpenTopoMap CC BY-SA",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7238,7 +7292,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 34,
+    "element": 35,
     "text": "\n        Inherited text and image. Image credit unverified; ",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7247,7 +7301,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 35,
+    "element": 36,
     "text": "Inherited text and image. Image credit unverified; check the",
     "minimum": 9.134034689095786,
     "font": "14px",
@@ -7256,7 +7310,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 35,
+    "element": 36,
     "text": "Inherited text and image. Image credit unverified; check the",
     "minimum": 9.134034689095786,
     "font": "14px",
@@ -7265,7 +7319,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 36,
+    "element": 37,
     "text": "Llogara Pass",
     "minimum": 8.447004160754966,
     "font": "25px",
@@ -7274,7 +7328,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7283,7 +7337,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7292,7 +7346,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7301,7 +7355,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7310,7 +7364,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7319,7 +7373,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7328,7 +7382,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7337,7 +7391,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7346,7 +7400,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7355,7 +7409,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 37,
+    "element": 38,
     "text": "The Llogara Pass is a spectacular, winding mountain road rea",
     "minimum": 10.818893235205575,
     "font": "15px",
@@ -7364,7 +7418,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 38,
+    "element": 39,
     "text": "No reviews yet",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7373,7 +7427,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 45,
+    "element": 46,
     "text": "\u00d7",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7382,7 +7436,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 46,
+    "element": 47,
     "text": "\u00a9 OpenStreetMap contributors SRTM | OpenTopoMap CC BY-SA",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -7391,7 +7445,7 @@
   {
     "width": 1440,
     "state": "1-place4bottom",
-    "element": 46,
+    "element": 47,
     "text": "\u00a9 OpenStreetMap contributors SRTM | OpenTopoMap CC BY-SA",
     "minimum": 10.818893235205575,
     "font": "14px",
@@ -10195,6 +10249,60 @@
     "minimum": 10.818893235205575,
     "font": "14px",
     "glyphPixels": 223
+  },
+  {
+    "width": 1440,
+    "state": "1-reviews",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 199
+  },
+  {
+    "width": 1440,
+    "state": "1-reviews",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 257
+  },
+  {
+    "width": 1440,
+    "state": "1-reviewform",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 199
+  },
+  {
+    "width": 1440,
+    "state": "1-reviewform",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 257
+  },
+  {
+    "width": 1440,
+    "state": "1-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 927
+  },
+  {
+    "width": 1440,
+    "state": "1-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 457
   },
   {
     "width": 390,
@@ -13897,6 +14005,69 @@
   },
   {
     "width": 390,
+    "state": "0-reviews",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 178
+  },
+  {
+    "width": 390,
+    "state": "0-reviews",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 228
+  },
+  {
+    "width": 390,
+    "state": "0-reviewform",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 178
+  },
+  {
+    "width": 390,
+    "state": "0-reviewform",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 228
+  },
+  {
+    "width": 390,
+    "state": "0-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 546
+  },
+  {
+    "width": 390,
+    "state": "0-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 545
+  },
+  {
+    "width": 390,
+    "state": "0-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.791946444119928,
+    "font": "14px",
+    "glyphPixels": 138
+  },
+  {
+    "width": 390,
     "state": "1-overview",
     "element": 0,
     "text": "Albania, at your pace",
@@ -17584,5 +17755,68 @@
     "minimum": 10.818893235205575,
     "font": "14px",
     "glyphPixels": 233
+  },
+  {
+    "width": 390,
+    "state": "1-reviews",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 199
+  },
+  {
+    "width": 390,
+    "state": "1-reviews",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 257
+  },
+  {
+    "width": 390,
+    "state": "1-reviewform",
+    "element": 13,
+    "text": "Average Rating: 4.5 (2 reviews)",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 199
+  },
+  {
+    "width": 390,
+    "state": "1-reviewform",
+    "element": 30,
+    "text": "Review Submitted!",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 257
+  },
+  {
+    "width": 390,
+    "state": "1-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 603
+  },
+  {
+    "width": 390,
+    "state": "1-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 620
+  },
+  {
+    "width": 390,
+    "state": "1-trivia",
+    "element": 13,
+    "text": "Butrint was abandoned in the late Middle Ages after marshes ",
+    "minimum": 10.818893235205575,
+    "font": "14px",
+    "glyphPixels": 162
   }
 ]
