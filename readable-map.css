@@ -27,3 +27,6 @@ body .modal-content :is(p,span,label,a,li,div,button,input,textarea){font-size:1
 .scout-ops-panel,.chronos-panel{position:fixed;z-index:4000;top:158px;right:20px;width:390px;padding:18px;border-radius:10px;max-height:calc(100dvh - 205px);overflow:auto}.scout-ops-panel:not(.active),.chronos-panel:not(.active){display:none}.ops-header,.chronos-header{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:8px 0}.ops-header h3,.chronos-header h3{font-size:20px;color:var(--ink)}.ops-header #closeOpsCenter{margin-left:auto;background:var(--paper);color:var(--ink);border:1px solid var(--line)}.intel-feed-section,.drone-control-section{padding:12px 0}.intel-feed-section h4,.drone-control-section h4{font-size:16px;margin-bottom:10px}.chronos-panel .timeline-container{padding:14px 0}.chronos-panel input{width:100%}.chronos-panel .timeline-labels{display:flex;justify-content:space-between}.chronos-intel{font:15px/1.6 Arial,sans-serif}.status-indicator{color:var(--ink)}
 @media(max-width:768px){body .scout-ops-panel,body .chronos-panel{top:234px!important;left:12px!important;right:12px!important;width:auto!important;max-height:calc(100dvh - 438px)!important}}
 html,body{height:100%;width:100%}body{position:fixed;inset:0;overflow:hidden!important}
+
+/* Optional sound lives with the other map tools. */
+#soundMap{min-height:44px;padding:10px 16px;font-size:16px}

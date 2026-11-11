@@ -20,7 +20,9 @@ appState.subscribe('languageChanged',()=>queueMicrotask(labelModes));labelModes(
 map.attributionControl.setPrefix(false);
 const links=document.createElement('p');links.className='map-references';links.innerHTML='<a href="https://opentopomap.org/about" target="_blank" rel="noopener">Map source and licence</a> · <a href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener">Report a map issue</a><br>Inherited place descriptions, photos and historical trivia have not been independently fact-checked. Photos have unverified photographer credits. Saved plans and reviews stay only in this browser.';tools.append(links);
 // A tool reveals its own panel, so the drawer gets out of the way.
-tools.addEventListener('click',e=>{if(e.target.closest('button')&&e.target.closest('button').id!=='closeMapTools')setTools(false)});
+tools.addEventListener('click',e=>{if(e.target.closest('button')&&!['closeMapTools','soundMap'].includes(e.target.closest('button').id))setTools(false)});
 const licence=map.attributionControl.getContainer();licence.classList.add('map-licence');document.body.append(licence);
 map.on('popupopen',e=>{for(const img of e.popup.getElement().querySelectorAll('img')){const hide=()=>{img.hidden=true;img.style.setProperty("display","none","important")};img.addEventListener('error',hide);if(img.complete&&!img.naturalWidth)hide()}});
 const closeChronos=document.createElement('button');closeChronos.id='closeChronos';closeChronos.textContent='Close history';closeChronos.onclick=()=>document.querySelector('.chronos-toggle').click();document.querySelector('#chronosPanel .chronos-header').append(closeChronos);
+
+const soundNote=document.createElement('p');soundNote.textContent='Sound is optional environmental synthesis, not recordings from these places. It follows the open place and contains no speech or music.';tools.append(soundNote);

@@ -37,6 +37,11 @@ jobs:
           SHOTS=test-results/visual WIDTH=390 npm run verify:visual
           SHOTS=test-results/visual WIDTH=1440 npm run verify:visual
 
+      - name: Verify ambient audio
+        run: |
+          AUDIO_OUT=verification/audio node scripts/audio-structure.cjs
+          AUDIO_OUT=verification/audio node scripts/browser-gate.cjs
+
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
