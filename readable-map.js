@@ -23,3 +23,4 @@ const links=document.createElement('p');links.className='map-references';links.i
 tools.addEventListener('click',e=>{if(e.target.closest('button')&&e.target.closest('button').id!=='closeMapTools')setTools(false)});
 const licence=map.attributionControl.getContainer();licence.classList.add('map-licence');document.body.append(licence);
 map.on('popupopen',e=>{for(const img of e.popup.getElement().querySelectorAll('img')){const hide=()=>{img.hidden=true;img.style.setProperty("display","none","important")};img.addEventListener('error',hide);if(img.complete&&!img.naturalWidth)hide()}});
+const closeChronos=document.createElement('button');closeChronos.id='closeChronos';closeChronos.textContent='Close history';closeChronos.onclick=()=>document.querySelector('.chronos-toggle').click();document.querySelector('#chronosPanel .chronos-header').append(closeChronos);

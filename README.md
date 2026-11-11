@@ -10,6 +10,6 @@ Inherited guide copy, trivia and photos are not independently fact-checked. Imag
 
 ## Verification
 
-`npm ci`, `npm test` (37 unit tests), `PW_PORT=8861 PW_BASE_URL=http://localhost:8861 npm run test:e2e -- --project=chromium --workers=1` (7 browser regressions), `WIDTH=390 npm run verify:visual` (62 states, both themes,10 places and controls). Chromium defaults to /usr/bin/google-chrome; CHROME overrides it. `npm run build` copies the static runtime to dist.
+`npm ci`, `npm test` (37 unit tests), `PW_PORT=8861 PW_BASE_URL=http://localhost:8861 npm run test:e2e -- --project=chromium --workers=1` (7 browser regressions), `WIDTH=390 npm run verify:visual` (68 states, both themes,10 places and controls). Chromium defaults to /usr/bin/google-chrome; CHROME overrides it. `npm run build` copies the static runtime to dist.
 
-Final matrices also run at320 and1440. Contrast capture: `CONTRAST=1 WIDTH=390 npm run verify:visual` and same at1440; then `python verification/measure-contrast.py` (Pillow and NumPy required).124 rendered screens yielded1980 visible direct-text glyph samples, minimum6.757:1. Disabled controls also meet the floor. No audio feature is present, so no synthesized audio was added.
+Final matrices also run at320 and1440. Contrast capture: `CONTRAST=1 WIDTH=390 npm run verify:visual` and same at1440; then `python verification/measure-contrast.py` (Pillow and NumPy required).136 rendered screens yielded2080 visible direct-text glyph samples, minimum6.757:1. Disabled controls also meet the floor. No audio feature is present, so no synthesized audio was added.
