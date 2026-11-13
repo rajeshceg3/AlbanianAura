@@ -10,6 +10,7 @@ module.exports = defineConfig({
   use: {
     baseURL: process.env.PW_BASE_URL || 'http://localhost:8080',
     trace: 'on-first-retry',
+    launchOptions: process.env.CHROME ? { executablePath: process.env.CHROME, args: ['--no-sandbox', '--enable-unsafe-swiftshader'] } : {},
     screenshot: 'only-on-failure',
     actionTimeout: 10000,
   },

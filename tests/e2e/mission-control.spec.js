@@ -11,11 +11,13 @@ test.describe('Mission Control & Simulation', () => {
     // Add two items to itinerary for meaningful simulation
 
     // Item 1: Tirana
+    await page.click('#explore-albania');
     await page.fill('#searchBox', 'Tirana');
     await page.locator('.search-result-item').first().click();
     await page.locator('.leaflet-popup-content button.popup-btn').click();
 
     // Item 2: Berat
+    await page.click('#explore-albania');
     await page.fill('#searchBox', 'Berat');
     // Wait for previous dropdown to close or update.
     // Clicking map might close it, or typing new text might update it.
@@ -29,6 +31,7 @@ test.describe('Mission Control & Simulation', () => {
 
   test('should display timeline correctly', async ({ page }) => {
     // Open Mission Control
+    await page.click('#explore-albania');
     await page.click('#missionControlToggle');
 
     // Check timeline container
@@ -51,6 +54,7 @@ test.describe('Mission Control & Simulation', () => {
   });
 
   test('should run recon simulation', async ({ page }) => {
+    await page.click('#explore-albania');
     await page.click('#missionControlToggle');
 
     // Find Recon Button: ID is reconBtn in index.html
@@ -67,6 +71,7 @@ test.describe('Mission Control & Simulation', () => {
   });
 
   test('should use crowd intel slider', async ({ page }) => {
+    await page.click('#explore-albania');
     await page.click('#missionControlToggle');
 
     // Toggle Crowd Intel
