@@ -17,6 +17,7 @@ test.describe('User Journey', () => {
 
   test('should interact with the map and add to itinerary', async ({ page }) => {
     // Locate search box
+    await page.click('#explore-albania');
     const searchBox = page.locator('#searchBox');
     await searchBox.fill('Tirana');
 
@@ -39,6 +40,7 @@ test.describe('User Journey', () => {
     await expect(toast).toContainText('Target added');
 
     // Open Mission Control
+    await page.click('#explore-albania');
     const toggle = page.locator('#missionControlToggle');
     await toggle.click();
 
@@ -50,6 +52,7 @@ test.describe('User Journey', () => {
   });
 
   test('should change language', async ({ page }) => {
+    await page.click('#explore-albania');
     const langBtnSq = page.locator('#langSwitcher button[data-lang="sq"]');
     await langBtnSq.click();
 

@@ -1214,7 +1214,7 @@ setLanguage(appState.language);
 // --- Tour System Initialization ---
 const tourSteps = [
     {
-        target: '.ui-controls',
+        target: '#explore-albania',
         title: 'AGENCY PROTOCOL INITIATED',
         text: 'Welcome to the Albania Tactical Map. This interface provides real-time intelligence and mission planning capabilities for field operatives.',
         placement: 'bottom'
@@ -1226,21 +1226,21 @@ const tourSteps = [
         placement: 'center'
     },
     {
-        target: '#filter-container',
+        target: '#explore-albania',
         title: 'TARGET ACQUISITION',
-        text: 'Use the search matrix to locate assets, safehouses, and points of interest. Filter intelligence by category.',
+        text: 'Open Explore Albania to search by name or choose a category. The map stays clear until you ask for tools.',
         placement: 'bottom'
     },
     {
-        target: '#missionControlToggle',
+        target: '#explore-albania',
         title: 'MISSION LOG',
-        text: 'Access your active itinerary, deploy reconnaissance drones, and analyze route risks via the Mission Control panel.',
+        text: 'Open Explore Albania, then Mission Control for your itinerary and route tools.',
         placement: 'left'
     },
     {
-        target: '#dreamModeBtn',
+        target: '#explore-albania',
         title: 'SIMULATION TOOLS',
-        text: 'Activate Dream Mode for hypothetical scenario planning, disabling standard map interactions for focused strategic review.',
+        text: 'Open Explore Albania, then Dream Mode to use the existing simulation tools.',
         placement: 'right'
     }
 ];
@@ -1257,15 +1257,6 @@ if (typeof TourSystem !== 'undefined') {
         });
     }
 
-    // Auto-start tour for new users (disabled during tests to prevent overlay blocking)
-    if (!window.__PLAYWRIGHT_TEST__) {
-        const hasSeenTour = localStorage.getItem('albania_tour_seen');
-        if (!hasSeenTour) {
-            // Use a short timeout to ensure the map and UI are fully rendered
-            setTimeout(() => {
-                tourSystem.start();
-                localStorage.setItem('albania_tour_seen', 'true');
-            }, 1000);
-        }
-    }
+    // Guide is started explicitly from Explore Albania, never over the map at launch.
+
 }
