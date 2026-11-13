@@ -191,19 +191,26 @@ function initScoutInterface() {
 }
 
 
-// Add a tile layer to the map (using a pastel-themed layer)
-const baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
-}).addTo(map);
+// Warm-paper basemap (worlds shared module): OpenFreeMap vector tiles via the
+// MapLibre GL Leaflet bridge. Free public instance, no API key. The bridge lacks
+// the GridLayer helpers generative mode uses, so shim them per layer.
+maplibregl.setWorkerUrl('vendor/maplibre/maplibre-gl-csp-worker.js');
+const WARM_ATTRIBUTION = '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>';
+function createWarmLayer() {
+    const layer = L.maplibreGL({
+        style: window.WARM_MAP_STYLE,
+        attribution: WARM_ATTRIBUTION,
+        maxZoom: 20
+    });
+    layer.setOpacity = function (v) { if (this._container) { this._container.style.opacity = v; } };
+    layer.bringToFront = function () { if (this._container && this._container.parentNode) { this._container.parentNode.appendChild(this._container); } };
+    return layer;
+}
 
-// Using CartoDB Dark Matter for the "Generative" mode as a stable alternative to Stamen Watercolor
-let generativeLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-	subdomains: 'abcd',
-	maxZoom: 20
-});
+const baseLayer = createWarmLayer().addTo(map);
+
+// Second warm layer for "Generative" mode (replaces the old dark overlay)
+let generativeLayer = createWarmLayer();
 
 const allMarkers = [];
 

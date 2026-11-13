@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Albania Tourist Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://rsms.me https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://rsms.me https://fonts.gstatic.com; img-src 'self' data: https://*.basemaps.cartocdn.com https://unpkg.com https://a.basemaps.cartocdn.com https://b.basemaps.cartocdn.com https://c.basemaps.cartocdn.com https://d.basemaps.cartocdn.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://rsms.me https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://rsms.me https://fonts.gstatic.com; img-src 'self' data: blob: https://unpkg.com; connect-src 'self' https://tiles.openfreemap.org; worker-src 'self';">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -206,6 +206,10 @@
   </div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
+  <link rel="stylesheet" href="vendor/maplibre/maplibre-gl.css">
+  <script src="vendor/maplibre/maplibre-gl-csp.js"></script>
+  <script src="vendor/maplibre/leaflet-maplibre-gl.js"></script>
+  <script src="vendor/warm-map/style.js"></script>
   <script src="data.js"></script>
   <script src="state.js"></script>
   <script src="languages.js"></script>
