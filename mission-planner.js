@@ -56,6 +56,26 @@ class MissionPlanner {
         document.getElementById('newMissionBtn').onclick = () => this.createNewMission();
         document.getElementById('missionSelector').onchange = (e) => this.appState.switchMission(e.target.value);
 
+        // Analysis modal: close button + ACTIVATE delegation.
+        // (script-src 'self' CSP blocks inline event-handler attributes,
+        //  so these must be attached from script.)
+        const analysisModal = document.getElementById('analysisModal');
+        const closeAnalysisBtn = document.getElementById('closeAnalysisModal');
+        if (analysisModal && closeAnalysisBtn) {
+            const closeAnalysisModal = () => {
+                analysisModal.style.display = 'none';
+                analysisModal.setAttribute('aria-hidden', 'true');
+            };
+            closeAnalysisBtn.addEventListener('click', closeAnalysisModal);
+            analysisModal.addEventListener('click', (e) => {
+                const activateBtn = e.target.closest('[data-activate-mission]');
+                if (activateBtn) {
+                    this.appState.switchMission(activateBtn.getAttribute('data-activate-mission'));
+                    closeAnalysisModal();
+                }
+            });
+        }
+
         this.refreshMissionSelector();
     }
 
@@ -159,7 +179,7 @@ class MissionPlanner {
                 <td style="color: ${riskColor}">${stats.risk}</td>
                 <td>
                     ${mission.id !== this.appState.currentMissionId ?
-                        `<button class="control-button small-btn" onclick="appState.switchMission('${mission.id}'); document.getElementById('closeAnalysisModal').click();">ACTIVATE</button>` :
+                        `<button class="control-button small-btn" data-activate-mission="${mission.id}">ACTIVATE</button>` :
                         '<span style="font-size:0.8rem; color:#666;">ACTIVE</span>'
                     }
                 </td>
